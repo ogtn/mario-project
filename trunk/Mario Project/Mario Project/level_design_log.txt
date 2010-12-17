@@ -1,0 +1,70 @@
+/*============================================================================*/
+/*===         _____         _        _____           _         _           ===*/
+/*===        |     |___ ___|_|___   |  _  |___ ___  |_|___ ___| |_         ===*/
+/*===        | | | | .'|  _| | . |  |   __|  _| . | | | -_|  _|  _|        ===*/
+/*===        |_|_|_|__,|_| |_|___|  |__|  |_| |___|_| |___|___|_|          ===*/
+/*===                                             |___|                    ===*/
+/*============================================================================*/
+/*===      =LagMan=                =McCaml=                 =MouleMan=     ===*/
+/*============================================================================*/
+
+
+/*============================================================================*/
+                               Level Design Log
+/*============================================================================*/
+
+
+
+Dans ce log, il y a le descriptif des niveaux.Ca inclut le contenu (pieces, decors)
+mais aussi quelques elements du gameplay (systeme de quick time event? niveau
+mirroir?mode chrono?), ainsi que les monstres rencontrés.
+Les pieces marquées d'une etoile sont les pièces à modéliser:
+
+
+		================================================
+		*	Pieces communes à tous les niveaux:    *
+		================================================
+
+Ci gissent les pieces communes à tous les mondes:
+
+Boites mysteres*
+Pieces*
+Champignons*
+Blocs de Briques*
+Blocs Secrets*
+
+
+
+		================================================
+		*	   Premier Monde: Let ce gau           *
+		================================================
+
+Monde exterieur, ca demande des arbres (plusieurs modeles d'arbre, ca permet une 
+diversité du decors), des rochers seront aussi de la partie, des fleurs, le fond
+sera un ciel eclaircit, avec quelques cumulonimbus qui pointeront le bout de leur
+nez en fin d'apres midi. Pour les temperatures, elles seront egales aux normales
+saisonnieres. Il s'agira d'un niveau de base, donc pas de surprises niveau gameplay.
+
+premier plan:parterre d'herbe bien vert, pas de grands dénivelés.
+second plan:petites colines d'herbes
+arriere plan:ciel bleu avec soleil(plan fixe)
+
+Eléments du decors:
+arbre01
+arbre02*
+arbre03*
+buisson01
+buisson02*
+buisson03*
+fleur01*
+fleur02*
+fleur03*
+rocher01
+rocher02*
+rocher03*
+nuage_blanc01*
+nuage_blanc02*
+
+
+Monstres:
+en construction
