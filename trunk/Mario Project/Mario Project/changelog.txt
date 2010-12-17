@@ -1,0 +1,300 @@
+/*============================================================================*/
+/*===         _____         _        _____           _         _           ===*/
+/*===        |     |___ ___|_|___   |  _  |___ ___  |_|___ ___| |_         ===*/
+/*===        | | | | .'|  _| | . |  |   __|  _| . | | | -_|  _|  _|        ===*/
+/*===        |_|_|_|__,|_| |_|___|  |__|  |_| |___|_| |___|___|_|          ===*/
+/*===                                             |___|                    ===*/
+/*============================================================================*/
+/*===      =LagMan=                =McCaml=                 =MouleMan=     ===*/
+/*============================================================================*/
+
+[V0.027a] 07/03/2010
+_Gestion du HUD
+_Apparition des pièces
+_Quelques Optimisations
+_Avancements de l'éditeur (en grande partie refondu): 
+	_GUI fonctionnelle (boutons, onglets)
+	_actions associées à des boutons et des racourcis clavier
+	_remplissage "intelligent", suppression, couper, copier, coller
+	_browser de textures de blocs
+	_favoris
+_13490 lignes
+
+
+
+
+[V0.026a] 05/10/2009
+_Gestion fonctionnelle de l'animation des transformations de Mario
+_Gestion fonctionnelle des carapaces par le personnage
+_Gestion fonctionnelle de l'animation des arrière-plans et des objets
+_Gestion fonctionnelle des collisions de toutes les pentes 
+par le perso, les monstres, les items et les projectiles
+_De nombreux bugs de collisions corrigés
+_SpriteMaker fonctionnel
+_10591 lignes
+
+
+
+
+[V0.025a] 21/02/2009
+_Nouveau système de collisions fonctionnel
+_Ajout d'un nouveau format ".item", pour stocker les informations 
+sur l'item en question, et d'une fonction charger_item pour
+le charger.
+_Amélioration des textures en qualité et en taille 
+pour leur donner un aspect dessiné
+_Code entièrement nettoyé
+_8672 lignes
+
+
+
+[V0.024a] 01/02/2009
+_Ajout des items et des projectiles avec leurs structures respectives
+_Ajout d'un format '.proj' pour stocker les informations
+sur les projectiles et donc d'une fonction pour charger ces informations
+_Collisions items/niveau et items/perso gérées proprement
+_Collisions projectiles/niveau gérées proprement aussi
+_Gestion de l'etat du projectile lorsqu'il y a collision avec le niveau
+et de l'affichage en conséquence
+_Codage en cours concernant un nouveau système de collisions
+_Ajout de liste chainees de blocs et de textures en vue d'une gestion optimale
+des ressources dans l'editeur de niveau
+_Mise a jour du module de surveillance des allocations
+_Mise a jour du module d'affichage de texte à l'ecran (pas encore terminé)
+_9510 lignes
+
+
+[V0.023a] 26/11/2008
+_Ajout d'un nouveau format ".mstr", pour stocker les informations 
+sur le monstre en question, et d'une fonction charger_monstre pour
+les charger.
+_Ajout d'un nouveau format ".perso", pour stocker les informations 
+sur le perso, et d'une fonction charger_perso pour
+le charger.
+_Ajout d'une structure occ_monstre, pour gérer toutes les occurences
+de monstres dans un niveau
+_Collisions entre le personnage et les monstres sont gérées proprement
+_Gestion de la transformation de Mario : dès qu'il est touché, il change
+de costume et deviens invincible pendant 2 secondes.
+_Mise a jour du module chargé de surveiller les allocations et desallocation
+en mode debug: les buffer overflow et underflow sont maintenant detectés.
+_Mise a jour de l'editeur pour l'ajout d'un nouvel outil pour placer les blocs,
+disponible dans la prochaine version si tout va bien.
+_Mise a jour des boutons, pour faciliter leur utilisation (moins de code, et
+plus clair).
+_6163 lignes
+
+
+[V0.022a] 12/11/2008
+_Ajout de 4 nouveaux blocs correspondant aux coins et les collisions avec eux
+sont gérées proprement aussi.
+_Ajout de la structure monstre et affichage de celui-ci.
+_Collisions du monstre avec l'ensemble du niveau gérées proprement aussi.
+_5154 lignes
+
+
+
+[V0.021a] 9/11/2008
+_Les collisions de base sont enfin gerées proprement, en tenant réellement
+compte du contennu des blocs du niveau.
+_Ajout des boutons de type radio.
+_Ajout d'un mode expert dans l'editeur (le menu disparait, on a donc un aperçu 
+global du niveau).
+_Ajout d'un "curseur" spécial utile pour le mode bloc, la ligne et la colonne
+sur lesquelles on se trouve sont mises en evidence.
+_Ajout d'une fonction permettant d'assigner une meme texture à un ensemble de
+blocs, ou de supprimer la texture d'un ensemble de bloc via un simple clic
+suivi d'un deplacement de la souris. La zone concernée est mise en evidence par
+un rectangle bien visible.
+_Les infos de debugage sont enfin affichées à l'ecran via une fonction dediée, 
+que ce soit pour l'editeur ou pour le jeu. Comble du raffinement, la fonction
+n'est appelleé que lorsque l'on compile en mode debug.
+_La fonction main_editeur() approchant dangereusement les 200 lignes, il va
+etre necessaire de dispatcher proprement toutes les instructions qu'elle 
+contient dans un soucis de clarté.
+_L'affichage des niveaux plus petits que l'ecran ne pose plus de probleme ni
+dans le jeu ni dans l'editeur.
+_4734 lignes
+
+
+[V0.020a] 30/03/2008
+_Nettoyage de quelques parties du code
+_Amelioration des frottements et gestion de la vitesse/deplacements. On peut regler
+independament la pluspart des caracteristiques (vitesse max, acceleration, distance
+de derapage etc.)
+_L'animation du personnage est presque terminée, reste quelques legers bugs (par
+exemple le perso baissé ne peut sauter si la touche RUN est pressée)
+_Une bonne partie de la gestion des collisions à été faite, c'est pour le
+moment codé "à la porc" pour les tests, reste à refaire ça proprement
+_Affichage à l'ecran de données suplémentaires, il faut faire une fonction qui
+s'en charge pour un mode debug qu'on active ou pas.
+_3654 lignes
+
+
+[V0.019a] 19/12/2007
+_amelioration de l'interface de l'editeur et celle-ci s'adpate maintenant
+parfaitement à toutes les resolutions et ratios
+_le survol d'un bouton affiche maintenant une phrase d'aide
+_nettoyage du code de l'editeur (reste du travail de ce coté evidement)
+_debut d'une modification en profondeur des boutons, pour permetre les
+radios ou les checkbox, et ainsi utiliser les boutons pour le menu principal 
+_3366 lignes
+
+
+[V0.018a] 10/12/2007
+_modifications de l'affichage du perso pour qu'il soit animé. Mario marche en
+bougeant enfin ses jambes, il leve le poing en sautant, derape et se baisse.
+_modifications des changements d'etat du personnage (pour savoir quelle image
+afficher).
+_modifs des fonctions de frottement et de gravité, mais c'est pas encore ça :p
+_debut du codage de l'editeur de niveau, avec l'utilisation des boutons. 
+Ceux-ci permetent de choisir si l'on veut afficher ou non chaque "layer" du
+niveau pour faciliter la création.
+_ebauche de l'interface graphique de l'editeur (s'adaptant à la resolution de 
+l'ecran)
+_3131 lignes
+
+
+[V0.017a] 07/12/2007
+_Netoyage de tous les .h, avec ajout de commentaires pour toutes les fonctions
+_La structure ecran permet d'effectuer le rendu du niveau dans une zone
+ rectangulaire definie (très utile pour l'editeur notament). Tout y est dessiné
+ à sa taille réelle. Par consequent, c'est la distance de visibilité du joueur
+ qui se trouve modifié.
+ _2860 lignes
+
+
+[V0.016a] 05/12/2007
+_Developpement de la gestion des collisions (ou plus particulierement de la
+"physique"): fonctions qui simulent la gravité, les frottements, les sauts...
+Ces fonctions tiennent compte du temps ecoulé entre deux frames, elles
+ produisent donc des resultats identiques quel que soit le framerate.
+_Les niveaux peuvent desormais utiliser un nombre illimité de textures d'arriere
+plan et le nom du fichier audio est ajouté à la structure niveau.
+_Ajout de la gestion du scrolling (uniquement horizontal pour le moment). Les
+niveaux d'une taille superieure à celle de l'ecran s'affichent maintenant sans
+probleme, et les differents calques du niveaux defilent à des vitesses variables
+en fonction de leur eloignement.
+_debut de codage de fonctions permettant la gestion de boutons (utile pour 
+le futur editeur de niveaux, voir pour les menus pourquoi pas.
+_2700 lignes
+
+
+[V0.015a] 03/12/2007
+_Modifications de la structure niveau et de la fonction charger_niveau(), dont
+notament l'ajout d'une couche d'objets entre l'image de fond et la couche des
+blocs
+_Grosse optimisation de l'affichage des niveaux et du texte: très gros gain de
+FPS à la clé
+_Debut maladroits de la gestion des collisions
+_Nettoyage d'une partie du code (voir derniere maj), notament en ajoutant la 
+fonction charger_niveau_test()
+_2300 lignes
+
+
+[V0.014a] 25/11/2007
+_integration de FMOD
+_Leger travail sur les fonctions d'affichage et d'enregistrement/lecture des
+niveaux, mais c'est vachement crade, il faut netoyer tout ça pour la prochaine 
+maj avant que ça soit trop le bordel.
+_2050 lignes
+
+
+
+[V0.013a] 22/11/2007
+
+_Gestion des menus fonctionnelle avec les touches du clavier (fleches + Entrer)
+_Les fonctions affiche_menu() et main_menu() sont plutot crades, à recoder plus
+tard proprement (avant de faire l'editeur de niveau, pour avoir quelquechose de
+bien propre, et notament une interraction souris/bouton)
+_Modification de la structure keystate pour savoir si une touche enfoncée à été
+pressée à l'instant ou est maintenue
+_1970 lignes
+
+
+[V0.012a] 21/11/2007
+_Ajout d'une gestion de menus sous forme d'arbres (ajout de menus.c et menus.h)
+A terminer (75%)
+_"Nettoyage" du code et amelioration de la lisibilité de plusieurs fonctions
+_Evolution du format .lvl mais:
+	_/!\ Il faut concevoir un niveau valide pour tester et debugger /!\
+	_/!\ Les fonctions de desallocations qui y sont liées sont à modifier /!\
+_Ameliorations dans les fonctions draw_sprite() et draw_text() 
+_1900 lignes
+
+
+[V0.011a] 11/11/2007
+
+_Specifications du format .lvl
+_Fonctions charger_niveau() et sauver_niveau() mises à jour
+_legeres modifs des desallocations pour plus de securité
+_1500 lignes
+
+
+[V0.010a] 08/11/2007
+
+_Bug d'allocation reglé
+_Modif du code pour qu'il soit portable
+_Refonte complete et propre de l'allocation et de la desallocation des
+ differentes structures
+_1400 lignes environ
+ 
+[V0.009a] 21/10/2007
+
+_/!\ Compile sans erreur ni warning mais ne s'execute pas /!\
+_Debut de modif des fonctions qui manipulent les structures world et niveau
+_ Il existe un bug au niveau des allocations, plutot recalcitrant.
+
+
+[V0.008a] 20/10/2007
+
+_/!\ Compile sans erreur ni warning mais ne s'execute pas /!\
+_Refonte totale des structures world et niveau, les fonctions
+qui chargent tout ça et font les allocations mémoire ne sont
+pas encore adaptées à ces changements.
+_Ajout de la structure bloc
+_Sans compter les bidules en ascii art dans chaque fichier, on
+compte desormais plus de 1000 lignes de code.
+_Ajout de structures vercteur en 2D d'entiers et de flottants,
+ainsi que de fonctions de base pour les manipuler.
+
+
+[V0.006a] 11/10/2007
+
+_Nettoyage du code (bordels, tests crades en plein milieu...)
+_Re-organisation de l'affichage plus propre
+_Ajout du vidage de tampon avant le calcul de chaque frame
+
+
+[V0.005a] 11/10/2007
+
+_Fonction qui affiche à l'ecran la chaine de caracteres donnée
+_Fonction d'affichage des coordonées de la souris
+
+
+[V0.004a] 10/10/2007
+
+_Debut du codage d'un effet de lumiere destiné à donner du relief
+_Gestion de la transparence "tout ou rien" et progressive
+_premier niveau de test réalisé (un simple sol), et affichage de celui-ci
+
+
+[V0.004a] 10/10/2007
+
+_gestion des touches du clavier fonctionnelle
+_premier deplacement de mario (sans changement de sprite) ..mais changement de sprite quand on se baisse.
+_test d'affichage de differents sprites de tailles variables
+
+
+[V0.002a] 07/10/2007
+
+_Organisation du code avec la mise en place de:
+perso.c/h, sound.c/h, world.c/h, niveau.c/h, sprite.c/h, monstre.c/h, texture.c/h, keystate.c/h, collision.c/h.
+_Naissance de Blop.
+
+
+[V0.001a] 06/10/2007
+
+_Mise en place de constante.h et de main.c
+_Fonctions d'initialisation de la SDL et d'OpenGL
+_Création du changelog \o/
