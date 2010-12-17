@@ -167,6 +167,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="allocations.txt" />
+    <None Include="changelog.txt" />
     <None Include="level_design_log.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

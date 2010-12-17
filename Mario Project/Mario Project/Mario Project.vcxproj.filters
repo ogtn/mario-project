@@ -180,5 +180,8 @@
     <None Include="level_design_log.txt">
       <Filter>Fichiers de ressources</Filter>
     </None>
+    <None Include="changelog.txt">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
   </ItemGroup>
 </Project>
