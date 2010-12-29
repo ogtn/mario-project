@@ -791,7 +791,7 @@ void maj_selection(editeur *e)
             }
             else
             {
-                int id_bloc = e->world->niveau->id_blocs[e->bloc_survole.x][e->bloc_survole.y];
+                int id_bloc = e->world->niveau->occ_blocs[e->bloc_survole.x][e->bloc_survole.y];
 
                 if(id_bloc != BLOC_VIDE)
                     screen_printf(pos, NULL, COLOR_WHITE, "[%d;%d] physique: [%d]", e->bloc_survole.x, e->bloc_survole.y, e->world->niveau->blocs[id_bloc].phys);
@@ -840,7 +840,7 @@ void debug_mode(editeur *e)
 
     if(e->bloc_survole.x >= 0 && e->bloc_survole.x < e->world->niveau->taille.x &&
         e->bloc_survole.y >= 0 && e->bloc_survole.y < e->world->niveau->taille.y)
-        screen_printf_dbg("id du bloc (%d;%d): %d\n", e->bloc_survole.x, e->bloc_survole.y, e->world->niveau->id_blocs[e->bloc_survole.x][e->bloc_survole.y]);
+        screen_printf_dbg("id du bloc (%d;%d): %d\n", e->bloc_survole.x, e->bloc_survole.y, e->world->niveau->occ_blocs[e->bloc_survole.x][e->bloc_survole.y]);
 }
 
 

@@ -328,7 +328,7 @@ void affichage_debug(world *w)
         bloc.x = (int) (w->persos[0]->position.x + w->persos[0]->texture_act->abscisse_bas + (w->persos[0]->taille.x - 2 * w->persos[0]->texture_act->abscisse_bas) / 2) / w->niveau->taille_blocs.x;
         bloc.y = (int) w->persos[0]->position.y / w->niveau->taille_blocs.y;
 
-        switch(w->niveau->blocs[w->niveau->id_blocs[bloc.x][bloc.y]].phys)
+		switch(w->niveau->occ_blocs[bloc.x][bloc.y]->bloc_actuel->phys)
         {
         case SOL :
             screen_printf_dbg("Type de bloc en dessous du milieu de Mario : SOL\n");

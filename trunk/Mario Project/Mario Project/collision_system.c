@@ -25,49 +25,6 @@ void main_collisions(world *w)
 	for(i = 0; i < w->niveau->nb_tuyaux; i++)
 		MAJ_tuyau(w->niveau->tuyaux[i], w->temps_ecoule);
 
-
-	/* PARTIE ITEMS */
-	for(i = 0; i < w->niveau->nb_items; i++)
-	{
-		elem_item *item_actuel = w->niveau->items[i]->occ_items->item;
-		while(item_actuel != NULL)
-		{
-			i_bis = item_actuel->occ_item;
-
-			MAJ_collision_item(i_bis, w->ecran, w->temps_ecoule);
-
-			solve_collisions_item(i_bis, w->niveau, w->temps_ecoule);
-
-			diff_x = abs((int)i_bis->position_prec.x - (int)i_bis->position.x);
-			diff_y = abs((int)i_bis->position_prec.y - (int)i_bis->position.y);
-
-			/* Teste si il y a beaucoup de pixels d'écart entre les 2 positions */
-			if(diff_x < w->niveau->taille_blocs.x && diff_y < w->niveau->taille_blocs.y)
-			{
-				/* Si non, on laisse comme c'était */
-				*item_actuel->occ_item = *i_bis;
-
-			}
-			else
-			{
-
-				/* Si oui, on stocke la différence */
-				nb_images_inter = max(diff_x / w->niveau->taille_blocs.x, diff_y / w->niveau->taille_blocs.y);
-
-				/* Pour chaque image intermédiaire de chaque perso, on teste si il n'y a pas eu de collision entre temps */
-				for(j = 0; j <= nb_images_inter; j++)
-				{
-					MAJ_collision_item(item_actuel->occ_item, w->ecran, w->temps_ecoule / (nb_images_inter + 1));
-
-					/* Fonction résolvant les collisions */
-					solve_collisions_item(item_actuel->occ_item, w->niveau, w->temps_ecoule);
-				}
-			}
-
-			item_actuel = item_actuel->suivant;
-		}
-	}
-
 	/* PARTIE PROJECTILES */
 	for(i = 0; i < w->niveau->nb_projectiles; i++)
 	{
@@ -120,64 +77,6 @@ void main_collisions(world *w)
 			}
 		}
 	}
-
-
-	/* PARTIE MONSTRE */
-	for(i = 0; i < w->niveau->nb_monstres; i++)
-	{
-		elem_monstre *mstr_actuel = w->niveau->monstres[i]->occ_monstres->monstre, *mstr_prec;
-
-		while(mstr_actuel != NULL)
-		{
-
-			if(mstr_actuel->occ_monstre->position.y + mstr_actuel->occ_monstre->type_monstre->taille.y < 0
-				|| (mstr_actuel->occ_monstre->etat == M_MORT_PAR_SAUT && mstr_actuel->occ_monstre->tps_disparition == 0)) {
-					mstr_prec = mstr_actuel;
-					mstr_actuel = mstr_actuel->suivant;
-					supprime_monstre(w->niveau->monstres[i]->occ_monstres, mstr_prec->occ_monstre);
-			}
-			else
-			{
-
-				m_bis = copy_monstre(mstr_actuel->occ_monstre);
-
-				if(m_bis->etat != M_RETRACTED_PORTED)
-					MAJ_collision_monstre(m_bis, w->ecran, w->temps_ecoule);
-
-				/* Fonction résolvant les collisions sur la copie du monstre */
-				if(m_bis->etat != M_MORT_PAR_PROJ)
-					solve_collisions_monstre(m_bis, mstr_actuel->occ_monstre, w->persos[0], w->niveau, w->temps_ecoule);
-
-				diff_x = abs((int)m_bis->position_prec.x - (int)m_bis->position.x);
-				diff_y = abs((int)m_bis->position_prec.y - (int)m_bis->position.y);
-
-				/* Teste si il y a plus de pixels d'écart entre les 2 positions */
-				if(diff_x < w->niveau->taille_blocs.x && diff_y < w->niveau->taille_blocs.y)
-				{
-					/* Si non, on laisse comme c'était */
-					*mstr_actuel->occ_monstre = *m_bis;
-				}
-				else
-				{
-					/* Si oui, on stocke la différence */
-					nb_images_inter = max(diff_x / w->niveau->taille_blocs.x, diff_y / w->niveau->taille_blocs.y);
-
-					/* Pour chaque image intermédiaire de chaque perso, on teste si il n'y a pas eu de collision entre temps */
-					for(j = 0; j <= nb_images_inter; j++)
-					{
-						MAJ_collision_monstre(mstr_actuel->occ_monstre, w->ecran, w->temps_ecoule / (nb_images_inter + 1));
-
-						/* Fonction résolvant les collisions */
-						if(mstr_actuel->occ_monstre->etat != M_MORT_PAR_PROJ)
-							solve_collisions_monstre(mstr_actuel->occ_monstre, NULL, w->persos[0], w->niveau, w->temps_ecoule);
-					}
-				}
-				mstr_actuel = mstr_actuel->suivant;
-				free_copy_monstre(m_bis);
-			}
-		}
-	}
-
 
 	/* PARTIE PERSONNAGE */
 	for(i = 0; i < w->nb_persos; i++) {
@@ -235,6 +134,104 @@ void main_collisions(world *w)
 				}
 			}
 			free_copy_perso(p_bis);
+		}
+	}
+
+	/* PARTIE MONSTRE */
+	for(i = 0; i < w->niveau->nb_monstres; i++)
+	{
+		elem_monstre *mstr_actuel = w->niveau->monstres[i]->occ_monstres->monstre, *mstr_prec;
+
+		while(mstr_actuel != NULL)
+		{
+
+			if(mstr_actuel->occ_monstre->position.y + mstr_actuel->occ_monstre->type_monstre->taille.y < 0
+				|| (mstr_actuel->occ_monstre->etat == M_MORT_PAR_SAUT && mstr_actuel->occ_monstre->tps_disparition == 0)) {
+					mstr_prec = mstr_actuel;
+					mstr_actuel = mstr_actuel->suivant;
+					supprime_monstre(w->niveau->monstres[i]->occ_monstres, mstr_prec->occ_monstre);
+			}
+			else
+			{
+
+				m_bis = copy_monstre(mstr_actuel->occ_monstre);
+
+				if(m_bis->etat != M_RETRACTED_PORTED)
+					MAJ_collision_monstre(m_bis, w->ecran, w->temps_ecoule);
+
+				/* Fonction résolvant les collisions sur la copie du monstre */
+				if(m_bis->etat != M_MORT_PAR_PROJ)
+					solve_collisions_monstre(m_bis, mstr_actuel->occ_monstre, w->persos[0], w->niveau, w->temps_ecoule);
+
+				diff_x = abs((int)m_bis->position_prec.x - (int)m_bis->position.x);
+				diff_y = abs((int)m_bis->position_prec.y - (int)m_bis->position.y);
+
+				/* Teste si il y a plus de pixels d'écart entre les 2 positions */
+				if(diff_x < w->niveau->taille_blocs.x && diff_y < w->niveau->taille_blocs.y)
+				{
+					/* Si non, on laisse comme c'était */
+					*mstr_actuel->occ_monstre = *m_bis;
+				}
+				else
+				{
+					/* Si oui, on stocke la différence */
+					nb_images_inter = max(diff_x / w->niveau->taille_blocs.x, diff_y / w->niveau->taille_blocs.y);
+
+					/* Pour chaque image intermédiaire de chaque perso, on teste si il n'y a pas eu de collision entre temps */
+					for(j = 0; j <= nb_images_inter; j++)
+					{
+						MAJ_collision_monstre(mstr_actuel->occ_monstre, w->ecran, w->temps_ecoule / (nb_images_inter + 1));
+
+						/* Fonction résolvant les collisions */
+						if(mstr_actuel->occ_monstre->etat != M_MORT_PAR_PROJ)
+							solve_collisions_monstre(mstr_actuel->occ_monstre, NULL, w->persos[0], w->niveau, w->temps_ecoule);
+					}
+				}
+				mstr_actuel = mstr_actuel->suivant;
+				free_copy_monstre(m_bis);
+			}
+		}
+	}
+
+	/* PARTIE ITEMS */
+	for(i = 0; i < w->niveau->nb_items; i++)
+	{
+		elem_item *item_actuel = w->niveau->items[i]->occ_items->item;
+		while(item_actuel != NULL)
+		{
+			i_bis = item_actuel->occ_item;
+
+			MAJ_collision_item(i_bis, w->ecran, w->temps_ecoule);
+
+			solve_collisions_item(i_bis, w->niveau, w->temps_ecoule);
+
+			diff_x = abs((int)i_bis->position_prec.x - (int)i_bis->position.x);
+			diff_y = abs((int)i_bis->position_prec.y - (int)i_bis->position.y);
+
+			/* Teste si il y a beaucoup de pixels d'écart entre les 2 positions */
+			if(diff_x < w->niveau->taille_blocs.x && diff_y < w->niveau->taille_blocs.y)
+			{
+				/* Si non, on laisse comme c'était */
+				*item_actuel->occ_item = *i_bis;
+
+			}
+			else
+			{
+
+				/* Si oui, on stocke la différence */
+				nb_images_inter = max(diff_x / w->niveau->taille_blocs.x, diff_y / w->niveau->taille_blocs.y);
+
+				/* Pour chaque image intermédiaire de chaque perso, on teste si il n'y a pas eu de collision entre temps */
+				for(j = 0; j <= nb_images_inter; j++)
+				{
+					MAJ_collision_item(item_actuel->occ_item, w->ecran, w->temps_ecoule / (nb_images_inter + 1));
+
+					/* Fonction résolvant les collisions */
+					solve_collisions_item(item_actuel->occ_item, w->niveau, w->temps_ecoule);
+				}
+			}
+
+			item_actuel = item_actuel->suivant;
 		}
 	}
 }
@@ -792,7 +789,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 	if(p->position.x + p->taille.x > n->taille.x * n->taille_blocs.x)
 		p->position.x = (float)(n->taille.x * n->taille_blocs.x) - p->taille.x;
 
-	if(p->position.y + p->taille.y < 0)
+	if(p->position.y + p->texture_act->ordonnee_haut < 0)
 		p->etat = MORT;
 
 	if(p->etat == BAISSE || p->etat == SAUT_BAISSE || p->etat == SAUT_BAISSE_CARAPACE)
@@ -807,7 +804,6 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 	bloc_hd.x = (int) (p->position.x + p->taille.x - p->texture_act->abscisse_bas) / n->taille_blocs.x;
 	bloc_hd.y = (int) (p->position.y + ordonnee_haut) / n->taille_blocs.y;
 
-
 	/* Initialisation du carre perso */
 	perso.position.x = p->position.x + p->texture_act->abscisse_bas;
 	perso.position.y = p->position.y;
@@ -821,254 +817,270 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 	perso.est_bloc_pente = FAUX;
 
 	if(p->etat != MORT && p->etat != RENTRE_TUYAU_HORIZONTAL && p->etat != SORT_TUYAU_HORIZONTAL
-		&& p->etat != RENTRE_TUYAU_VERTICAL && p->etat != SORT_TUYAU_VERTICAL) {
-
+		&& p->etat != RENTRE_TUYAU_VERTICAL && p->etat != SORT_TUYAU_VERTICAL) 
+	{
 			/************ COLLISIONS PERSO <=> NIVEAU ***************/
-			for(i = bloc_bg.x; i <= bloc_hd.x; i++){
-				for(j = bloc_bg.y; j <= bloc_hd.y; j++){
-
-					if(n->id_blocs[i][j] != BLOC_VIDE){
-
-						/* On récupère la physique du bloc */
-						phys_bloc_actuel = n->blocs[n->id_blocs[i][j]].phys;
-
-						bloc.position.x = (float)i * n->taille_blocs.x;
-						bloc.position.y = (float)j * n->taille_blocs.y;
-
-						bloc.position_prec.x = bloc.position.x;
-						bloc.position_prec.y = bloc.position.y;
-
-						bloc.taille.x = n->taille_blocs.x;
-						bloc.taille.y = n->taille_blocs.y;
-
-						find_angle_height_with_phys(phys_bloc_actuel, &bloc);
-
-						bloc.est_bloc_pente = (bloc.angle_pente != 0);
-
-						determinate_collision(perso, bloc, &collision);
-
-						/* Collision avec le sol */
-						if((phys_bloc_actuel == SOL 
-							|| phys_bloc_actuel == BORD_A_GAUCHE
-							|| phys_bloc_actuel == BORD_A_DROITE
-							|| phys_bloc_actuel == COIN_HAUT_A_GAUCHE
-							|| phys_bloc_actuel == COIN_HAUT_A_DROITE
-							|| phys_bloc_actuel == BLOC_SPEC)
-							&& collision.type_collision == PAR_LE_BAS)
+			for(i = bloc_bg.x; i <= bloc_hd.x; i++)
+			{
+				for(j = bloc_bg.y; j <= bloc_hd.y; j++)
+				{
+					if(i >= 0 && j >= 0)
+					{
+						if(n->occ_blocs[i][j]->bloc_actuel != NULL)
 						{
+							/* On récupère la physique du bloc */
+							phys_bloc_actuel = n->occ_blocs[i][j]->bloc_actuel->phys;
 
-							// Si le perso est en train d'attaquer, on ne change pas son etat 
-							if(!p->tps_attaque_speciale && !p->tps_attaque)
+							bloc.position.x = (float)i * n->taille_blocs.x;
+							bloc.position.y = (float)j * n->taille_blocs.y;
+
+							bloc.position_prec.x = bloc.position.x;
+							bloc.position_prec.y = bloc.position.y;
+
+							bloc.taille.x = n->taille_blocs.x;
+							bloc.taille.y = n->taille_blocs.y;
+
+							find_angle_height_with_phys(phys_bloc_actuel, &bloc);
+
+							bloc.est_bloc_pente = (bloc.angle_pente != 0);
+
+							determinate_collision(perso, bloc, &collision);
+
+							/* Collision avec le sol */
+							if((phys_bloc_actuel == SOL 
+								|| phys_bloc_actuel == BORD_A_GAUCHE
+								|| phys_bloc_actuel == BORD_A_DROITE
+								|| phys_bloc_actuel == COIN_HAUT_A_GAUCHE
+								|| phys_bloc_actuel == COIN_HAUT_A_DROITE
+								|| phys_bloc_actuel == BLOC_SPEC)
+								&& collision.type_collision == PAR_LE_BAS)
 							{
-								if(p->monstre_porte == NULL)
+
+								// Si le perso est en train d'attaquer, on ne change pas son etat 
+								if(!p->tps_attaque_speciale && !p->tps_attaque)
 								{
-									if(p->etat == SAUT_BAISSE)
-										p->etat = BAISSE;
-									else if(p->etat == SAUT || p->etat == SAUT_DESCENDANT) {
-										p->etat = DEBOUT;
-										p->hud->nb_monstres_tues = 0;
+									if(p->monstre_porte == NULL)
+									{
+										if(p->etat == SAUT_BAISSE)
+											p->etat = BAISSE;
+										else if(p->etat == SAUT || p->etat == SAUT_DESCENDANT) {
+											p->etat = DEBOUT;
+											p->hud->nb_monstres_tues = 0;
+										}
+									}
+									else
+									{
+										if(p->etat == SAUT_BAISSE_CARAPACE)
+											p->etat = BAISSE_CARAPACE;
+										else if(p->etat == SAUT_CARAPACE) {
+											p->etat = DEBOUT_CARAPACE;
+											p->hud->nb_monstres_tues = 0;
+										}
 									}
 								}
-								else
+
+
+								p->position.y = (float)bloc.position.y + bloc.taille.y;
+
+								p->environnement = SOL_DUR;
+								p->vitesse.y = 0;
+
+								// MAJ du carré perso
+								perso.position.y = p->position.y;
+								determinate_collision(perso, bloc, &collision);
+							}
+
+							/* Collision avec les pentes */
+							if((phys_bloc_actuel == PENTE_15_DROITE_16
+								|| phys_bloc_actuel == PENTE_15_GAUCHE_16
+								|| phys_bloc_actuel == PENTE_15_DROITE_12
+								|| phys_bloc_actuel == PENTE_15_GAUCHE_12
+								|| phys_bloc_actuel == PENTE_15_DROITE_8
+								|| phys_bloc_actuel == PENTE_15_GAUCHE_8
+								|| phys_bloc_actuel == PENTE_15_DROITE_4
+								|| phys_bloc_actuel == PENTE_15_GAUCHE_4
+
+								|| phys_bloc_actuel == PENTE_30_DROITE_0
+								|| phys_bloc_actuel == PENTE_30_DROITE_8
+								|| phys_bloc_actuel == PENTE_30_GAUCHE_8
+								|| phys_bloc_actuel == PENTE_30_GAUCHE_16
+								|| phys_bloc_actuel == PENTE_45_DROITE
+								|| phys_bloc_actuel == PENTE_45_GAUCHE)
+								&& 
+								(collision.type_collision == PENTE_PAR_LE_BAS
+								|| collision.type_collision == PENTE_PAR_LA_GAUCHE
+								|| collision.type_collision == PENTE_PAR_LA_DROITE))
+							{
+
+								/* Test si le perso est en train d'attaquer */
+								if(!p->tps_attaque_speciale && !p->tps_attaque)
 								{
-									if(p->etat == SAUT_BAISSE_CARAPACE)
-										p->etat = BAISSE_CARAPACE;
-									else if(p->etat == SAUT_CARAPACE) {
-										p->etat = DEBOUT_CARAPACE;
-										p->hud->nb_monstres_tues = 0;
+									if(p->monstre_porte == NULL)
+									{
+										if(p->etat == SAUT_BAISSE)
+											p->etat = BAISSE;
+										else if(p->etat == SAUT || p->etat == SAUT_DESCENDANT) {
+											p->hud->nb_monstres_tues = 0;
+											p->etat = DEBOUT;
+										}
+									}
+									else
+									{
+										if(p->etat == SAUT_BAISSE_CARAPACE)
+											p->etat = BAISSE_CARAPACE;
+										else if(p->etat == SAUT_CARAPACE) {
+											p->etat = DEBOUT_CARAPACE;
+											p->hud->nb_monstres_tues = 0;
+										}
 									}
 								}
+
+								/* Calcul de la nouvelle ordonnée du personnage 
+								avec l'équation de la pente et en fonction du bloc */
+								if (phys_bloc_actuel == PENTE_45_GAUCHE)
+								{
+									hauteur = (float) (-(perso.position.x + perso.taille.x / 2.0F) * tan(deg_to_rad(135.0F)) + bloc.position.y + bloc.taille.y - LARGEUR_BLOC + bloc.position.x * tan(deg_to_rad(135.0F)));
+								}
+								else if(phys_bloc_actuel == PENTE_45_DROITE)
+								{
+									hauteur = (float) (-(perso.position.x + perso.taille.x / 2.0F) * tan(deg_to_rad(45.0F)) + bloc.position.y + bloc.taille.y + bloc.position.x * tan(deg_to_rad(45.0F)));
+								}
+								else if(phys_bloc_actuel == PENTE_30_GAUCHE_8)
+								{
+									hauteur = (float) (-(perso.position.x + perso.taille.x / 2.0F) * tan(deg_to_rad(180.0F - 26.5650512F)) + bloc.position.y + bloc.taille.y - 8 + bloc.position.x * tan(deg_to_rad(180.0F - 26.5650512F)));
+								}
+								else if(phys_bloc_actuel == PENTE_30_GAUCHE_16)
+								{
+									hauteur = (float) (-(perso.position.x + perso.taille.x / 2.0F) * tan(deg_to_rad(180.0F - 26.5650512F)) + bloc.position.y + bloc.taille.y - LARGEUR_BLOC + bloc.position.x * tan(deg_to_rad(180.0F - 26.5650512F)));
+								}
+								else if(phys_bloc_actuel == PENTE_30_DROITE_0)
+								{
+									hauteur = (float) (-(perso.position.x + perso.taille.x / 2.0F) * tan(deg_to_rad(26.5650512F)) + bloc.position.y + bloc.taille.y + bloc.position.x * tan(deg_to_rad(26.5650512F)));
+								}
+								else// if(phys_bloc_actuel == PENTE_30_DROITE_8)
+								{
+									hauteur = (float) (-(perso.position.x + perso.taille.x / 2.0F) * tan(deg_to_rad(26.5650512F)) + bloc.position.y + bloc.taille.y - 8 + bloc.position.x * tan(deg_to_rad(26.5650512F)));
+								}
+
+								p->position.y = hauteur;
+
+								p->environnement = SOL_DUR;
+								p->vitesse.y = 0;
+
+								// MAJ du carré perso
+								perso.position.y = p->position.y;
+								determinate_collision(perso, bloc, &collision);
 							}
 
-
-							p->position.y = (float)bloc.position.y + bloc.taille.y;
-
-							p->environnement = SOL_DUR;
-							p->vitesse.y = 0;
-
-							// MAJ du carré perso
-							perso.position.y = p->position.y;
-							determinate_collision(perso, bloc, &collision);
-						}
-
-						/* Collision avec les pentes */
-						if((phys_bloc_actuel == PENTE_15_DROITE_16
-							|| phys_bloc_actuel == PENTE_15_GAUCHE_16
-							|| phys_bloc_actuel == PENTE_15_DROITE_12
-							|| phys_bloc_actuel == PENTE_15_GAUCHE_12
-							|| phys_bloc_actuel == PENTE_15_DROITE_8
-							|| phys_bloc_actuel == PENTE_15_GAUCHE_8
-							|| phys_bloc_actuel == PENTE_15_DROITE_4
-							|| phys_bloc_actuel == PENTE_15_GAUCHE_4
-
-							|| phys_bloc_actuel == PENTE_30_DROITE_0
-							|| phys_bloc_actuel == PENTE_30_DROITE_8
-							|| phys_bloc_actuel == PENTE_30_GAUCHE_8
-							|| phys_bloc_actuel == PENTE_30_GAUCHE_16
-							|| phys_bloc_actuel == PENTE_45_DROITE
-							|| phys_bloc_actuel == PENTE_45_GAUCHE)
-							&& 
-							(collision.type_collision == PENTE_PAR_LE_BAS
-							|| collision.type_collision == PENTE_PAR_LA_GAUCHE
-							|| collision.type_collision == PENTE_PAR_LA_DROITE))
-						{
-
-							/* Test si le perso est en train d'attaquer */
-							if(!p->tps_attaque_speciale && !p->tps_attaque)
+							/* Collision avec le plafond */
+							if((phys_bloc_actuel == PLAFOND
+								|| phys_bloc_actuel == COIN_BAS_A_GAUCHE
+								|| phys_bloc_actuel == COIN_BAS_A_DROITE
+								|| phys_bloc_actuel == BLOC_SPEC)
+								&& collision.type_collision == PAR_LE_HAUT)
 							{
-								if(p->monstre_porte == NULL)
+
+								p->vitesse.y = 0;
+								p->position.y = (float)bloc.position.y - p->taille.y + (p->taille.y - ordonnee_haut);
+
+								if(!n->occ_blocs[i][j]->bloc_actuel->est_vide)
 								{
-									if(p->etat == SAUT_BAISSE)
-										p->etat = BAISSE;
-									else if(p->etat == SAUT || p->etat == SAUT_DESCENDANT) {
-										p->hud->nb_monstres_tues = 0;
-										p->etat = DEBOUT;
+									/* Ajout de l'occurence d'item */
+									coordf vitesse;
+									occ_item *item;
+
+									vitesse.x = 0;
+
+									n->occ_blocs[i][j]->etat = POUSSE_PAR_LE_HAUT;
+									/* Si le bloc ne contient pas un pointeur sur un item,
+									l'item sera en fonction de la transformation actuelle 
+									du personnage */
+									if(n->occ_blocs[i][j]->bloc_actuel->item == NULL) {
+										int index = (p->transformation == FIRE_MARIO)? p->transformation - 1: p->transformation;
+										vitesse.y = VIT_SORTIE_BLOC;
+										item = new_occ_item(n->occ_blocs[i][j]->position.x, n->occ_blocs[i][j]->position.y, n->items[index], vitesse, SORT_DU_BLOC);
 									}
-								}
-								else
-								{
-									if(p->etat == SAUT_BAISSE_CARAPACE)
-										p->etat = BAISSE_CARAPACE;
-									else if(p->etat == SAUT_CARAPACE) {
-										p->etat = DEBOUT_CARAPACE;
-										p->hud->nb_monstres_tues = 0;
+									else
+									{
+										vitesse.y =  VIT_SORTIE_BLOC * 5;
+										item = new_occ_item(n->occ_blocs[i][j]->position.x, n->occ_blocs[i][j]->position.y, n->occ_blocs[i][j]->bloc_actuel->item, vitesse, SORT_DU_BLOC);
 									}
+
+									item->tps_sortie_bloc = TPS_ITEM_SORT_BLOC;
+
+									item->type_item->occ_items = ajout_item(item->type_item->occ_items, item);
+									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_UNBREAKABLE_BLOCK]);
+									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_ITEM_BLOCK]);
+
+									/* Devient incassable */
+									n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif;//  A rendre plus propre
+									n->occ_blocs[i][j]->bloc_alternatif = NULL;
+
 								}
-							}
+								else if(n->occ_blocs[i][j]->bloc_actuel->est_cassable && p->transformation >= SUPER_MARIO)
+								{	
+									/* Creation et ajout des 4 débris de blocs */
+									n->projectiles[0]->occ_projectiles = ajout_projectile(n->projectiles[0]->occ_projectiles, 
+										create_debris(n->projectiles[0], n->occ_blocs[i][j]->position.x, n->occ_blocs[i][j]->position.y, -n->projectiles[0]->vitesse.x, VITESSE_Y_EJECTION));
 
-							/* Calcul de la nouvelle ordonnée du personnage 
-							avec l'équation de la pente et en fonction du bloc */
-							if (phys_bloc_actuel == PENTE_45_GAUCHE)
-							{
-								hauteur = (float) (-(perso.position.x + perso.taille.x / 2.0F) * tan(deg_to_rad(135.0F)) + bloc.position.y + bloc.taille.y - LARGEUR_BLOC + bloc.position.x * tan(deg_to_rad(135.0F)));
-							}
-							else if(phys_bloc_actuel == PENTE_45_DROITE)
-							{
-								hauteur = (float) (-(perso.position.x + perso.taille.x / 2.0F) * tan(deg_to_rad(45.0F)) + bloc.position.y + bloc.taille.y + bloc.position.x * tan(deg_to_rad(45.0F)));
-							}
-							else if(phys_bloc_actuel == PENTE_30_GAUCHE_8)
-							{
-								hauteur = (float) (-(perso.position.x + perso.taille.x / 2.0F) * tan(deg_to_rad(180.0F - 26.5650512F)) + bloc.position.y + bloc.taille.y - 8 + bloc.position.x * tan(deg_to_rad(180.0F - 26.5650512F)));
-							}
-							else if(phys_bloc_actuel == PENTE_30_GAUCHE_16)
-							{
-								hauteur = (float) (-(perso.position.x + perso.taille.x / 2.0F) * tan(deg_to_rad(180.0F - 26.5650512F)) + bloc.position.y + bloc.taille.y - LARGEUR_BLOC + bloc.position.x * tan(deg_to_rad(180.0F - 26.5650512F)));
-							}
-							else if(phys_bloc_actuel == PENTE_30_DROITE_0)
-							{
-								hauteur = (float) (-(perso.position.x + perso.taille.x / 2.0F) * tan(deg_to_rad(26.5650512F)) + bloc.position.y + bloc.taille.y + bloc.position.x * tan(deg_to_rad(26.5650512F)));
-							}
-							else// if(phys_bloc_actuel == PENTE_30_DROITE_8)
-							{
-								hauteur = (float) (-(perso.position.x + perso.taille.x / 2.0F) * tan(deg_to_rad(26.5650512F)) + bloc.position.y + bloc.taille.y - 8 + bloc.position.x * tan(deg_to_rad(26.5650512F)));
-							}
+									n->projectiles[0]->occ_projectiles = ajout_projectile(n->projectiles[0]->occ_projectiles, 
+										create_debris(n->projectiles[0], n->occ_blocs[i][j]->position.x, (int)(n->occ_blocs[i][j]->position.y + n->taille_blocs.y / 2), -n->projectiles[0]->vitesse.x, VITESSE_Y_EJECTION * 2));
 
-							p->position.y = hauteur;
+									n->projectiles[0]->occ_projectiles = ajout_projectile(n->projectiles[0]->occ_projectiles, 
+										create_debris(n->projectiles[0], n->occ_blocs[i][j]->position.x, n->occ_blocs[i][j]->position.y, n->projectiles[0]->vitesse.x, VITESSE_Y_EJECTION));
 
-							p->environnement = SOL_DUR;
-							p->vitesse.y = 0;
+									n->projectiles[0]->occ_projectiles = ajout_projectile(n->projectiles[0]->occ_projectiles, 
+										create_debris(n->projectiles[0], n->occ_blocs[i][j]->position.x, (int)(n->occ_blocs[i][j]->position.y + n->taille_blocs.y / 2), n->projectiles[0]->vitesse.x, VITESSE_Y_EJECTION * 2));
 
-							// MAJ du carré perso
-							perso.position.y = p->position.y;
-							determinate_collision(perso, bloc, &collision);
-						}
 
-						/* Collision avec le plafond */
-						if((phys_bloc_actuel == PLAFOND
-							|| phys_bloc_actuel == COIN_BAS_A_GAUCHE
-							|| phys_bloc_actuel == COIN_BAS_A_DROITE
-							|| phys_bloc_actuel == BLOC_SPEC)
-							&& collision.type_collision == PAR_LE_HAUT)
-						{
+									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_BREAK_BLOCK]);
+									n->occ_blocs[i][j]->etat = POUSSE_PAR_LE_HAUT;
 
-							p->vitesse.y = 0;
-							p->position.y = (float)bloc.position.y - p->taille.y + (p->taille.y - ordonnee_haut);
-
-							if(n->blocs[n->id_blocs[i][j]].contient_item) {
-								/* Ajout de l'occurence d'item */
-								coordf vitesse;
-								occ_item *item;
-
-								vitesse.x = 0;
-
-								/* Si le bloc ne contient pas un pointeur sur un item,
-								l'item sera en fonction de la transforùation actuelle 
-								du personnage */
-								if(n->blocs[n->id_blocs[i][j]].item == NULL) {
-									int index = (p->transformation == FIRE_MARIO)? p->transformation - 1: p->transformation;
-									vitesse.y = VIT_SORTIE_BLOC;
-									item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, n->items[index], vitesse, SORT_DU_BLOC);
+									n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif;
+									n->occ_blocs[i][j]->bloc_alternatif = NULL;	// Suppression du bloc
 								}
-								else
+								else 
 								{
-									vitesse.y =  (n->blocs[n->id_blocs[i][j]].item->nom == PIECE)? VIT_SORTIE_BLOC * 5:VIT_SORTIE_BLOC;
-									item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, n->blocs[n->id_blocs[i][j]].item, vitesse, SORT_DU_BLOC);
+
+									if(n->occ_blocs[i][j]->bloc_actuel->est_cassable && p->transformation < SUPER_MARIO)
+										n->occ_blocs[i][j]->etat = POUSSE_PAR_LE_HAUT;
+									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_UNBREAKABLE_BLOCK]);
 								}
 
-								item->tps_sortie_bloc = TPS_ITEM_SORT_BLOC;
-
-								item->type_item->occ_items = ajout_item(item->type_item->occ_items, item);
-								FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_UNBREAKABLE_BLOCK]);
-								FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_ITEM_BLOCK]);
-
-								/* Devient incassable */
-								n->id_blocs[i][j] = 19; // A rendre plus propre
+								// MAJ du carré perso
+								perso.position.y = p->position.y;
+								determinate_collision(perso, bloc, &collision);
 							}
-							else if(n->blocs[n->id_blocs[i][j]].est_cassable && p->transformation >= SUPER_MARIO) {
-								n->id_blocs[i][j] = BLOC_VIDE;	// Suppression du bloc, rajouter les débris
 
-								/* Creation et ajout des 4 débris de blocs */
-								n->projectiles[0]->occ_projectiles = ajout_projectile(n->projectiles[0]->occ_projectiles, 
-									create_debris(n->projectiles[0], (int)(i * LARGEUR_BLOC), (int)(j * LARGEUR_BLOC), -n->projectiles[0]->vitesse.x, VITESSE_Y_EJECTION));
+							/* Collision avec le mur à gauche du personnage */
+							if((phys_bloc_actuel == MUR_A_GAUCHE 
+								|| phys_bloc_actuel == COIN_HAUT_A_GAUCHE
+								|| phys_bloc_actuel == COIN_BAS_A_GAUCHE
+								|| phys_bloc_actuel == BLOC_SPEC) 
+								&& collision.type_collision == PAR_LA_GAUCHE)
+							{
+								p->vitesse.x = 0;
+								p->position.x = (float) bloc.position.x + bloc.taille.x - p->texture_act->abscisse_bas;
 
-								n->projectiles[0]->occ_projectiles = ajout_projectile(n->projectiles[0]->occ_projectiles, 
-									create_debris(n->projectiles[0], (int)(i * LARGEUR_BLOC), (int)(j * LARGEUR_BLOC + LARGEUR_BLOC / 2), -n->projectiles[0]->vitesse.x, VITESSE_Y_EJECTION * 2));
-
-								n->projectiles[0]->occ_projectiles = ajout_projectile(n->projectiles[0]->occ_projectiles, 
-									create_debris(n->projectiles[0], (int)(i * LARGEUR_BLOC), (int)(j * LARGEUR_BLOC), n->projectiles[0]->vitesse.x, VITESSE_Y_EJECTION));
-
-								n->projectiles[0]->occ_projectiles = ajout_projectile(n->projectiles[0]->occ_projectiles, 
-									create_debris(n->projectiles[0], (int)(i * LARGEUR_BLOC), (int)(j * LARGEUR_BLOC + LARGEUR_BLOC / 2), n->projectiles[0]->vitesse.x, VITESSE_Y_EJECTION * 2));
-
-
-								FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_BREAK_BLOCK]);
+								// MAJ du carré perso
+								perso.position.x = p->position.x + p->texture_act->abscisse_bas;
+								determinate_collision(perso, bloc, &collision);
 							}
-							else
-								FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_UNBREAKABLE_BLOCK]);
 
-							// MAJ du carré perso
-							perso.position.y = p->position.y;
-							determinate_collision(perso, bloc, &collision);
-						}
+							/* Collision avec le mur à droite du personnage */
+							if((phys_bloc_actuel == MUR_A_DROITE
+								|| phys_bloc_actuel == COIN_HAUT_A_DROITE
+								|| phys_bloc_actuel == COIN_BAS_A_DROITE
+								|| phys_bloc_actuel == BLOC_SPEC) 
+								&& collision.type_collision == PAR_LA_DROITE)
+							{
+								p->vitesse.x = 0;
+								p->position.x = (float) bloc.position.x - p->taille.x + p->texture_act->abscisse_bas;
 
-						/* Collision avec le mur à gauche du personnage */
-						if((phys_bloc_actuel == MUR_A_GAUCHE 
-							|| phys_bloc_actuel == COIN_HAUT_A_GAUCHE
-							|| phys_bloc_actuel == COIN_BAS_A_GAUCHE
-							|| phys_bloc_actuel == BLOC_SPEC) 
-							&& collision.type_collision == PAR_LA_GAUCHE)
-						{
-							p->vitesse.x = 0;
-							p->position.x = (float) bloc.position.x + bloc.taille.x - p->texture_act->abscisse_bas;
-
-							// MAJ du carré perso
-							perso.position.x = p->position.x + p->texture_act->abscisse_bas;
-							determinate_collision(perso, bloc, &collision);
-						}
-
-						/* Collision avec le mur à droite du personnage */
-						if((phys_bloc_actuel == MUR_A_DROITE
-							|| phys_bloc_actuel == COIN_HAUT_A_DROITE
-							|| phys_bloc_actuel == COIN_BAS_A_DROITE
-							|| phys_bloc_actuel == BLOC_SPEC) 
-							&& collision.type_collision == PAR_LA_DROITE)
-						{
-							p->vitesse.x = 0;
-							p->position.x = (float) bloc.position.x - p->taille.x + p->texture_act->abscisse_bas;
-
-							// MAJ du carré perso
-							perso.position.x = p->position.x + p->texture_act->abscisse_bas;
-							determinate_collision(perso, bloc, &collision);
+								// MAJ du carré perso
+								perso.position.x = p->position.x + p->texture_act->abscisse_bas;
+								determinate_collision(perso, bloc, &collision);
+							}
 						}
 					}
 				}
@@ -1630,14 +1642,33 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 	{
 
 		/************* Collisions MONSTRES <=> NIVEAU *************/
-		for(i = bloc_bg.x; i <= bloc_hd.x; i++){
-			for(j = bloc_bg.y; j <= bloc_hd.y; j++){
+		for(i = bloc_bg.x; i <= bloc_hd.x; i++)
+		{
+			for(j = bloc_bg.y; j <= bloc_hd.y; j++)
+			{
+				if (i < n->taille.x && i >= 0)
+				{
+					if(n->occ_blocs[i][j]->bloc_actuel == NULL && n->occ_blocs[i][j]->etat == POUSSE_PAR_LE_HAUT)
+					{
+						/* Le monstre touché meurt */
+						m->etat = M_MORT_PAR_PROJ;
+						m->vitesse.y = VITESSE_Y_EJECTION * 2;
 
-				if (i < n->taille.x && i >= 0) {
-					if(n->id_blocs[i][j] != BLOC_VIDE)
+						FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_PROJ_ON]);
+
+						// Comptage des points
+						text_points.x = (int)(mstr_actuel->occ_monstre->position.x);
+						text_points.y = (int)(mstr_actuel->occ_monstre->position.y + mstr_actuel->occ_monstre->type_monstre->taille.y);
+
+						p->hud->file_points = add_file_pts(p->hud->file_points, m->type_monstre->points, text_points);
+
+						p->hud->score += m->type_monstre->points;
+						p->hud->nb_monstres_tues_carapace = 0;
+					}
+					if(n->occ_blocs[i][j]->bloc_actuel != NULL)
 					{
 						/* On récupère la physique du bloc */
-						phys_bloc_actuel = n->blocs[n->id_blocs[i][j]].phys;
+						phys_bloc_actuel = n->occ_blocs[i][j]->bloc_actuel->phys;
 
 						/* Initialisation du carré bloc */
 						bloc.position.x = (float)i * n->taille_blocs.x;
@@ -1664,9 +1695,29 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 							|| phys_bloc_actuel == BLOC_SPEC)
 							&& collision.type_collision == PAR_LE_BAS)
 						{
+							
+							if(n->occ_blocs[i][j]->etat == POUSSE_PAR_LE_HAUT)
+							{
+								/* Le monstre touché meurt */
+								m->etat = M_MORT_PAR_PROJ;
+								m->vitesse.y = VITESSE_Y_EJECTION * 2;
 
-							m->vitesse.y = 0;
-							m->position.y = (float)bloc.position.y + bloc.taille.y;							
+								FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_PROJ_ON]);
+
+								// Comptage des points
+								text_points.x = (int)(mstr_actuel->occ_monstre->position.x);
+								text_points.y = (int)(mstr_actuel->occ_monstre->position.y + mstr_actuel->occ_monstre->type_monstre->taille.y);
+
+								p->hud->file_points = add_file_pts(p->hud->file_points, m->type_monstre->points, text_points);
+
+								p->hud->score += m->type_monstre->points;
+								p->hud->nb_monstres_tues_carapace = 0;
+							}
+							else
+							{
+								m->vitesse.y = 0;
+								m->position.y = (float)bloc.position.y + bloc.taille.y;
+							}
 
 							// MAJ du carré monstre
 							monstre.position.y = m->position.y;
@@ -1760,26 +1811,27 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 
 							if(m->etat == M_RETRACTED)
 							{
-								if(n->blocs[n->id_blocs[i][j]].contient_item)
+								if(!n->occ_blocs[i][j]->bloc_actuel->est_vide)
 								{
 									/* Ajout de l'occurence d'item */
 									coordf vitesse;
 									occ_item *item;
 
 									vitesse.x = 0;
+									n->occ_blocs[i][j]->etat = POUSSE_PAR_LA_DROITE;
 
 									/* Si le bloc ne contient pas un pointeur sur un item,
 									l'item sera en fonction de la transforùation actuelle 
 									du personnage */
-									if(n->blocs[n->id_blocs[i][j]].item == NULL) {
+									if(n->occ_blocs[i][j]->bloc_actuel->item == NULL) {
 										int index = (p->transformation == FIRE_MARIO)? p->transformation - 1: p->transformation;
 										vitesse.y = VIT_SORTIE_BLOC;
 										item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, n->items[index], vitesse, SORT_DU_BLOC);
 									}
 									else
 									{
-										vitesse.y =  (n->blocs[n->id_blocs[i][j]].item->nom == PIECE)? VIT_SORTIE_BLOC * 5:VIT_SORTIE_BLOC;
-										item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, n->blocs[n->id_blocs[i][j]].item, vitesse, SORT_DU_BLOC);
+										vitesse.y =  VIT_SORTIE_BLOC * 5;
+										item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, n->occ_blocs[i][j]->bloc_actuel->item, vitesse, SORT_DU_BLOC);
 									}
 
 									item->tps_sortie_bloc = TPS_ITEM_SORT_BLOC;
@@ -1789,11 +1841,13 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_ITEM_BLOCK]);
 
 									/* Devient incassable */
-									n->id_blocs[i][j] = 19; // A rendre plus propre
+									n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif; // A rendre plus propre
+									n->occ_blocs[i][j]->bloc_alternatif = NULL;
 								}
-								else if(n->blocs[n->id_blocs[i][j]].est_cassable)
+								else if(n->occ_blocs[i][j]->bloc_actuel->est_cassable)
 								{
-									n->id_blocs[i][j] = BLOC_VIDE;	// Suppression du bloc, rajouter les débris
+									n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif;//  A rendre plus propre
+									n->occ_blocs[i][j]->bloc_alternatif = NULL;	// Suppression du bloc, rajouter les débris
 
 									/* Creation et ajout des 4 débris de blocs */
 									n->projectiles[0]->occ_projectiles = ajout_projectile(n->projectiles[0]->occ_projectiles, 
@@ -1836,7 +1890,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 
 							if(m->etat == M_RETRACTED)
 							{
-								if(n->blocs[n->id_blocs[i][j]].contient_item) {
+								if(n->occ_blocs[i][j]->bloc_actuel->est_vide) {
 									/* Ajout de l'occurence d'item */
 									coordf vitesse;
 									occ_item *item;
@@ -1846,15 +1900,15 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 									/* Si le bloc ne contient pas un pointeur sur un item,
 									l'item sera en fonction de la transforùation actuelle 
 									du personnage */
-									if(n->blocs[n->id_blocs[i][j]].item == NULL) {
+									if(n->occ_blocs[i][j]->bloc_actuel->item == NULL) {
 										int index = (p->transformation == FIRE_MARIO)? p->transformation - 1: p->transformation;
 										vitesse.y = VIT_SORTIE_BLOC;
 										item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, n->items[index], vitesse, SORT_DU_BLOC);
 									}
 									else
 									{
-										vitesse.y =  (n->blocs[n->id_blocs[i][j]].item->nom == PIECE)? VIT_SORTIE_BLOC * 5:VIT_SORTIE_BLOC;
-										item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, n->blocs[n->id_blocs[i][j]].item, vitesse, SORT_DU_BLOC);
+										vitesse.y =  (n->occ_blocs[i][j]->bloc_actuel->est_vide)? VIT_SORTIE_BLOC * 5:VIT_SORTIE_BLOC;
+										item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, n->occ_blocs[i][j]->bloc_actuel->item, vitesse, SORT_DU_BLOC);
 									}
 
 									item->tps_sortie_bloc = TPS_ITEM_SORT_BLOC;
@@ -1864,10 +1918,12 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_ITEM_BLOCK]);
 
 									/* Devient incassable */
-									n->id_blocs[i][j] = 19; // A rendre plus propre
+									n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif; // A rendre plus propre
+									n->occ_blocs[i][j]->bloc_alternatif = NULL;
 								}
-								else if(n->blocs[n->id_blocs[i][j]].est_cassable) {
-									n->id_blocs[i][j] = BLOC_VIDE;	// Suppression du bloc, rajouter les débris
+								else if(n->occ_blocs[i][j]->bloc_actuel->est_cassable) {
+									n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif;//  A rendre plus propre
+									n->occ_blocs[i][j]->bloc_alternatif = NULL;	// Suppression du bloc, rajouter les débris
 
 									/* Creation et ajout des 4 débris de blocs */
 									n->projectiles[0]->occ_projectiles = ajout_projectile(n->projectiles[0]->occ_projectiles, 
@@ -1886,7 +1942,9 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_BREAK_BLOCK]);
 								}
 								else
+								{
 									FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_LEVEL_ON]);
+								}
 							}
 
 							// MAJ du carré monstre
@@ -2197,10 +2255,11 @@ void solve_collisions_projectile(occ_projectile* p, niveau *n)
 			for(i = bloc_bg.x; i <= bloc_hd.x; i++){
 				for(j = bloc_bg.y; j <= bloc_hd.y; j++){
 
-					if(n->id_blocs[i][j] != BLOC_VIDE){
+					if(n->occ_blocs[i][j]->bloc_actuel != NULL)
+					{
 
 						/* On récupère la physique du bloc */
-						phys_bloc_actuel = n->blocs[n->id_blocs[i][j]].phys;
+						phys_bloc_actuel = n->occ_blocs[i][j]->bloc_actuel->phys;
 
 						/* Initialisation du carré bloc */
 						bloc.position.x = (float)i * n->taille_blocs.x;
@@ -2385,8 +2444,8 @@ void solve_collisions_projectile(occ_projectile* p, niveau *n)
 	}
 }
 
-void solve_collisions_item(occ_item* it, niveau* n, Uint32 duree){
-
+void solve_collisions_item(occ_item* it, niveau* n, Uint32 duree)
+{
 	/* Variables pour l'initialisation */
 	coordi bloc_bg, bloc_hd;
 	int i, j;
@@ -2408,7 +2467,7 @@ void solve_collisions_item(occ_item* it, niveau* n, Uint32 duree){
 
 	/* Si l'item est soumis aux collisions avec le niveau => détection et résolution */
 	if((it->type_item->soumission & SOUMIS_COLLISIONS_SOL)
-		&& it->etat == NORMAL){
+		&& it->etat == NORMAL) {
 
 			/* Initialisation du carre projectile */
 			item.position.x = it->position.x;
@@ -2421,14 +2480,16 @@ void solve_collisions_item(occ_item* it, niveau* n, Uint32 duree){
 			item.taille.y = it->type_item->taille.y;
 
 			/************ COLLISIONS ITEM <=> NIVEAU ***************/
-			for(i = bloc_bg.x; i <= bloc_hd.x; i++){
-				for(j = bloc_bg.y; j <= bloc_hd.y; j++){
+			for(i = bloc_bg.x; i <= bloc_hd.x; i++)
+			{
+				for(j = bloc_bg.y; j <= bloc_hd.y; j++)
+				{
 
 					if(i >= 0 && i < n->taille.x && j >= 0) {
-						if(n->id_blocs[i][j]!= BLOC_VIDE){
-
+						if(n->occ_blocs[i][j]->bloc_actuel != NULL)
+						{
 							/* On récupère la physique du bloc */
-							phys_bloc_actuel = n->blocs[n->id_blocs[i][j]].phys;
+							phys_bloc_actuel = n->occ_blocs[i][j]->bloc_actuel->phys;
 
 							/* Initialisation du carré bloc */
 							bloc.position.x = (float)i * n->taille_blocs.x;
@@ -2455,8 +2516,15 @@ void solve_collisions_item(occ_item* it, niveau* n, Uint32 duree){
 								|| phys_bloc_actuel == BLOC_SPEC)
 								&& collision.type_collision == PAR_LE_BAS)
 							{
-								it->vitesse.y = it->type_item->vitesse.y;
+
 								it->position.y = (float)bloc.position.y + bloc.taille.y;
+								it->vitesse.y = it->type_item->vitesse.y;
+
+ 								if(n->occ_blocs[i][j]->etat == POUSSE_PAR_LE_HAUT)
+								{
+									it->vitesse.y = VIT_SORTIE_BLOC * 7;
+								}
+								
 
 								// MAJ du carré projectile
 								item.position.y = it->position.y;
@@ -2569,7 +2637,7 @@ void solve_collisions_item(occ_item* it, niveau* n, Uint32 duree){
 				}
 			}
 			/************ COLLISIONS ITEMS <=> TUYAUX */
-			for(i = 0; i < n->nb_tuyaux; i++)
+ 			for(i = 0; i < n->nb_tuyaux; i++)
 			{
 				tuyau.angle_pente = 0;
 				tuyau.est_bloc_pente = 0;
@@ -2891,6 +2959,7 @@ vectf *jump(vectf *v)
 void jump_perso(perso* p)
 {
 	jump(&p->vitesse);
+	p->vitesse.y += p->accel;
 	FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_SAUT]);
 
 
