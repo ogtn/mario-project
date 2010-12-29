@@ -419,8 +419,8 @@ void draw_monstre(occ_monstre *monstre, Uint32 duree, Uint32 tps_transformation)
 			v_anim = monstre->type_monstre->v_anim;
 			break;
 		case M_MORT_PAR_PROJ : 
-			gauche = 0;
-			droite = (float)1 / nb_sprites_max;
+			gauche = (float)1 / nb_sprites_max;
+			droite = (float)2 / nb_sprites_max;
 			haut = 0;
 			bas = (float)1 / nb_etats_presents; // inversement du haut et bas pour renverser le sprite
 			break;

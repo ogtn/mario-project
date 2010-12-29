@@ -111,6 +111,7 @@
   <ItemGroup>
     <ClCompile Include="action.c" />
     <ClCompile Include="alloc_free.c" />
+    <ClCompile Include="bloc.c" />
     <ClCompile Include="bouton.c" />
     <ClCompile Include="browser.c" />
     <ClCompile Include="collision_system.c" />
@@ -138,6 +139,7 @@
   <ItemGroup>
     <ClInclude Include="action.h" />
     <ClInclude Include="alloc_free.h" />
+    <ClInclude Include="bloc.h" />
     <ClInclude Include="bouton.h" />
     <ClInclude Include="browser.h" />
     <ClInclude Include="collision_system.h" />
@@ -167,8 +169,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="allocations.txt" />
-    <None Include="changelog.txt" />
     <None Include="level_design_log.txt" />
+    <None Include="to do list.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

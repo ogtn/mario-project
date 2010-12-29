@@ -90,6 +90,9 @@
     <ClCompile Include="particules.c">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="bloc.c">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="action.h">
@@ -167,6 +170,9 @@
     <ClInclude Include="particules.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="bloc.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ressources.rc">
@@ -180,7 +186,7 @@
     <None Include="level_design_log.txt">
       <Filter>Fichiers de ressources</Filter>
     </None>
-    <None Include="changelog.txt">
+    <None Include="to do list.txt">
       <Filter>Fichiers de ressources</Filter>
     </None>
   </ItemGroup>

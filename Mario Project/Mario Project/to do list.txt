@@ -1,0 +1,180 @@
+/*============================================================================*/
+/*===         _____         _        _____           _         _           ===*/
+/*===        |     |___ ___|_|___   |  _  |___ ___  |_|___ ___| |_         ===*/
+/*===        | | | | .'|  _| | . |  |   __|  _| . | | | -_|  _|  _|        ===*/
+/*===        |_|_|_|__,|_| |_|___|  |__|  |_| |___|_| |___|___|_|          ===*/
+/*===                                             |___|                    ===*/
+/*============================================================================*/
+/*===      =LagMan=                =McCaml=                 =MouleMan=     ===*/
+/*============================================================================*/
+
+
+/*============================================================================*/
+						Trucs vraiment utiles
+/*============================================================================*/
+
+_gestion de tout ce qui concerne le perso (etat, nombre de points, de vies
+etc..)
+
+_gestion et affichage du HUD
+
+_gestion des collisions:
+	*collisions objets/ennemis et objets/perso (boules de feu, marteau...)
+	*ajout de l'eau
+	
+_IA des enemis. Très basique vu que c'est un simple jeu de plateforme:
+	*enemis cons de base (type goombas)
+	*enemis qui ne tombent pas (type koopas)
+	*enemis volants
+	*enemis aquatiques
+	*autres (boss?)
+
+_gestion des parties animées dans les niveaux (surface de l'eau, blocs [?],
+pieces qui tournent sur elles memes...
+
+_gestion des differents etats du perso (normal, super, mini, feu etc..)
+
+_sauvegarde et chargement des parties
+
+_scene de cul avec Peach
+
+_"vrais sauts à la mario": quand, on presse la touche de saut plus longtemps, le saut est plus haut
+
+_trouver l'origine du bug qui oblige à utiliser le mode de compatibilité XP
+
+_gestion des debuts/fins de niveau et des checkpoint (respawn du perso, attribution de points en fonction du temps restant sur la fin...)
+
+_editeur de niveau de base:
+	*placement des blocs
+	*placement du depart/check/fin
+	*placement des ennemis
+	*placement des pieces, champis etc...
+	*aperçu du niveau
+	
+_reglages de bugs à faire :
+	* On ne peut pas sauter quand on descend une pente
+	
+_sauvegarde/chargement des niveau au format xml, avec verification de la validité du document en prime
+
+/*============================================================================*/
+						Trucs bonus
+/*============================================================================*/
+
+_gestion du scrolling pour 2 joueurs
+
+_mode multi fonctionnel (coop)
+
+_mode reseau fonctionnel (coop)
+
+_fonction credit() qui afficher le generique du jeu
+
+_fonction jeu() qui lance une partie avec le nombre de joueurs donné et
+le niveau demandé
+
+_gestion de plusieurs niveaux de difficulté
+
+_images animées avec durée entre chaque frame variable (top du top: on le choisit
+depuis l'editeur)
+
+/*============================================================================*/
+						Trucs entre les deux
+/*============================================================================*/
+
+_gestion des collisions:
+	*ajout de pieces plus complexes (pentes, plateformes mobiles...)
+
+_possiblité de changer les touches utilisées pour jouer
+
+_menu pour changer les parametres graphiques(reso, V-sync...)
+
+_"distributeurs" de pieces (bloc qui donne 10s de pieces à partir du premier coup dedans)
+
+-les blocs [?] et les blocs cassables doivent l'etre aussi par le coté, en recevant une carapace de koopa
+
+_les blocs cassables et les blocs [?] doivent remonter quand on tape dedans, ça permet d'ailleur de faire sauter les champignons qui sont au dessus, de tuer un enemi, ou de prendre une piece.
+-> marche à suivre pour réaliser ça :
+	- ajouter des fichiers blocs.c et blocs.h, afin de séparer bloc et niveau
+	- créer les types pour gérer une liste d'occurences de bloc
+		-> typedef struct occ_bloc
+		{
+		coordi position;
+		bloc* bloc_modele;
+		bloc* bloc_alternatif;
+		item* item;
+		}occ_bloc;
+
+		typedef struct elem_bloc
+		{
+			occ_bloc* bloc;
+			struct elem_bloc* suivant;
+		}
+
+		typedef struct liste_bloc
+		{
+			elem_bloc* element;
+			int nb_elements;
+		}
+	- modifier la grille pour que chaque case pointe sur une occurence de bloc
+
+	
+_possibilité de mettre le jeu en pause (ou se trouverait le menu de sauvegarde?)
+
+_editeur de niveau le plus complet possible
+	*test du niveau en temps réel
+	*interface graphique intuitive (boutons, icones, couleurs...)
+	*quelques effets graphiques sympatoches (mais utiles)
+	*un systeme d'info bulle pour les boutons
+	
+_pouvoir courrir sans tomber sur un sol qui comporte un trou d'un bloc (une approximation identique existe sur l'autre axe)
+
+
+
+
+
+
+
+
+
+/*============================================================================*/
+  ================Ce qui suit a été fait (ou est en cours)====================
+/*============================================================================*/
+
+_gestion des collisions:
+	*correcte au niveau des pieces de base
+	*gravité/saut
+	*collisions ennemis/niveau
+	*collisions ennemis/perso
+	*collisions ennemis/ennemis
+	*collisions ennemis/projectiles
+
+_gestion de n'importe quelle resolution, pour que l'affichage soit toujours le
+meilleur possible quel que soit l'ecran/ la resolution
+
+_gestion avancée des ennemis (ils peuvent etre constitués d'un nombre variable
+de sprites, avoir un nombre variable d'attaque etc... L'idée est de ne pas
+avoir à modifier le code si l'on ajoute une bestiole)
+
+_fonctions permmettant de gerer des menus (à partir de fichiers si possible)
+
+_fonction ecran_titre() qui affiche l'ecran titre et le menu
+
+_niveaux pouvant utiliser des blocs de resolution variable (peut etre utile)
+
+_structure ecran et gestion du scrolling pour 1 joueur
+
+_tuyaux fonctionnels, ajout des enemis qui sortent des tuyaux
+
+_ajout d'un foreground, pour les effets de pluie ou de neige
+
+_bugs réglés :
+	* traverse le plafond -> OK
+	* quand on marche (pas quand on cours), on ne se fait pas toucher par la carapace
+	* Si on va vers elle, elle rebondit sur nous, sinon elle nous traverse (enfin techniquement elle doit rebondir vers l'autre coté, vu qu'il y a un son) -> OK
+	* Si mario dérape (en marchant), peut se faire toucher par la carapace en M_RETRACTED -> OK
+	* Si, après être redevenu normal après la période d'invincibilité, on reste sur le monstre, on est pas touché -> OK
+	* Detection de collision entre un monstre et ... sa copie -> OK
+	* Si Mario court et que la touche bas est appuyée, il court sur place
+	* Si mario est baissé et que la touche haut est appuyée, il doit se retrouver debout
+	* Si mario regarde en haut et que la touche bas est appuyée, il doit se retrouver debout
+	* Après un dérapage, si la touche haut  ou bas est appuyée, Mario reste en état dérape
+	* Après un saut_baissé, si la touche haut est appuyée, Mario reste baissé

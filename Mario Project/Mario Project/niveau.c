@@ -93,7 +93,7 @@ niveau* init_niveau(niveau *n)
 	/* Blocs */
 	n->nb_blocs = 0;
 	n->blocs = NULL;
-	n->id_blocs = NULL;
+	n->occ_blocs = NULL;
 	n->taille_blocs.x = 0;
 	n->taille_blocs.y = 0;
 
@@ -167,11 +167,11 @@ niveau *free_niveau(niveau *n)
 	{
 		for(i = 0; i < n->taille.x; i++)
 		{
-			if(n->id_blocs[i] != NULL) 
-				free(n->id_blocs[i]);
+			if(n->occ_blocs[i] != NULL) 
+				free(n->occ_blocs[i]);
 		}
 
-		free(n->id_blocs);
+		free(n->occ_blocs);
 	}
 
 	if(n->blocs != NULL)
@@ -323,11 +323,11 @@ void balise_blocs(niveau *n, const char **attrs)
     n->blocs = malloc(n->nb_blocs * sizeof(bloc));
     n->taille_blocs.x = LARGEUR_BLOC;
 	n->taille_blocs.y = LARGEUR_BLOC;
-    n->id_blocs = malloc(n->taille.x * sizeof(id*));
+    n->occ_blocs = malloc(n->taille.x * sizeof(id*));
 
 	for(i = 0; i < n->taille.x; i++)
 	{
-		n->id_blocs[i] = malloc(n->taille.y * sizeof(id));
+		n->occ_blocs[i] = malloc(n->taille.y * sizeof(id));
 	}
 }
 
@@ -546,7 +546,7 @@ void sauver_niveau(char *nom, niveau *n)
         fseek(fic, -1, SEEK_CUR);
         for(j = 0; j < n->taille.x; j++)
             for(k = 0; k < n->taille.y; k++)
-                fprintf(fic, "%d:", n->id_blocs[j][k]);
+                fprintf(fic, "%d:", n->occ_blocs[j][k]);
         close_element(fic, "layer");
     }
     close_element(fic, "layers");
@@ -647,7 +647,6 @@ void liberer_textures_niveau(niveau* n)
 
 void charger_finish(finish* f)
 {
-	FILE* back_file;
 	char nom_texture[TAILLE_NOM_TEXTURE];
 	int i;
 
@@ -781,10 +780,10 @@ void charger_niveau_test_vide(niveau *n)
 
 	/************ layer blocs ***********/
 
-	n->id_blocs = malloc(n->taille.x * sizeof(id*));
+	n->occ_blocs = malloc(n->taille.x * sizeof(id*));
 	for(i = 0; i < n->taille.x; i++)
 	{
-		n->id_blocs[i] = malloc(n->taille.y * sizeof(id));
+		n->occ_blocs[i] = malloc(n->taille.y * sizeof(id));
 	}
 
 	/* Remplissage des ID des blocs */
@@ -792,7 +791,7 @@ void charger_niveau_test_vide(niveau *n)
 	{
 		for(j = 0; j < n->taille.y; j++)
 		{
-				n->id_blocs[i][j] = BLOC_VIDE;
+				n->occ_blocs[i][j] = NULL;
 		}
 	}
 	
@@ -820,7 +819,7 @@ void charger_niveau_test(niveau *n)
 	n->monstres = malloc(sizeof(monstre*) * n->nb_monstres);
 	n->monstres[0] = charger_monstre("goomba");
 
-	n->monstres[0]->occ_monstres = ajout_monstre(n->monstres[0]->occ_monstres, new_occ_monstre(400, 200, n->monstres[0]));
+	n->monstres[0]->occ_monstres = ajout_monstre(n->monstres[0]->occ_monstres, new_occ_monstre(400, 400, n->monstres[0]));
 
 	/* Layer projectile */
 	n->nb_projectiles = 2;
@@ -836,16 +835,16 @@ void charger_niveau_test(niveau *n)
 	n->items[2] = charger_fleur();
 	
 	// Pièces
-	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(128, 172, n->items[0], n->items[2]->vitesse, NORMAL));
-	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(160, 172, n->items[0], n->items[2]->vitesse, NORMAL));
-	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(192, 172, n->items[0], n->items[2]->vitesse, NORMAL));
+	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(128, 172, n->items[0], n->items[0]->vitesse, NORMAL));
+	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(160, 172, n->items[0], n->items[0]->vitesse, NORMAL));
+	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(192, 172, n->items[0], n->items[0]->vitesse, NORMAL));
 
 	/* Finish */
-	n->nb_finish = 1;
+	/*n->nb_finish = 1;
 	n->finishes = malloc(sizeof(finish) * n->nb_finish);
 	strcpy(n->finishes[0].nom_text, "big_castle");
 	n->finishes[0].position.x = 20 * LARGEUR_BLOC;
-	n->finishes[0].position.y = 2 * LARGEUR_BLOC;
+	n->finishes[0].position.y = 2 * LARGEUR_BLOC;*/
 	
 	/* Premiers plans */
 	/*n->nb_foregrounds = 1;
@@ -857,9 +856,6 @@ void charger_niveau_test(niveau *n)
 	n->nb_backgrounds = 1;
 	n->backgrounds = malloc(sizeof(background) * n->nb_backgrounds);
 
-	/*strcpy(n->backgrounds[0].nom_text, "EdgeLava");
-	strcpy(n->backgrounds[1].nom_text, "Stalactites");
-	strcpy(n->backgrounds[2].nom_text, "NearStalactites");*/
 	strcpy(n->backgrounds[0].nom_text, "SnowHills");
 	
 	/* Layer tuyaux */
@@ -928,11 +924,11 @@ void charger_niveau_test(niveau *n)
 
 	/************ layer blocs ***********/
 
-	n->id_blocs = malloc(n->taille.x * sizeof(id*));
+	n->occ_blocs = malloc(n->taille.x * sizeof(occ_bloc***));
 
 	for(i = 0; i < n->taille.x; i++)
 	{
-		n->id_blocs[i] = malloc(n->taille.y * sizeof(id));
+		n->occ_blocs[i] = malloc(n->taille.y * sizeof(occ_bloc**));
 	}
 
 	/* Remplissage des ID des blocs */
@@ -941,76 +937,76 @@ void charger_niveau_test(niveau *n)
 		for(j = 0; j < n->taille.y; j++)
 		{
 			if(j == 1 && i < 75)
-				n->id_blocs[i][j] = 0;
-			else if(j == 1 && i >= 75)
-				n->id_blocs[i][j] = 23;
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[0], NULL);
 			else if (i == 0)
-				n->id_blocs[i][j] = 2;
-			/*else if (i == 8 && j == 6)
-				n->id_blocs[i][j] = 17;
-			else if (i == 12 && j == 6)
-				n->id_blocs[i][j] = 18;
-			else if (i == 13 && j == 6)
-				n->id_blocs[i][j] = 17;
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[2], NULL);
+			else if (i > 10 && j == 6)
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[18], NULL);
+			else if (i == 1 && j == 6)
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[17], &n->blocs[19]);
+			/*else if (i == 17 && j == 6)
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[18], NULL);
 			else if (i == 14 && j == 6)
-				n->id_blocs[i][j] = 18;
+				n->occ_blocs[i][j] = 18;
 			else if (i == 14 && j == 10)
-				n->id_blocs[i][j] = 17;
+				n->occ_blocs[i][j] = 17;
 			else if (i == 13 && j == 14)
-				n->id_blocs[i][j] = 18;
+				n->occ_blocs[i][j] = 18;
 			else if (i == 15 && j == 6)
-				n->id_blocs[i][j] = 17;*/
+				n->occ_blocs[i][j] = 17;
+			else if(j == 1 && i >= 75)
+				n->occ_blocs[i][j] = 23;
 			//// pente 30° en bas à gauche
 			//else if(j == 1 && i <= 1)
-			//	n->id_blocs[i][j] = 0;
+			//	n->occ_blocs[i][j] = 0;
 			//else if(j == 1 && i == 2)
-			//	n->id_blocs[i][j] = 14;
+			//	n->occ_blocs[i][j] = 14;
 			//else if(j == 1 && i == 3)
-			//	n->id_blocs[i][j] = 15;
+			//	n->occ_blocs[i][j] = 15;
 			//// pente 45° à gauche
 			//else if(j == 9 && i <= 1)
-			//	n->id_blocs[i][j] = 0;
+			//	n->occ_blocs[i][j] = 0;
 			//else if(j == 8 && i == 3)
-			//	n->id_blocs[i][j ] = 11;
+			//	n->occ_blocs[i][j ] = 11;
 			//else if(j == 9 && i == 2)
-			//	n->id_blocs[i][j] = 11;
+			//	n->occ_blocs[i][j] = 11;
 			//else if(j == 8 && i == 2)
-			//	n->id_blocs[i][j] = 8;
+			//	n->occ_blocs[i][j] = 8;
 			//else if(j == 8 && i == 1)
-			//	n->id_blocs[i][j] = 9;
+			//	n->occ_blocs[i][j] = 9;
 			//// pente 30° en haut à droite
 			//else if(j == 15 && i == 41)
-			//	n->id_blocs[i][j] = 13;
+			//	n->occ_blocs[i][j] = 13;
 			//else if(j == 15 && i == 42)
-			//	n->id_blocs[i][j] = 12;
+			//	n->occ_blocs[i][j] = 12;
 			//else if(j == 15 && i == 43)
-			//	n->id_blocs[i][j] = 0;
+			//	n->occ_blocs[i][j] = 0;
 			//// pente 45° à droite
 			//else if (j == 8 && i == 9)
-			//	n->id_blocs[i][j]= 16;
+			//	n->occ_blocs[i][j]= 16;
 			//else if (j == 8 && i == 10)
-			//	n->id_blocs[i][j]= 11;
+			//	n->occ_blocs[i][j]= 11;
 			//// Autres
 			//else if(j == 7 && 0 <= i && i < 25)
-			//	n->id_blocs[i][j] = 0;
+			//	n->occ_blocs[i][j] = 0;
 			//else if(j == 14 && 25 < i && i < 45)
-			//	n->id_blocs[i][j] = 0;
+			//	n->occ_blocs[i][j] = 0;
 			//else if(j == 6 && 0 <= i && i < 25)
-			//	n->id_blocs[i][j] = 1;
+			//	n->occ_blocs[i][j] = 1;
 			//else if(j == 13 && 25 < i && i < 45)
-			//	n->id_blocs[i][j] = 1;
+			//	n->occ_blocs[i][j] = 1;
 			//else if (i == 44 && j > 14)
-			//	n->id_blocs[i][j] = 3;
+			//	n->occ_blocs[i][j] = 3;
 			//else if(j == 7 && i == 25)
-			//	n->id_blocs[i][j] = 4;
+			//	n->occ_blocs[i][j] = 4;
 			//else if(j == 14 && i == 25)
-			//	n->id_blocs[i][j] = 5;
+			//	n->occ_blocs[i][j] = 5;
 			//else if(j == 6 && i == 25)
-			//	n->id_blocs[i][j] = 6;
+			//	n->occ_blocs[i][j] = 6;
 			//else if(j == 13 && i == 25)
-			//	n->id_blocs[i][j] = 7;
+			//	n->occ_blocs[i][j] = 7;*/
 			else
-				n->id_blocs[i][j] = BLOC_VIDE;
+				n->occ_blocs[i][j] = new_occ_bloc(i * LARGEUR_BLOC, j * LARGEUR_BLOC, NULL, NULL);
 		}
 	}
 
@@ -1019,7 +1015,7 @@ void charger_niveau_test(niveau *n)
 	n->blocs[0].coord_sprite.x = 2;
 	n->blocs[0].coord_sprite.y = 0;
 	n->blocs[0].phys = SOL;
-	n->blocs[0].contient_item = FAUX;
+	n->blocs[0].est_vide = VRAI;
 	n->blocs[0].est_cassable = FAUX;
 	n->blocs[0].item = NULL;
 
@@ -1027,7 +1023,7 @@ void charger_niveau_test(niveau *n)
 	n->blocs[1].coord_sprite.x = 8;
 	n->blocs[1].coord_sprite.y = 0;
 	n->blocs[1].phys = PLAFOND;
-	n->blocs[1].contient_item = FAUX;
+	n->blocs[1].est_vide = VRAI;
 	n->blocs[1].est_cassable = FAUX;
 	n->blocs[1].item = NULL;
 
@@ -1035,7 +1031,7 @@ void charger_niveau_test(niveau *n)
 	n->blocs[2].coord_sprite.x = 6;
 	n->blocs[2].coord_sprite.y = 0;
 	n->blocs[2].phys = MUR_A_GAUCHE;
-	n->blocs[2].contient_item = FAUX;
+	n->blocs[2].est_vide = VRAI;
 	n->blocs[2].est_cassable = FAUX;
 	n->blocs[2].item = NULL;
 
@@ -1043,7 +1039,7 @@ void charger_niveau_test(niveau *n)
 	n->blocs[3].coord_sprite.x = 4;
 	n->blocs[3].coord_sprite.y = 0;
 	n->blocs[3].phys = MUR_A_DROITE;
-	n->blocs[3].contient_item = FAUX;
+	n->blocs[3].est_vide = VRAI;
 	n->blocs[3].est_cassable = FAUX;
 	n->blocs[3].item = NULL;
 
@@ -1051,7 +1047,7 @@ void charger_niveau_test(niveau *n)
 	n->blocs[4].coord_sprite.x = 3;
 	n->blocs[4].coord_sprite.y = 0;
 	n->blocs[4].phys = COIN_HAUT_A_GAUCHE;
-	n->blocs[4].contient_item = FAUX;
+	n->blocs[4].est_vide = VRAI;
 	n->blocs[4].est_cassable = FAUX;
 	n->blocs[4].item = NULL;
 
@@ -1059,7 +1055,7 @@ void charger_niveau_test(niveau *n)
 	n->blocs[5].coord_sprite.x = 1;
 	n->blocs[5].coord_sprite.y = 0;
 	n->blocs[5].phys = COIN_HAUT_A_DROITE;
-	n->blocs[5].contient_item = FAUX;
+	n->blocs[5].est_vide = VRAI;
 	n->blocs[5].est_cassable = FAUX;
 	n->blocs[5].item = NULL;
 
@@ -1067,7 +1063,7 @@ void charger_niveau_test(niveau *n)
 	n->blocs[6].coord_sprite.x = 9;
 	n->blocs[6].coord_sprite.y = 0;
 	n->blocs[6].phys = COIN_BAS_A_GAUCHE;
-	n->blocs[6].contient_item = FAUX;
+	n->blocs[6].est_vide = VRAI;
 	n->blocs[6].est_cassable = FAUX;
 	n->blocs[6].item = NULL;
 
@@ -1075,7 +1071,7 @@ void charger_niveau_test(niveau *n)
 	n->blocs[7].coord_sprite.x = 7;
 	n->blocs[7].coord_sprite.y = 0;
 	n->blocs[7].phys = COIN_BAS_A_DROITE;
-	n->blocs[7].contient_item = FAUX;
+	n->blocs[7].est_vide = VRAI;
 	n->blocs[7].est_cassable = FAUX;
 	n->blocs[7].item = NULL;
 
@@ -1083,7 +1079,7 @@ void charger_niveau_test(niveau *n)
 	n->blocs[8].coord_sprite.x = 4;
 	n->blocs[8].coord_sprite.y = 1;
 	n->blocs[8].phys = PLEIN;
-	n->blocs[8].contient_item = FAUX;
+	n->blocs[8].est_vide = VRAI;
 	n->blocs[8].est_cassable = FAUX;
 	n->blocs[8].item = NULL;
 
@@ -1091,7 +1087,7 @@ void charger_niveau_test(niveau *n)
 	n->blocs[9].coord_sprite.x = 5;
 	n->blocs[9].coord_sprite.y = 0;
 	n->blocs[9].phys = PLEIN;
-	n->blocs[9].contient_item = FAUX;
+	n->blocs[9].est_vide = VRAI;
 	n->blocs[9].est_cassable = FAUX;
 	n->blocs[9].item = NULL;
 	
@@ -1099,7 +1095,7 @@ void charger_niveau_test(niveau *n)
 	n->blocs[10].coord_sprite.x = 11;
 	n->blocs[10].coord_sprite.y = 0;
 	n->blocs[10].phys = BORD_A_DROITE;
-	n->blocs[10].contient_item = FAUX;
+	n->blocs[10].est_vide = VRAI;
 	n->blocs[10].est_cassable = FAUX;
 	n->blocs[10].item = NULL;
 
@@ -1107,7 +1103,7 @@ void charger_niveau_test(niveau *n)
 	n->blocs[11].coord_sprite.x = 0;
 	n->blocs[11].coord_sprite.y = 1;
 	n->blocs[11].phys = PENTE_45_DROITE;
-	n->blocs[11].contient_item = FAUX;
+	n->blocs[11].est_vide = VRAI;
 	n->blocs[11].est_cassable = FAUX;
 	n->blocs[11].item = NULL;
 
@@ -1115,7 +1111,7 @@ void charger_niveau_test(niveau *n)
 	n->blocs[12].coord_sprite.x = 3;
 	n->blocs[12].coord_sprite.y = 2;
 	n->blocs[12].phys = PENTE_30_GAUCHE_8;
-	n->blocs[12].contient_item = FAUX;
+	n->blocs[12].est_vide = VRAI;
 	n->blocs[12].est_cassable = FAUX;
 	n->blocs[12].item = NULL;
 
@@ -1123,7 +1119,7 @@ void charger_niveau_test(niveau *n)
 	n->blocs[13].coord_sprite.x = 2;
 	n->blocs[13].coord_sprite.y = 2;
 	n->blocs[13].phys = PENTE_30_GAUCHE_16;
-	n->blocs[13].contient_item = FAUX;
+	n->blocs[13].est_vide = VRAI;
 	n->blocs[13].est_cassable = FAUX;
 	n->blocs[13].item = NULL;
 
@@ -1131,7 +1127,7 @@ void charger_niveau_test(niveau *n)
 	n->blocs[14].coord_sprite.x = 0;
 	n->blocs[14].coord_sprite.y = 2;
 	n->blocs[14].phys = PENTE_30_DROITE_0;
-	n->blocs[14].contient_item = FAUX;
+	n->blocs[14].est_vide = VRAI;
 	n->blocs[14].est_cassable = FAUX;
 	n->blocs[14].item = NULL;
 
@@ -1139,7 +1135,7 @@ void charger_niveau_test(niveau *n)
 	n->blocs[15].coord_sprite.x = 1;
 	n->blocs[15].coord_sprite.y = 2;
 	n->blocs[15].phys = PENTE_30_DROITE_8;
-	n->blocs[15].contient_item = FAUX;
+	n->blocs[15].est_vide = VRAI;
 	n->blocs[15].est_cassable = FAUX;
 	n->blocs[15].item = NULL;
 
@@ -1147,7 +1143,7 @@ void charger_niveau_test(niveau *n)
 	n->blocs[16].coord_sprite.x = 1;
 	n->blocs[16].coord_sprite.y = 1;
 	n->blocs[16].phys = PENTE_45_GAUCHE;
-	n->blocs[16].contient_item = FAUX;
+	n->blocs[16].est_vide = VRAI;
 	n->blocs[16].est_cassable = FAUX;
 	n->blocs[16].item = NULL;
 
@@ -1156,23 +1152,25 @@ void charger_niveau_test(niveau *n)
 	n->blocs[17].coord_sprite.x = 0;
 	n->blocs[17].coord_sprite.y = 3;
 	n->blocs[17].phys = BLOC_SPEC;
-	n->blocs[17].contient_item = VRAI;
+	n->blocs[17].est_vide = FAUX;
 	n->blocs[17].est_cassable = FAUX;
 	n->blocs[17].item = NULL;
 
+	/* Bloc cassable */
 	n->blocs[18].texture = 1;
 	n->blocs[18].coord_sprite.x = 0;
 	n->blocs[18].coord_sprite.y = 4;
 	n->blocs[18].phys = BLOC_SPEC;
-	n->blocs[18].contient_item = FAUX;
+	n->blocs[18].est_vide = VRAI;
 	n->blocs[18].est_cassable = VRAI;
 	n->blocs[18].item = NULL;
 
+	/* Boc incassable */
 	n->blocs[19].texture = 1;
 	n->blocs[19].coord_sprite.x = 0;
 	n->blocs[19].coord_sprite.y = 2;
 	n->blocs[19].phys = BLOC_SPEC;
-	n->blocs[19].contient_item = FAUX;
+	n->blocs[19].est_vide = VRAI;
 	n->blocs[19].est_cassable = FAUX;
 	n->blocs[19].item = NULL;
 
@@ -1180,38 +1178,37 @@ void charger_niveau_test(niveau *n)
 	n->blocs[20].coord_sprite.x = 0;
 	n->blocs[20].coord_sprite.y = 4;
 	n->blocs[20].phys = BLOC_SPEC;
-	n->blocs[20].contient_item = VRAI;
+	n->blocs[20].est_vide = VRAI;
 	n->blocs[20].est_cassable = FAUX;
-	n->blocs[20].item = n->items[3];
+	n->blocs[20].item = n->items[1];
 
 	n->blocs[21].texture = 1;
 	n->blocs[21].coord_sprite.x = 0;
 	n->blocs[21].coord_sprite.y = 4;
 	n->blocs[21].phys = BLOC_SPEC;
-	n->blocs[21].contient_item = VRAI;
+	n->blocs[21].est_vide = VRAI;
 	n->blocs[21].est_cassable = FAUX;
-	n->blocs[21].item = n->items[4];
+	n->blocs[21].item = n->items[1];
 
 	n->blocs[22].texture = 1;
 	n->blocs[22].coord_sprite.x = 0;
 	n->blocs[22].coord_sprite.y = 4;
 	n->blocs[22].phys = BLOC_SPEC;
-	n->blocs[22].contient_item = VRAI;
+	n->blocs[22].est_vide = VRAI;
 	n->blocs[22].est_cassable = FAUX;
-	n->blocs[22].item = n->items[5];
+	n->blocs[22].item = n->items[1];
 
 	n->blocs[23].texture = 1;
 	n->blocs[23].coord_sprite.x = 0;
 	n->blocs[23].coord_sprite.y = 1;
 	n->blocs[23].phys = EAU;
-	n->blocs[23].contient_item = FAUX;
+	n->blocs[23].est_vide = VRAI;
 	n->blocs[23].est_cassable = FAUX;
 	n->blocs[23].item = NULL;
 
-
-	// Nouvelle ecriture pour la texture : n->[n->id_blocs[i][j]].texture
-	// Flag correspondant à la physique du bloc : n->blocs[n->id_blocs[i][j]].phys
-	// Ajout d'informations supplémentaires : n->blocs[n->id_blocs[i][j]].contient_item & n->blocs[n->id_blocs[i][j]].est_cassable
+	// Nouvelle ecriture pour la texture : n->[n->occ_blocs[i][j]].texture
+	// Flag correspondant à la physique du bloc : n->blocs[n->occ_blocs[i][j]].phys
+	// Ajout d'informations supplémentaires : n->blocs[n->occ_blocs[i][j]].est_vide & n->blocs[n->occ_blocs[i][j]].est_cassable
 	
 	n->nb_textures = 2;
 	n->textures = malloc(sizeof(texture) * n->nb_textures);
@@ -1221,7 +1218,7 @@ void charger_niveau_test(niveau *n)
 }
 
 
-void affiche_id_blocs(niveau* n)
+void affiche_occ_blocs(niveau* n)
 {
 	int i, j;
 	FILE* flux = fopen("test.txt","w");
@@ -1229,13 +1226,13 @@ void affiche_id_blocs(niveau* n)
 	for(i = n->taille.x - 1; i >= 0 ; i--){ 
 		for(j = 0; j < n->taille.y; j++){
 
-			if(n->id_blocs[i][j] != BLOC_VIDE)
+			if(n->occ_blocs[i][j]->bloc_actuel != NULL)
 			{
-				fprintf(flux, "%d ", n->id_blocs[i][j]);
+				fprintf(flux, "%d ", n->occ_blocs[i][j]);
 			}
 			else
 			{
-				fprintf(flux, "0 ", n->id_blocs[i][j]);
+				fprintf(flux, "0 ", n->occ_blocs[i][j]);
 			}
 		}
 		fprintf(flux,"\n");
@@ -1270,7 +1267,7 @@ void draw_main(niveau *lvl, perso **persos, ecran e, Uint32 duree)
 	for(i = 0; i < lvl->nb_finish; i++)
 	{
 		finish f = lvl->finishes[i];
-		draw_sprite(f.position.x, f.position.y, f.taille.x, f.taille.y, f.id_text, 0, 1, 0 , 1);
+		draw_sprite(f.position.x, f.position.y, f.taille.x, f.taille.y, f.id_text, 0, 1, 0, 1);
 	}
 
 	/* Dessin des items */
@@ -1533,7 +1530,8 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
 {
     int i, j;
     sprite sprite;
-    id bloc_id, text_id;
+    id text_id;
+	occ_bloc* occ;
     coordi nb_sprites;
     int debut_x, fin_x, debut_y, fin_y;
 	int phase;
@@ -1565,38 +1563,56 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
     {	
         for(j = debut_y; j < fin_y; j++)
         {
-            bloc_id = n->id_blocs[i][j];
+            occ = n->occ_blocs[i][j];
 
-            if(bloc_id != BLOC_VIDE)
+			if(occ->bloc_actuel != NULL)
             {
-                text_id = n->blocs[bloc_id].texture;
+				text_id = occ->bloc_actuel->texture;
                 sprite.taille.x = n->textures[text_id].taille_sprite.x;
                 sprite.taille.y = n->textures[text_id].taille_sprite.y;
 
                 if(sprite.taille.x != 0 && sprite.taille.y != 0)
                 {
-                    sprite.position.x = i * n->taille_blocs.x;
-                    sprite.position.y = j * n->taille_blocs.y;
+					switch(occ->etat)
+					{
+					case POUSSE_PAR_LA_DROITE:
+						sprite.position.x = occ->position.x + 10;
+						sprite.position.y = occ->position.y;
+						break;
+					case POUSSE_PAR_LA_GAUCHE:
+						sprite.position.x = occ->position.x - 10;
+						sprite.position.y = occ->position.y;
+						break;
+					case POUSSE_PAR_LE_HAUT:
+						sprite.position.y = occ->position.y + 10;
+						sprite.position.x = occ->position.x;
+						break;
+					default:
+						sprite.position = occ->position;
+						break;
+					}
 
+					occ->etat = IMMOBILE;
+                    
                     sprite.text_id = n->textures[text_id].id_text;
 
                     nb_sprites.x = n->textures[text_id].taille.x / sprite.taille.x;
                     nb_sprites.y = n->textures[text_id].taille.y / sprite.taille.y;
 
-					if(n->blocs[bloc_id].texture == 1) {
+					if(text_id == 1) {
 						phase = (duree % V_ANIM_BLOC_SPEC) / (V_ANIM_BLOC_SPEC / (nb_sprites.x));
 
-						sprite.point_bg.x = (float)1 / nb_sprites.x * (n->blocs[bloc_id].coord_sprite.x + phase);
-						sprite.point_bg.y = (float)1 / nb_sprites.y * n->blocs[bloc_id].coord_sprite.y;
-						sprite.point_hd.x = (float)1 / nb_sprites.x * (n->blocs[bloc_id].coord_sprite.x + phase + 1);
-						sprite.point_hd.y = (float)1 / nb_sprites.y * (n->blocs[bloc_id].coord_sprite.y + 1);
+						sprite.point_bg.x = (float)1 / nb_sprites.x * (occ->bloc_actuel->coord_sprite.x + phase);
+						sprite.point_bg.y = (float)1 / nb_sprites.y * occ->bloc_actuel->coord_sprite.y;
+						sprite.point_hd.x = (float)1 / nb_sprites.x * (occ->bloc_actuel->coord_sprite.x + phase + 1);
+						sprite.point_hd.y = (float)1 / nb_sprites.y * (occ->bloc_actuel->coord_sprite.y + 1);
 					}
 					else 
 					{
-						sprite.point_bg.x = (float)1 / nb_sprites.x * n->blocs[bloc_id].coord_sprite.x;
-						sprite.point_bg.y = (float)1 / nb_sprites.y * n->blocs[bloc_id].coord_sprite.y;
-						sprite.point_hd.x = (float)1 / nb_sprites.x * (n->blocs[bloc_id].coord_sprite.x + 1);
-						sprite.point_hd.y = (float)1 / nb_sprites.y * (n->blocs[bloc_id].coord_sprite.y + 1);
+						sprite.point_bg.x = (float)1 / nb_sprites.x * occ->bloc_actuel->coord_sprite.x;
+						sprite.point_bg.y = (float)1 / nb_sprites.y * occ->bloc_actuel->coord_sprite.y;
+						sprite.point_hd.x = (float)1 / nb_sprites.x * (occ->bloc_actuel->coord_sprite.x + 1);
+						sprite.point_hd.y = (float)1 / nb_sprites.y * (occ->bloc_actuel->coord_sprite.y + 1);
 					}
 
                     draw_sprite_(&sprite, n->last_texture);
@@ -1700,137 +1716,3 @@ float deg_to_rad(float degres)
 	return convert;
 }
 
-/***************************** ******************************/
-
-liste_bloc *new_liste_bloc()
-{
-    liste_bloc *liste = malloc(sizeof(liste_bloc));
-    liste->debut = NULL;
-    liste->nb = 0;
-
-    return liste;
-}
-
-
-void free_liste_bloc(liste_bloc **liste)
-{
-    if(liste != NULL && *liste != NULL)
-    {
-        elt_liste_bloc *actuel = (*liste)->debut;
-        elt_liste_bloc *precedent = NULL;
-
-        while(actuel != NULL)
-        {
-            precedent = actuel;
-            actuel = actuel->suivant;
-            free_elt_liste_bloc(&actuel);
-        }
-
-        free(*liste);
-        *liste = NULL;
-    }
-}
-
-
-elt_liste_bloc *new_elt_liste_bloc()
-{
-    elt_liste_bloc *elt = malloc(sizeof(elt_liste_bloc));
-    elt->suivant = NULL;
-
-    return elt;
-}
-
-
-void free_elt_liste_bloc(elt_liste_bloc **elt)
-{
-    if(elt != NULL && *elt != NULL)
-    {
-        free(*elt);
-        *elt = NULL;
-    }
-}
-
-
-void ajouter_bloc_liste(liste_bloc *liste, bloc elt)
-{
-    if(liste != NULL)
-    {
-        elt_liste_bloc *actuel = liste->debut;
-        elt_liste_bloc *precedent = NULL;
-
-        while(actuel != NULL)
-        {
-			/* Si un doublon est trouvé, on sort de la fonction */
-            if(actuel->elt.coord_sprite.x == elt.coord_sprite.x
-                && actuel->elt.coord_sprite.y == elt.coord_sprite.y
-                && actuel->elt.texture == elt.texture)
-            {
-                return;
-            }
-
-            precedent = actuel;
-            actuel = actuel->suivant;
-        }
-
-        precedent->suivant = new_elt_liste_bloc();
-        precedent->elt = elt;
-        liste->nb++;
-    }
-}
-
-
-void supprimer_bloc_liste(liste_bloc *liste, bloc elt)
-{
-    if(liste != NULL)
-    {
-        elt_liste_bloc *actuel = liste->debut;
-        elt_liste_bloc *precedent = NULL;
-
-        while(actuel != NULL)
-        {
-            if(actuel->elt.coord_sprite.x == elt.coord_sprite.x
-                && actuel->elt.coord_sprite.y == elt.coord_sprite.y
-                && actuel->elt.texture == elt.texture)
-            {
-                if(actuel == liste->debut)
-                {
-                    liste->debut = actuel->suivant;
-                }
-                else
-                {
-                    precedent->suivant = actuel->suivant;
-                }
-
-                free_elt_liste_bloc(&actuel);
-                liste->nb--;
-            }
-
-            precedent = actuel;
-            actuel = actuel->suivant;
-        }
-    }
-}
-
-
-void bloc_liste_a_tableau(liste_bloc *liste, int *taille, bloc **tab)
-{
-    if(liste != NULL)
-    {       
-        int i;
-        elt_liste_bloc *actuel = liste->debut;
-
-        if(tab != NULL)
-        {
-            free(tab);
-        }
-
-        *tab = malloc(sizeof(bloc) * liste->nb);
-        *taille = liste->nb;
-
-        for(i = 0; i < liste->nb; i++)
-        {
-            *tab[i] = actuel->elt;
-            actuel = actuel->suivant;
-        }
-    }
-}

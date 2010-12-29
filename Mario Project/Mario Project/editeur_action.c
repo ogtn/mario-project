@@ -166,7 +166,7 @@ void ac_copier(action *a)
             /* Copie des blocs */
             for(i = x1, si = 0; i <= x2; i++, si++)
                 for(j = y1, sj = 0; j <= y2; j++, sj++)
-                    eb->blocs_cb.blocs[si][sj] = e->world->niveau->id_blocs[i][j];
+                    eb->blocs_cb.blocs[si][sj] = e->world->niveau->occ_blocs[i][j];
         }
     }
 }
@@ -198,7 +198,7 @@ void ac_coller(action *a)
                 {
                     if(eb->blocs_cb.blocs[si][sj] != BLOC_VIDE)
                     {
-                        e->world->niveau->id_blocs[i][j] = (id)(eb->blocs_cb.blocs[si][sj]);
+                        e->world->niveau->occ_blocs[i][j] = (id)(eb->blocs_cb.blocs[si][sj]);
                     }
                 }
             }
@@ -280,7 +280,7 @@ void ac_supprimer(action *a)
 
             for(i = x1; i <= x2; i++)
                 for(j = y1; j <= y2; j++)
-                    e->world->niveau->id_blocs[i][j] = BLOC_VIDE;
+                    e->world->niveau->occ_blocs[i][j] = BLOC_VIDE;
 
             eb->selection = 0;
         }
@@ -384,31 +384,31 @@ void ac_remplissage(action *a)
                     if(j == y1)
                     {
                         if(i == x1)
-                            e->world->niveau->id_blocs[i][j] = (id)bg;  /* Coin bas gauche */
+                            e->world->niveau->occ_blocs[i][j] = (id)bg;  /* Coin bas gauche */
                         else if(i == x2)
-                            e->world->niveau->id_blocs[i][j] = (id)bd;  /* Coin bas droite */
+                            e->world->niveau->occ_blocs[i][j] = (id)bd;  /* Coin bas droite */
                         else
-                            e->world->niveau->id_blocs[i][j] = (id)b;   /* Bas */
+                            e->world->niveau->occ_blocs[i][j] = (id)b;   /* Bas */
                     }
                     /* Derniere ligne */
                     else if(j == y2)
                     {
                         if(i == x1)
-                            e->world->niveau->id_blocs[i][j] = (id)hg;  /* Coin haut gauche */
+                            e->world->niveau->occ_blocs[i][j] = (id)hg;  /* Coin haut gauche */
                         else if(i == x2)
-                            e->world->niveau->id_blocs[i][j] = (id)hd;  /* Coin haut droite */
+                            e->world->niveau->occ_blocs[i][j] = (id)hd;  /* Coin haut droite */
                         else
-                            e->world->niveau->id_blocs[i][j] = (id)h;   /* Haut */
+                            e->world->niveau->occ_blocs[i][j] = (id)h;   /* Haut */
                     }
                     /* Milieu */
                     else
                     {
                         if(i == x1)
-                            e->world->niveau->id_blocs[i][j] = (id)g;   /* Gauche */
+                            e->world->niveau->occ_blocs[i][j] = (id)g;   /* Gauche */
                         else if(i == x2)
-                            e->world->niveau->id_blocs[i][j] = (id)d;   /* Droite */
+                            e->world->niveau->occ_blocs[i][j] = (id)d;   /* Droite */
                         else
-                            e->world->niveau->id_blocs[i][j] = (id)c;   /* Centre */
+                            e->world->niveau->occ_blocs[i][j] = (id)c;   /* Centre */
                     }
                 }
             }

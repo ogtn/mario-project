@@ -121,7 +121,7 @@ void load_world(world *w)
 	/* Chargement du niveau */
     //charger_niveau_test_vide(w->niveau);
 	charger_niveau_test(w->niveau);
-	//affiche_id_blocs(w->niveau);
+	//affiche_occ_blocs(w->niveau);
 	//charger_niveau("test_xml.xml", w->niveau);
 	charger_textures_niveau(w->niveau);
 	

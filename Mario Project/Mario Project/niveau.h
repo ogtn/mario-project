@@ -17,6 +17,8 @@
 #ifndef NIVEAU_H
 #define NIVEAU_H
 
+
+
 /******************************************************************************/
 /*=================================[INCLUDES]=================================*/
 /******************************************************************************/
@@ -27,23 +29,11 @@
 #include "projectile.h"
 #include "tuyau.h"
 #include "particules.h"
-
+#include "bloc.h"
 
 /******************************************************************************/
 /*================================[STRUCTURES]================================*/
 /******************************************************************************/
-
-/* Un bloc est au niveau ce qu'un pixel est à une image: le plus petit element existant */
-typedef struct bloc
-{
-	id texture;								/* l'id de la texture dans la structure niveau */
-	int contient_item;						/* indique si le bloc contient un item */
-	int est_cassable;						/* indique si le bloc est cassable */
-	coordi coord_sprite;					/* les coordonnées du sprite dans la texture  */
-	int phys;								/* Contient la physique du bloc sous la forme d'un flag */
-	item* item;								/* Pointeur sur l'item qu'il contient */
-} bloc;
-
 
 /* Structure objet */
 typedef struct objet
@@ -114,29 +104,13 @@ typedef struct niveau
 	/* Layer blocs */
 	nb nb_blocs;									/* le nombre de blocs différents qui constituent le niveau */
 	bloc *blocs;									/* un tableau à une dimension qui contient tous les blocs */
-	id **id_blocs;									/* tableau à deux dimensions dont chaque case contient l'identificateur d'un bloc */
+	occ_bloc ***occ_blocs;							/* tableau à deux dimensions dont chaque case contient l'occurence d'un bloc */
 	coordi taille_blocs;							/* vecteur 2D qui contient la taille des blocs (en pixels) */
 
 	/* Layer textures */
 	nb nb_textures;									/* nombre de textures utilisées pour les blocs */
 	texture *textures;								/* tableau à 1 dimension contenant les textures des blocs */
 } niveau;
-
-
-/* Liste simplement chainee de blocs */
-typedef struct elt_liste_bloc
-{
-    struct elt_liste_bloc *suivant;			/* Element suivant */
-    bloc elt;								/* Contenu */
-} elt_liste_bloc;
-
-
-typedef struct liste_bloc
-{
-    elt_liste_bloc *debut;					/* Premier element */
-    int nb;									/* Taille de la liste */
-} liste_bloc;
-
 
 /******************************************************************************/
 /*================================[PROTOTYPES]================================*/
@@ -174,6 +148,9 @@ void charger_finish(finish* f);
 /* Charge "à la main" un niveau de texte, c'est crade mais c'est comme ça o) */
 void charger_niveau_test(niveau *n);
 
+/* Charge un niveau vide pour l'éditeur */
+void charger_niveau_test_vide(niveau *n);
+
 /* Libere les textures du niveau de la memoire video */
 void liberer_textures_niveau(niveau *n);
 
@@ -200,7 +177,7 @@ personnages. But uniquement decoratif */
 void draw_objects(niveau *n, Uint32 duree);
 
 /* Affiche les id des blocs du niveau dans un fichier */
-void affiche_id_blocs(niveau* n);
+void affiche_occ_blocs(niveau* n);
 
 /* MAJ des particules présentes dans le niveau */
 void MAJ_particules(niveau* n, Uint32 duree);
@@ -209,35 +186,6 @@ typedef void (*balise_func)(niveau *, const char **);
 
 /*** UTILITAIRES ***/
 float deg_to_rad(float degres);
-
-
-/*********** Gestion des listes chainees ***********/
-
-/* Allocation et desallocation d'une liste de blocs */
-liste_bloc *new_liste_bloc();
-void free_liste_bloc(liste_bloc **liste);
-
-/* Allocation et desallocation d'un élément de la liste de blocs */
-elt_liste_bloc *new_elt_liste_bloc();
-void free_elt_liste_bloc(elt_liste_bloc **elt);
-
-/* Ajoute un element a une liste sans doublon */
-void ajouter_bloc_liste(liste_bloc *liste, bloc elt);
-
-/* Retire l'element de la liste */
-void supprimer_bloc_liste(liste_bloc *liste, bloc elt);
-
-/* Genere un tableau a partir de la liste */
-void bloc_liste_a_tableau(liste_bloc *liste, int *taille, bloc **tab);
-
-
-
-
-
-
-
-void charger_niveau_test_vide(niveau *n);
-
 
 
 #endif
