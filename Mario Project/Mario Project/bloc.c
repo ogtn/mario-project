@@ -28,6 +28,7 @@ occ_bloc* init_occ_bloc(occ_bloc* occ, int pos_x, int pos_y, bloc* bloc_actuel, 
 		occ->bloc_actuel = bloc_actuel;
 		occ->bloc_alternatif = bloc_alternatif;
 		occ->etat = IMMOBILE;
+		occ->compteur_etat = 0;
 	}
 	return occ;
 }
