@@ -1664,8 +1664,6 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 
 						p->hud->score += m->type_monstre->points;
 						p->hud->nb_monstres_tues_carapace = 0;
-
-						n->occ_blocs[i][j]->etat = IMMOBILE; // Remise à zéro de l'état
 					}
 					if(n->occ_blocs[i][j]->bloc_actuel != NULL)
 					{
