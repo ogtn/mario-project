@@ -991,7 +991,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 
 									vitesse.x = 0;
 
-									n->occ_blocs[i][j]->etat = POUSSE_PAR_LE_HAUT_1;
+									n->occ_blocs[i][j]->etat = POUSSE_PAR_LE_HAUT;
 									/* Si le bloc ne contient pas un pointeur sur un item,
 									l'item sera en fonction de la transformation actuelle 
 									du personnage */
@@ -1034,7 +1034,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 
 
 									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_BREAK_BLOCK]);
-									n->occ_blocs[i][j]->etat = POUSSE_PAR_LE_HAUT_1;
+									n->occ_blocs[i][j]->etat = POUSSE_PAR_LE_HAUT;
 
 									n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif;
 									n->occ_blocs[i][j]->bloc_alternatif = NULL;	// Suppression du bloc
@@ -1043,7 +1043,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 								{
 
 									if(n->occ_blocs[i][j]->bloc_actuel->est_cassable && p->transformation < SUPER_MARIO)
-										n->occ_blocs[i][j]->etat = POUSSE_PAR_LE_HAUT_1;
+										n->occ_blocs[i][j]->etat = POUSSE_PAR_LE_HAUT;
 									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_UNBREAKABLE_BLOCK]);
 								}
 
@@ -1648,7 +1648,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 			{
 				if (i < n->taille.x && i >= 0)
 				{
-					if(n->occ_blocs[i][j]->bloc_actuel == NULL && n->occ_blocs[i][j]->etat == POUSSE_PAR_LE_HAUT_1)
+					if(n->occ_blocs[i][j]->bloc_actuel == NULL && n->occ_blocs[i][j]->etat == POUSSE_PAR_LE_HAUT)
 					{
 						/* Le monstre touché meurt */
 						m->etat = M_MORT_PAR_PROJ;
@@ -1664,6 +1664,8 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 
 						p->hud->score += m->type_monstre->points;
 						p->hud->nb_monstres_tues_carapace = 0;
+
+						n->occ_blocs[i][j]->etat = IMMOBILE; // Remise à zéro de l'état
 					}
 					if(n->occ_blocs[i][j]->bloc_actuel != NULL)
 					{
@@ -1696,7 +1698,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 							&& collision.type_collision == PAR_LE_BAS)
 						{
 							
-							if(n->occ_blocs[i][j]->etat == POUSSE_PAR_LE_HAUT_1)
+							if(n->occ_blocs[i][j]->etat == POUSSE_PAR_LE_HAUT)
 							{
 								/* Le monstre touché meurt */
 								m->etat = M_MORT_PAR_PROJ;
@@ -1890,12 +1892,15 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 
 							if(m->etat == M_RETRACTED)
 							{
-								if(n->occ_blocs[i][j]->bloc_actuel->est_vide) {
+								if(!n->occ_blocs[i][j]->bloc_actuel->est_vide)
+								{
 									/* Ajout de l'occurence d'item */
 									coordf vitesse;
 									occ_item *item;
 
 									vitesse.x = 0;
+
+									n->occ_blocs[i][j]->etat = POUSSE_PAR_LA_GAUCHE;
 
 									/* Si le bloc ne contient pas un pointeur sur un item,
 									l'item sera en fonction de la transforùation actuelle 
@@ -2520,7 +2525,7 @@ void solve_collisions_item(occ_item* it, niveau* n, Uint32 duree)
 								it->position.y = (float)bloc.position.y + bloc.taille.y;
 								it->vitesse.y = it->type_item->vitesse.y;
 
- 								if(n->occ_blocs[i][j]->etat == POUSSE_PAR_LE_HAUT_1)
+ 								if(n->occ_blocs[i][j]->etat == POUSSE_PAR_LE_HAUT)
 								{
 									it->vitesse.y = VIT_SORTIE_BLOC * 7;
 								}

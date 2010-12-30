@@ -404,11 +404,11 @@ void draw_perso(perso *perso, Uint32 duree)
 
 }
 
-void draw_monstre(occ_monstre *monstre, Uint32 duree, Uint32 tps_transformation){
-
+void draw_monstre(occ_monstre *monstre, Uint32 duree, Uint32 tps_transformation)
+{
 	float gauche = 0, droite = 0, haut = 0, bas = 0, temp;
 	int v_anim = monstre->type_monstre->v_anim, phase, nb_etats_presents = M_NB_ETATS - m_nb_etats_absents(monstre->type_monstre);
-	int nb_sprites_max = (monstre->type_monstre->nb_sprites_marche > monstre->type_monstre->nb_sprites_carapace)?monstre->type_monstre->nb_sprites_marche:monstre->type_monstre->nb_sprites_carapace;
+	int nb_sprites_max = (monstre->type_monstre->nb_sprites_marche > monstre->type_monstre->nb_sprites_carapace) ? monstre->type_monstre->nb_sprites_marche : monstre->type_monstre->nb_sprites_carapace;
 
 	switch(monstre->etat) {
 		case M_MARCHE : case M_SORT_DU_TUYAU:
@@ -418,11 +418,11 @@ void draw_monstre(occ_monstre *monstre, Uint32 duree, Uint32 tps_transformation)
 			bas = 1 - (float)1 / nb_etats_presents;
 			v_anim = monstre->type_monstre->v_anim;
 			break;
-		case M_MORT_PAR_PROJ : 
-			gauche = (float)1 / nb_sprites_max;
-			droite = (float)2 / nb_sprites_max;
+		case M_MORT_PAR_PROJ :
+			gauche = 0;
+			droite = (float)1 / nb_sprites_max;
 			haut = 0;
-			bas = (float)1 / nb_etats_presents; // inversement du haut et bas pour renverser le sprite
+			bas = 1 - (float) 2 / nb_etats_presents; // inversement du haut et bas pour renverser le sprite
 			break;
 		case M_MORT_PAR_SAUT: case M_RETRACTED: case M_RETRACTED_PORTED:
 			gauche = 0;

@@ -22,9 +22,7 @@ typedef enum ETAT_BLOC
 	IMMOBILE,
 	POUSSE_PAR_LA_GAUCHE,
 	POUSSE_PAR_LA_DROITE,
-	POUSSE_PAR_LE_HAUT_1,
-	POUSSE_PAR_LE_HAUT_2,
-	POUSSE_PAR_LE_HAUT_3
+	POUSSE_PAR_LE_HAUT,
 }ETAT_BLOC;
 
 
@@ -54,6 +52,7 @@ typedef struct occ_bloc
 {
 	coordi position;						/* Position actuelle du bloc */
 	ETAT_BLOC etat;							/* Contient l'etat du bloc */
+	int compteur_etat;						/* Définit l'étape de dessin d'un mouvement de bloc */
 	bloc* bloc_actuel;						/* Pointeur sur le bloc modèle actuel */
 	bloc* bloc_alternatif;					/* Pointeur sur le bloc modèle alternatif */
 } occ_bloc;

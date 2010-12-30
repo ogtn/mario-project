@@ -817,7 +817,7 @@ void charger_niveau_test(niveau *n)
 	/* Layer monstre */
 	n->nb_monstres = 1;
 	n->monstres = malloc(sizeof(monstre*) * n->nb_monstres);
-	n->monstres[0] = charger_monstre("goomba");
+	n->monstres[0] = charger_monstre("koopa");
 
 	n->monstres[0]->occ_monstres = ajout_monstre(n->monstres[0]->occ_monstres, new_occ_monstre(400, 400, n->monstres[0]));
 
@@ -940,7 +940,11 @@ void charger_niveau_test(niveau *n)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[0], NULL);
 			else if (i == 0)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[2], NULL);
-			else if (i > 10 && j == 6)
+			else if (i > 10 && i < 16 && j == 6)
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[18], NULL);
+			else if (i == 11 && j == 7)
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[18], NULL);
+			else if (i == 15 && j == 7)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[18], NULL);
 			else if (i == 1 && j == 6)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[17], &n->blocs[19]);
@@ -1564,7 +1568,7 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
         for(j = debut_y; j < fin_y; j++)
         {
             occ = n->occ_blocs[i][j];
-
+			
 			if(occ->bloc_actuel != NULL)
             {
 				text_id = occ->bloc_actuel->texture;
@@ -1576,39 +1580,35 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
 					switch(occ->etat)
 					{
 					case POUSSE_PAR_LA_DROITE:
-						sprite.position.x = occ->position.x + 10;
+						sprite.position.x = occ->position.x + occ->compteur_etat * 3;
 						sprite.position.y = occ->position.y;
+						occ->compteur_etat = (occ->compteur_etat + 1) % 4;
 						break;
 					case POUSSE_PAR_LA_GAUCHE:
-						sprite.position.x = occ->position.x - 10;
+						sprite.position.x = occ->position.x - occ->compteur_etat * 3;
 						sprite.position.y = occ->position.y;
+						occ->compteur_etat = (occ->compteur_etat + 1) % 4;
 						break;
-					case POUSSE_PAR_LE_HAUT_1:
-						sprite.position.y = occ->position.y + 3;
+					case POUSSE_PAR_LE_HAUT:
+						sprite.position.y = occ->position.y + occ->compteur_etat * 3;
 						sprite.position.x = occ->position.x;
-						occ->etat = POUSSE_PAR_LE_HAUT_2;
-						break;
-					case POUSSE_PAR_LE_HAUT_2:
-						sprite.position.y = occ->position.y + 6;
-						sprite.position.x = occ->position.x;
-						occ->etat = POUSSE_PAR_LE_HAUT_3;
-						break;
-					case POUSSE_PAR_LE_HAUT_3:
-						sprite.position.y = occ->position.y + 10;
-						sprite.position.x = occ->position.x;
-						occ->etat = IMMOBILE;
+						occ->compteur_etat = (occ->compteur_etat + 1) % 4;
 						break;
 					default:
 						sprite.position = occ->position;
 						break;
 					}
+
+					if(occ->compteur_etat == 0)
+							occ->etat = IMMOBILE;
                     
                     sprite.text_id = n->textures[text_id].id_text;
 
                     nb_sprites.x = n->textures[text_id].taille.x / sprite.taille.x;
                     nb_sprites.y = n->textures[text_id].taille.y / sprite.taille.y;
 
-					if(text_id == 1) {
+					if(text_id == 1)
+					{
 						phase = (duree % V_ANIM_BLOC_SPEC) / (V_ANIM_BLOC_SPEC / (nb_sprites.x));
 
 						sprite.point_bg.x = (float)1 / nb_sprites.x * (occ->bloc_actuel->coord_sprite.x + phase);
@@ -1628,6 +1628,11 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
                     n->last_texture = text_id;
                 }
             }
+
+			if(occ->etat != IMMOBILE && occ->compteur_etat == 0)
+			{
+				occ->etat = IMMOBILE;
+			}
         }
     }
 
