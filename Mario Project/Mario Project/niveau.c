@@ -1583,16 +1583,25 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
 						sprite.position.x = occ->position.x - 10;
 						sprite.position.y = occ->position.y;
 						break;
-					case POUSSE_PAR_LE_HAUT:
+					case POUSSE_PAR_LE_HAUT_1:
+						sprite.position.y = occ->position.y + 3;
+						sprite.position.x = occ->position.x;
+						occ->etat = POUSSE_PAR_LE_HAUT_2;
+						break;
+					case POUSSE_PAR_LE_HAUT_2:
+						sprite.position.y = occ->position.y + 6;
+						sprite.position.x = occ->position.x;
+						occ->etat = POUSSE_PAR_LE_HAUT_3;
+						break;
+					case POUSSE_PAR_LE_HAUT_3:
 						sprite.position.y = occ->position.y + 10;
 						sprite.position.x = occ->position.x;
+						occ->etat = IMMOBILE;
 						break;
 					default:
 						sprite.position = occ->position;
 						break;
 					}
-
-					occ->etat = IMMOBILE;
                     
                     sprite.text_id = n->textures[text_id].id_text;
 
