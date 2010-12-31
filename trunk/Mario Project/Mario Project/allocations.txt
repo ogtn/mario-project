@@ -1,9 +1,9 @@
 
 ==========================[Fuites de memoire]==========================
-@01C5C6D8:	11336 octets
+@01E5C6D8:	11336 octets
 Allocation:	texte.c	ligne	13
 -----------------------------------------------------------------------
-@01C5B4D0:	30 octets
+@01E5B4D0:	30 octets
 Allocation:	keystate.c	ligne	19
 
 ========================[Resume de l'execution]========================
@@ -11,4 +11,4 @@ Aucun debordement de tampon detecte
 ATTENTION: 2 fuites de memoire pour un total de 11366 octets (0Mo) ont ete detectees
 Aucune tentative de desallocation de pointeur NULL detectee
 Aucune tentative de desallocation de pointeur inconnu ou deja desalloue detectee
-Consomation maximale de ram: 53452 octets (0Mo)
+Consomation maximale de ram: 53092 octets (0Mo)

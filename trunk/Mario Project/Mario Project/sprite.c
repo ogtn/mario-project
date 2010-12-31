@@ -441,15 +441,16 @@ void draw_monstre(occ_monstre *monstre, Uint32 duree, Uint32 tps_transformation)
 
 	if(monstre->etat == M_MARCHE || monstre->etat == M_SORT_DU_TUYAU || (monstre->etat == M_RETRACTED && monstre->vitesse.x != 0))
 	{
+		if(!tps_transformation)
+		{
+			if(monstre->etat == M_RETRACTED)
+				phase = (duree % v_anim) / (v_anim / (monstre->type_monstre->nb_sprites_carapace - 1));
+			else
+				phase = (duree % v_anim) / (v_anim / (monstre->type_monstre->nb_sprites_marche));
 
-		if(!tps_transformation && monstre->etat == M_RETRACTED)
- 			phase = (duree % v_anim) / (v_anim / (monstre->type_monstre->nb_sprites_carapace - 1));
-		else
- 			phase = (duree % v_anim) / (v_anim / (monstre->type_monstre->nb_sprites_marche));
-
-		gauche += phase * (float)1 / nb_sprites_max;
-		droite += phase * (float)1 / nb_sprites_max;
-
+			gauche += phase * (float)1 / nb_sprites_max;
+			droite += phase * (float)1 / nb_sprites_max;
+		}
 	}
 	
 	draw_sprite((int)monstre->position.x, (int)monstre->position.y, monstre->type_monstre->taille.x, monstre->type_monstre->taille.y, monstre->type_monstre->texture, gauche, droite, bas, haut);
@@ -461,14 +462,14 @@ void draw_projectile(occ_projectile* proj, Uint32 duree) {
 	float gauche = 0, droite = (float) 1 / proj->type_projectile->nb_sprites_marche, haut = 0, bas = 0, temp;
 	int phase = 0, i, v_anim;
 
-	if(!proj->tps_apparition && proj->tps_vie){
-
+	if(!proj->tps_apparition && proj->tps_vie)
+	{
 		v_anim = proj->type_projectile->v_anim_marche;
 
 		phase = (duree % v_anim) / (v_anim / proj->type_projectile->nb_sprites_marche);
 
 		haut = 1;
-		bas = (proj->type_projectile->nb_sprites_mort == 0)?0.0F:0.5F;
+		bas = (proj->type_projectile->nb_sprites_mort == 0)? 0.0F : 0.5F;
 
 		gauche += phase * (float)1 / proj->type_projectile->nb_sprites_marche;
 		droite += phase * (float)1 / proj->type_projectile->nb_sprites_marche;
@@ -482,15 +483,17 @@ void draw_projectile(occ_projectile* proj, Uint32 duree) {
 		}
 
 	}
-	else if(proj->tps_disparition && !proj->tps_vie){
-
+	else if(proj->tps_disparition && !proj->tps_vie)
+	{
 		phase = proj->tps_disparition / proj->type_projectile->nb_sprites_mort;
 
 		haut = 0.5;
 		bas = 0;
 
-		for(i = 1; i <= proj->type_projectile->nb_sprites_mort; i++){
-			if( i * proj->type_projectile->v_anim_mort / proj->type_projectile->nb_sprites_mort > phase){
+		for(i = 1; i <= proj->type_projectile->nb_sprites_mort; i++)
+		{
+			if( i * proj->type_projectile->v_anim_mort / proj->type_projectile->nb_sprites_mort > phase)
+			{
 				gauche = (float) (i - 1) / proj->type_projectile->nb_sprites_marche;
 				droite = (float) i / proj->type_projectile->nb_sprites_marche;
 				break;
