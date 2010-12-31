@@ -2451,7 +2451,7 @@ void solve_collisions_item(occ_item* it, niveau* n, Uint32 duree)
 {
 	/* Variables pour l'initialisation */
 	coordi bloc_bg, bloc_hd;
-	int i, j;
+	int i, j, collision_bloc_releve = 0;
 
 	/* Variables pour la detection et la résolution de collisions */
 	int phys_bloc_actuel;
@@ -2521,16 +2521,40 @@ void solve_collisions_item(occ_item* it, niveau* n, Uint32 duree)
 							{
 
 								it->position.y = (float)bloc.position.y + bloc.taille.y;
-								it->vitesse.y = it->type_item->vitesse.y;
+								
+								/* Si une collision a déjà eu lieu avec un bloc relevé, on ne remodifie pas la vitesse verticale */
+								if(!collision_bloc_releve)
+									it->vitesse.y = it->type_item->vitesse.y;
 
+								/* Cas où l'item entre en collision avec un bloc tappé par Mario */
  								if(n->occ_blocs[i][j]->etat == POUSSE_PAR_LE_HAUT)
 								{
-									it->vitesse.y = VIT_SORTIE_BLOC * 7;
+									/* Si jamais la collision a lieu un peu avant que l'item arrive au milieu du bloc */
+									if(it->vitesse.x > 0)
+									{
+										if(n->occ_blocs[i][j]->position.x > item.position.x + item.taille.x / 2)
+										{
+											it->vitesse.x = -it->vitesse.x;
+											it->position.x = (float)it->position.x + it->vitesse.x * duree;
+										}
+									}
+									else
+									{
+										if(n->occ_blocs[i][j]->position.x + n->taille_blocs.x / 2 < item.position.x)
+										{
+											it->vitesse.x = -it->vitesse.x;
+											it->position.x = (float)it->position.x + it->vitesse.x * duree;
+										}
+									}
+
+									it->vitesse.y = VIT_SORTIE_BLOC * 8;
+									collision_bloc_releve = 1;
 								}
 								
 
-								// MAJ du carré projectile
+								// MAJ du carré item
 								item.position.y = it->position.y;
+								item.position.x = it->position.x;
 								determinate_collision(item, bloc, &collision);
 							}
 
@@ -2556,7 +2580,7 @@ void solve_collisions_item(occ_item* it, niveau* n, Uint32 duree)
 								|| collision.type_collision == PENTE_PAR_LA_DROITE))
 							{
 
-								/* Calcul de la nouvelle ordonnée du personnage 
+								/* Calcul de la nouvelle ordonnée de l'item 
 								avec l'équation de la pente et en fonction du bloc */
 								if(phys_bloc_actuel == PENTE_45_GAUCHE)
 								{
@@ -2586,7 +2610,7 @@ void solve_collisions_item(occ_item* it, niveau* n, Uint32 duree)
 								it->position.y = hauteur;
 								it->vitesse.y = it->vitesse.y;
 
-								// MAJ du carré projectile
+								// MAJ du carré item
 								item.position.y = it->position.y;
 								determinate_collision(item, bloc, &collision);
 							}
@@ -2601,7 +2625,7 @@ void solve_collisions_item(occ_item* it, niveau* n, Uint32 duree)
 								it->vitesse.y = 0;
 								it->position.y = (float)bloc.position.y - bloc.taille.y - it->type_item->taille.y;
 
-								// MAJ du carré projectile
+								// MAJ du carré item
 								item.position.y = it->position.y;
 								determinate_collision(item, bloc, &collision);
 							}
@@ -2629,7 +2653,7 @@ void solve_collisions_item(occ_item* it, niveau* n, Uint32 duree)
 								&& collision.type_collision == PAR_LA_DROITE)
 							{
 								it->vitesse.x = -it->vitesse.x;
-								it->position.x = (float)it->position.x + it->vitesse.x * duree;
+								it->position.x = (float)it->position.x + it->vitesse.x * duree;								
 
 								// MAJ du carré item
 								item.position.x = it->position.x;

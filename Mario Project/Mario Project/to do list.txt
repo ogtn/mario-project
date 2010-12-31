@@ -92,29 +92,6 @@ _"distributeurs" de pieces (bloc qui donne 10s de pieces à partir du premier cou
 -les blocs [?] et les blocs cassables doivent l'etre aussi par le coté, en recevant une carapace de koopa
 
 _les blocs cassables et les blocs [?] doivent remonter quand on tape dedans, ça permet d'ailleur de faire sauter les champignons qui sont au dessus, de tuer un enemi, ou de prendre une piece.
--> marche à suivre pour réaliser ça :
-	- ajouter des fichiers blocs.c et blocs.h, afin de séparer bloc et niveau
-	- créer les types pour gérer une liste d'occurences de bloc
-		-> typedef struct occ_bloc
-		{
-		coordi position;
-		bloc* bloc_modele;
-		bloc* bloc_alternatif;
-		item* item;
-		}occ_bloc;
-
-		typedef struct elem_bloc
-		{
-			occ_bloc* bloc;
-			struct elem_bloc* suivant;
-		}
-
-		typedef struct liste_bloc
-		{
-			elem_bloc* element;
-			int nb_elements;
-		}
-	- modifier la grille pour que chaque case pointe sur une occurence de bloc
 
 	
 _possibilité de mettre le jeu en pause (ou se trouverait le menu de sauvegarde?)
@@ -126,13 +103,6 @@ _editeur de niveau le plus complet possible
 	*un systeme d'info bulle pour les boutons
 	
 _pouvoir courrir sans tomber sur un sol qui comporte un trou d'un bloc (une approximation identique existe sur l'autre axe)
-
-
-
-
-
-
-
 
 
 /*============================================================================*/
