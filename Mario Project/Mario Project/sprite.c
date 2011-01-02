@@ -404,7 +404,7 @@ void draw_perso(perso *perso, Uint32 duree)
 
 }
 
-void draw_monstre(occ_monstre *monstre, Uint32 duree, Uint32 tps_transformation)
+void draw_monstre(occ_monstre *monstre, Uint32 duree)
 {
 	float gauche = 0, droite = 0, haut = 0, bas = 0, temp;
 	int v_anim = monstre->type_monstre->v_anim, phase, nb_etats_presents = M_NB_ETATS - m_nb_etats_absents(monstre->type_monstre);
@@ -421,8 +421,8 @@ void draw_monstre(occ_monstre *monstre, Uint32 duree, Uint32 tps_transformation)
 		case M_MORT_PAR_PROJ :
 			gauche = 0;
 			droite = (float)1 / nb_sprites_max;
-			haut = 0;
-			bas = 1 - (float) 2 / nb_etats_presents; // inversement du haut et bas pour renverser le sprite
+			haut = 0;								//
+			bas = 1 - (float) 2 / nb_etats_presents;// inversement du haut et bas pour renverser le sprite
 			break;
 		case M_MORT_PAR_SAUT: case M_RETRACTED: case M_RETRACTED_PORTED:
 			gauche = 0;
@@ -441,23 +441,21 @@ void draw_monstre(occ_monstre *monstre, Uint32 duree, Uint32 tps_transformation)
 
 	if(monstre->etat == M_MARCHE || monstre->etat == M_SORT_DU_TUYAU || (monstre->etat == M_RETRACTED && monstre->vitesse.x != 0))
 	{
-		if(!tps_transformation)
-		{
-			if(monstre->etat == M_RETRACTED)
-				phase = (duree % v_anim) / (v_anim / (monstre->type_monstre->nb_sprites_carapace - 1));
-			else
-				phase = (duree % v_anim) / (v_anim / (monstre->type_monstre->nb_sprites_marche));
+		if(monstre->etat == M_RETRACTED)
+			phase = (duree % v_anim) / (v_anim / (monstre->type_monstre->nb_sprites_carapace - 1));
+		else
+			phase = (duree % v_anim) / (v_anim / (monstre->type_monstre->nb_sprites_marche));
 
-			gauche += phase * (float)1 / nb_sprites_max;
-			droite += phase * (float)1 / nb_sprites_max;
-		}
+		gauche += phase * (float)1 / nb_sprites_max;
+		droite += phase * (float)1 / nb_sprites_max;
 	}
 	
 	draw_sprite((int)monstre->position.x, (int)monstre->position.y, monstre->type_monstre->taille.x, monstre->type_monstre->taille.y, monstre->type_monstre->texture, gauche, droite, bas, haut);
 
 }
 
-void draw_projectile(occ_projectile* proj, Uint32 duree) {
+void draw_projectile(occ_projectile* proj, Uint32 duree)
+{
 
 	float gauche = 0, droite = (float) 1 / proj->type_projectile->nb_sprites_marche, haut = 0, bas = 0, temp;
 	int phase = 0, i, v_anim;
@@ -465,7 +463,6 @@ void draw_projectile(occ_projectile* proj, Uint32 duree) {
 	if(!proj->tps_apparition && proj->tps_vie)
 	{
 		v_anim = proj->type_projectile->v_anim_marche;
-
 		phase = (duree % v_anim) / (v_anim / proj->type_projectile->nb_sprites_marche);
 
 		haut = 1;
@@ -498,7 +495,7 @@ void draw_projectile(occ_projectile* proj, Uint32 duree) {
 				droite = (float) i / proj->type_projectile->nb_sprites_marche;
 				break;
 			}
-		}	
+		}
 	}
 
 	draw_sprite((int)proj->position.x, (int)proj->position.y, proj->type_projectile->taille.x, proj->type_projectile->taille.y, proj->type_projectile->texture, gauche, droite, bas, haut);
@@ -517,18 +514,19 @@ void draw_HUD(perso* p) {
 	screen_printf_dbg("Temps restant : %d\n", p->hud->time);
 }
 
-void draw_item(occ_item* item, Uint32 duree) {
+void draw_item(occ_item* item, Uint32 duree)
+{
 
 	int phase;
 	float gauche = 0, droite = (float) 1 / item->type_item->nb_sprites;
 	
-	if(item->type_item->nb_sprites > 1) 
+	if(item->type_item->nb_sprites > 1)
 	{
+
 		phase = (duree % 500) / (500 / (item->type_item->nb_sprites));
 
 		gauche += phase * (float)1 / item->type_item->nb_sprites;
 		droite += phase * (float)1 / item->type_item->nb_sprites;
-
 
 		draw_sprite(
 			(int)item->position.x, 

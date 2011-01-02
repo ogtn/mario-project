@@ -1261,7 +1261,7 @@ void draw_main(niveau *lvl, perso **persos, ecran e, Uint32 duree)
     glTranslated(-e.scroll.x, -e.scroll.y, 0);
 
     /* Dessin des objets en arriere plan */
-    draw_objects(lvl, duree);
+	draw_objects(lvl, duree);
 
 	/* Dessin des arrivées */
 	for(i = 0; i < lvl->nb_finish; i++)
@@ -1284,7 +1284,7 @@ void draw_main(niveau *lvl, perso **persos, ecran e, Uint32 duree)
 	}
 
 	/* Dessin du plan du personnage */
-    draw_blocs(lvl, e, duree);
+	draw_blocs(lvl, e, duree);
 	
 	/* Dessin des monstres */
 	for(i = 0; i < lvl->nb_monstres; i++)
@@ -1293,7 +1293,7 @@ void draw_main(niveau *lvl, perso **persos, ecran e, Uint32 duree)
 		while(tmp_monstre != NULL)
 		{
 			if(tmp_monstre->occ_monstre->actif)
-				draw_monstre(tmp_monstre->occ_monstre, duree, persos[0]->tps_transformation);
+				draw_monstre(tmp_monstre->occ_monstre, duree);
 			tmp_monstre = tmp_monstre->suivant;
 		}
 	}
@@ -1369,7 +1369,7 @@ void draw_main_options(niveau *lvl, ecran e, Uint32 duree, int bck, int blocs, i
     glTranslated(-e.scroll.x, -e.scroll.y, 0);
 
     if(objets)
-        draw_objects(lvl, duree);
+        draw_objects(lvl, duree, 0);
 
     /* Dessin des items */
 	for(i = 0; i < lvl->nb_items; i++)
@@ -1377,13 +1377,13 @@ void draw_main_options(niveau *lvl, ecran e, Uint32 duree, int bck, int blocs, i
 		elem_item *tmp_item = lvl->items[i]->occ_items->item;
 		while(tmp_item != NULL)
 		{
-			draw_item(tmp_item->occ_item, duree);
+			draw_item(tmp_item->occ_item, duree, 0);
 			tmp_item = tmp_item->suivant;
 		}
 	}
 
     if(blocs)
-        draw_blocs(lvl, e, duree);
+        draw_blocs(lvl, e, duree, 0);
 
     /* Dessin des monstres */
 	for(i = 0; i < lvl->nb_monstres; i++)
@@ -1606,8 +1606,8 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
 
 					if(text_id == 1)
 					{
-						phase = (duree % V_ANIM_BLOC_SPEC) / (V_ANIM_BLOC_SPEC / (nb_sprites.x));
-
+						phase = (duree % V_ANIM_BLOC_SPEC) / (V_ANIM_BLOC_SPEC / nb_sprites.x);
+						
 						sprite.point_bg.x = (float)1 / nb_sprites.x * (occ->bloc_actuel->coord_sprite.x + phase);
 						sprite.point_bg.y = (float)1 / nb_sprites.y * occ->bloc_actuel->coord_sprite.y;
 						sprite.point_hd.x = (float)1 / nb_sprites.x * (occ->bloc_actuel->coord_sprite.x + phase + 1);

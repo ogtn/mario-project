@@ -139,6 +139,7 @@ void update_time(world *w)
 
 	w->temps_prec = w->temps_actuel;
 	w->temps_actuel = SDL_GetTicks();
+	w->temps_ecoule_prec = w->temps_ecoule;
 	w->temps_ecoule = (w->temps_actuel - w->temps_prec);
 
 	/* Calcul des fps */
