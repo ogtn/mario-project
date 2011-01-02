@@ -940,12 +940,8 @@ void charger_niveau_test(niveau *n)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[0], NULL);
 			else if (i == 0)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[2], NULL);
-			else if (i > 11 && i < 15 && j == 6)
+			else if (i > 10 && i < 16 && (j == 6 || j == 7))
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[18], NULL);
-			else if (i == 11 && j == 7)
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[17], &n->blocs[19]);
-			else if (i == 15 && j == 7)
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[17], &n->blocs[19]);
 			else if (i == 1 && j == 6)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[17], &n->blocs[19]);
 			/*else if (i == 17 && j == 6)
@@ -1565,7 +1561,7 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
 
     for(i = debut_x; i < fin_x; i++)
     {	
-        for(j = debut_y; j < fin_y; j++)
+        for(j = fin_y - 1; j >= debut_y; j--)
         {
             occ = n->occ_blocs[i][j];
 			
@@ -1580,23 +1576,23 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
 					switch(occ->etat)
 					{
 					case POUSSE_PAR_LA_DROITE:
-						sprite.position.x = occ->position.x + occ->compteur_etat * 3;
+						sprite.position.x = occ->position.x + occ->compteur_etat * 2;
 						sprite.position.y = occ->position.y;
-						occ->compteur_etat = (occ->compteur_etat + 1) % 4;
+						occ->compteur_etat = (occ->compteur_etat + 1) % 6;
 						break;
 					case POUSSE_PAR_LA_GAUCHE:
-						sprite.position.x = occ->position.x - occ->compteur_etat * 3;
+						sprite.position.x = occ->position.x - occ->compteur_etat * 2;
 						sprite.position.y = occ->position.y;
-						occ->compteur_etat = (occ->compteur_etat + 1) % 4;
+						occ->compteur_etat = (occ->compteur_etat + 1) % 6;
 						break;
 					case POUSSE_PAR_LE_HAUT:
-						sprite.position.y = occ->position.y = occ->position.y + occ->compteur_etat * 3;
+						sprite.position.y = occ->position.y + occ->compteur_etat * 2;
 						sprite.position.x = occ->position.x;
-						occ->compteur_etat = (occ->compteur_etat + 1) % 4;
+						occ->compteur_etat = (occ->compteur_etat + 1) % 6;
 						break;
 					default:
-						sprite.position.x = occ->position.x = i * n->taille_blocs.x;
-						sprite.position.y = occ->position.y = j * n->taille_blocs.y;
+						sprite.position.x = i * n->taille_blocs.x;
+						sprite.position.y = j * n->taille_blocs.y;
 						break;
 					}
 
