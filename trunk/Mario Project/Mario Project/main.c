@@ -219,7 +219,7 @@ void jouer(world *w_)
         maj_keystate(w->keystate, &continuer);
 
         /* Test de collisions */
-        if(!w->persos[0]->tps_transformation && !w->persos[0]->tps_mort)
+        if(perso_mort_ou_transforme(w))
 		{
 			/* Mise à jour de toutes les positions des objets/enemis */
 			main_collisions(w);
@@ -254,7 +254,7 @@ void jouer(world *w_)
         /* audio? */
 
         /* Gestion du temps */
-        if(!w->persos[0]->tps_transformation && !w->persos[0]->tps_mort)
+        if(perso_mort_ou_transforme(w))
 		{
 			update_time(w);
 		}
