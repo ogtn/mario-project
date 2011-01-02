@@ -239,3 +239,19 @@ void check_lives_finish(world *w, int* continuer)
 	if(!sont_vivants)
 		*continuer = 0;
 }
+
+int perso_mort_ou_transforme(world* w)
+{
+	int i, res = 0;
+
+	for(i = 0; i < w->nb_persos; i++)
+	{
+		if(!w->persos[i]->tps_transformation && !w->persos[i]->tps_mort)
+		{
+			res = 1;
+			break;
+		}
+	}
+
+	return res;
+}

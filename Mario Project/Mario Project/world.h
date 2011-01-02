@@ -106,6 +106,9 @@ void update_taille_fenetre(world *w);
 /* Vérification du nombre de vies */
 void check_lives_finish(world *w, int* continuer);
 
+/* Teste si un des personnages est mort ou se transforme */
+int perso_mort_ou_transforme(world* w);
+
 /* Fonctions de main.c, à placer ailleurs peut etre */
 void init_SDL(int x, int y);
 void init_OpenGL(int x, int y);
