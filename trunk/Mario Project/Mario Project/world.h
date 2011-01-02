@@ -48,6 +48,7 @@ _temps_fps: utilisé pour calculer les FPS
 _temps_actuel: tout est dans le nom...
 _temps_prec: temps à l'image precedente
 _temps_ecoule: difference entre les deux images
+_temps_ecoule_prec: différence calculée entre les deux dernières images
 _fps: fps...
 _frames_calculees: nombre d'images calculees depuis le dernier calcul de fps
 _ecran: structure ecran pour la gestion du scrolling notament
@@ -65,6 +66,7 @@ typedef struct world
     Uint32 temps_actuel;
     Uint32 temps_prec;
     Uint32 temps_ecoule;
+	Uint32 temps_ecoule_prec;
     int fps;
     int frames_calculees;
     ecran ecran;

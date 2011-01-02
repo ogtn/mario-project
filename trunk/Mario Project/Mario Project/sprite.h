@@ -105,7 +105,7 @@ void draw_HUD(perso* p);
 void draw_item(occ_item* item, Uint32 duree);
 
 /* dessine les différents sprites du perso selon son etat actuel */
-void draw_monstre(occ_monstre * monstre, Uint32 duree, Uint32 tps_transformation);
+void draw_monstre(occ_monstre * monstre, Uint32 duree);
 
 /* Dessine les différents sprites d'un projectile */
 void draw_projectile(occ_projectile* proj, Uint32 duree);
