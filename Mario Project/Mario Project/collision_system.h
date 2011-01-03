@@ -182,4 +182,7 @@ void pause_projectile(occ_projectile* projectile, ecran e);
 /* MAJ de l'activité d'un item */
 void pause_item(occ_item* item, ecran e);
 
+/* Compte les points */
+void compte_points(perso* p, occ_monstre* montre);
+
 #endif

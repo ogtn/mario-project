@@ -356,7 +356,7 @@ void init_HUD(perso* p)
 	p->hud->nb_pieces = 0;
 	p->hud->nb_vies = 3;
 	p->hud->nom_niveau = NULL;
-	p->hud->reserve_item = NULL;
+	//p->hud->reserve_item = NULL;
 	p->hud->score = 0;
 	p->hud->nb_monstres_tues = 0;
 	p->hud->nb_monstres_tues_carapace = 0;

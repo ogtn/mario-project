@@ -262,7 +262,7 @@ void jouer(world *w_)
 		temps_rendu = SDL_GetTicks() - temps_rendu;
 		//if(temps_rendu > 17)
 		//{
-		//	 temps_rendu = SDL_GetTicks();
+		//	temps_rendu = SDL_GetTicks();
 
 		//	/* Dessin de la scene */
 		//	draw_main(w->niveau, w->persos, w->ecran, w->temps_actuel);
@@ -278,8 +278,8 @@ void jouer(world *w_)
 		if(temps_rendu < 17)
 			pause(17 - temps_rendu);
 
-       screen_flush();
-	   SDL_GL_SwapBuffers();
+        screen_flush();
+	    SDL_GL_SwapBuffers();
     }
 
     if(w_ == NULL)

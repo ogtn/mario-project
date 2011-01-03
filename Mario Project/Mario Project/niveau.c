@@ -109,7 +109,7 @@ niveau* init_niveau(niveau *n)
 /* ajouter un appel à void liberer_textures_niveau(niveau*n) dedans */
 niveau *free_niveau(niveau *n)
 {
-	int i;
+	int i, j;
 
 	if(n == NULL) 
 		return NULL;
@@ -120,11 +120,14 @@ niveau *free_niveau(niveau *n)
 		for(i = 0; i < n->nb_items; i++)
 		{
 			elem_item* item_suiv = NULL;
-			while(n->items[i]->occ_items->item != NULL) {
+			while(n->items[i]->occ_items->item != NULL)
+			{
 				item_suiv = n->items[i]->occ_items->item->suivant;
 				supprime_item(n->items[i]->occ_items, n->items[i]->occ_items->item->occ_item);
 				n->items[i]->occ_items->item = item_suiv;
 			}
+			free(n->items[i]->occ_items);
+			free(n->items[i]);
 		}
 		free(n->items);
 	}
@@ -157,6 +160,7 @@ niveau *free_niveau(niveau *n)
 		free(n->projectiles);
 	}
 
+	/* Libération finishes */
 	if(n->finishes != NULL)
 	{
 		free(n->finishes);
@@ -167,15 +171,15 @@ niveau *free_niveau(niveau *n)
 	{
 		for(i = 0; i < n->taille.x; i++)
 		{
-			if(n->occ_blocs[i] != NULL) 
-				free(n->occ_blocs[i]);
+			for(j = 0; j < n->taille.y; j++)
+			{
+				free(n->occ_blocs[i][j]);
+			}
+			free(n->occ_blocs[i]);
 		}
-
 		free(n->occ_blocs);
-	}
-
-	if(n->blocs != NULL)
 		free(n->blocs);
+	}
 
 	/* Libération des objets */
 	if(n->id_objets != NULL)
@@ -941,7 +945,7 @@ void charger_niveau_test(niveau *n)
 			else if (i == 0)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[2], NULL);
 			else if (i > 10 && i < 16 && (j == 6 || j == 7))
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[18], NULL);
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[18], &n->blocs[19]);
 			else if (i == 1 && j == 6)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[17], &n->blocs[19]);
 			/*else if (i == 17 && j == 6)
@@ -1161,9 +1165,9 @@ void charger_niveau_test(niveau *n)
 	n->blocs[18].coord_sprite.x = 0;
 	n->blocs[18].coord_sprite.y = 4;
 	n->blocs[18].phys = BLOC_SPEC;
-	n->blocs[18].est_vide = VRAI;
-	n->blocs[18].est_cassable = VRAI;
-	n->blocs[18].item = NULL;
+	n->blocs[18].est_vide = FAUX;
+	n->blocs[18].est_cassable = FAUX;
+	n->blocs[18].item = n->items[0];
 
 	/* Boc incassable */
 	n->blocs[19].texture = 1;
@@ -1369,7 +1373,7 @@ void draw_main_options(niveau *lvl, ecran e, Uint32 duree, int bck, int blocs, i
     glTranslated(-e.scroll.x, -e.scroll.y, 0);
 
     if(objets)
-        draw_objects(lvl, duree, 0);
+        draw_objects(lvl, duree);
 
     /* Dessin des items */
 	for(i = 0; i < lvl->nb_items; i++)
@@ -1377,13 +1381,13 @@ void draw_main_options(niveau *lvl, ecran e, Uint32 duree, int bck, int blocs, i
 		elem_item *tmp_item = lvl->items[i]->occ_items->item;
 		while(tmp_item != NULL)
 		{
-			draw_item(tmp_item->occ_item, duree, 0);
+			draw_item(tmp_item->occ_item, duree);
 			tmp_item = tmp_item->suivant;
 		}
 	}
 
     if(blocs)
-        draw_blocs(lvl, e, duree, 0);
+        draw_blocs(lvl, e, duree);
 
     /* Dessin des monstres */
 	for(i = 0; i < lvl->nb_monstres; i++)
@@ -1391,7 +1395,7 @@ void draw_main_options(niveau *lvl, ecran e, Uint32 duree, int bck, int blocs, i
 		elem_monstre *tmp = lvl->monstres[i]->occ_monstres->monstre;
 		while(tmp != NULL)
 		{
-			draw_monstre(tmp->occ_monstre, duree, 0);
+			draw_monstre(tmp->occ_monstre, duree);
 			tmp = tmp->suivant;
 		}
 	}

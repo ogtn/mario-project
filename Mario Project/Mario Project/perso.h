@@ -61,7 +61,7 @@ typedef struct HUD
 	unsigned int score;						/* score atteint par le personnage */
 	unsigned int time;						/* temps restant au personnage pour terminer le niveau */
 	char *nom_niveau;						/* nom du niveau dans lequel se trouve le niveau */
-	item* reserve_item;						/* item que le personnage possède en réserve */	
+	struct item* reserve_item;				/* item que le personnage possède en réserve */	
 	unsigned int nb_monstres_tues;			/* variable permettant de calculer le score du personnage en sautant sur les monstres*/
 	unsigned int nb_monstres_tues_carapace;	/* variable permettant de calculer le score du personnage en lançant une carapace */
 	int tab_points[TAB_POINTS_LENGTH];		/* tableau correspondant à la suite des points lorsque le personnage tue des monstres */

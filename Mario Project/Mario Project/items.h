@@ -25,7 +25,6 @@
 #define charger_champipoison() charger_item("champi_poison", CHAMPI_POISON);
 #define charger_etoile() charger_item("etoile", ETOILE);
 
-
 #define VIT_SORTIE_BLOC		0.05F
 
 enum {
@@ -49,7 +48,7 @@ typedef enum {
 /******************************************************************************/
 
 #include "texture.h"
-
+#include "perso.h"
 
 /******************************************************************************/
 /*================================[STRUCTURES]================================*/
@@ -64,6 +63,7 @@ typedef struct occ_item {
 	int	tps_sortie_bloc;					/* temps qu'il reste avant que l'item sorte d'un élément du décor */
 	int actif;								/* indique si l'item est actif (dans l'écran) */
 	struct item* type_item;					/* pointeur sur l'item général de l'occurence */
+	struct perso** perso_destine;
 }occ_item;
 
 /* Structure elem_item */
