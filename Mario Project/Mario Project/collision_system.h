@@ -110,7 +110,7 @@ void MAJ_collision_perso(perso *perso, niveau* lvl, keystate* keystate, Uint32 d
 void MAJ_collision_monstre(occ_monstre* monstre, ecran e, Uint32 duree);
 
 /* MAJ des positions et vitesses de l'item */
-void MAJ_collision_item(occ_item* item, ecran e, Uint32 duree);
+int MAJ_collision_item(occ_item* item, ecran e, Uint32 duree);
 
 /* MAJ des positions et vitesses des projectiles */
 void MAJ_collision_projectile(occ_projectile* projectile, ecran e, Uint32 duree);

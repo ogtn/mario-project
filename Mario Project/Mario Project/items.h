@@ -63,7 +63,6 @@ typedef struct occ_item {
 	int	tps_sortie_bloc;					/* temps qu'il reste avant que l'item sorte d'un élément du décor */
 	int actif;								/* indique si l'item est actif (dans l'écran) */
 	struct item* type_item;					/* pointeur sur l'item général de l'occurence */
-	struct perso** perso_destine;
 }occ_item;
 
 /* Structure elem_item */

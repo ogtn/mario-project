@@ -196,42 +196,52 @@ void main_collisions(world *w)
 	/* PARTIE ITEMS */
 	for(i = 0; i < w->niveau->nb_items; i++)
 	{
-		elem_item *item_actuel = w->niveau->items[i]->occ_items->item;
+		elem_item *item_actuel = w->niveau->items[i]->occ_items->item, *precedent = NULL;
 		while(item_actuel != NULL)
 		{
+			int item_suppr;
 			i_bis = item_actuel->occ_item;
 
-			MAJ_collision_item(i_bis, w->ecran, w->temps_ecoule);
+			item_suppr = MAJ_collision_item(i_bis, w->ecran, w->temps_ecoule);
 
-			solve_collisions_item(i_bis, w->niveau, w->temps_ecoule);
-
-			diff_x = abs((int)i_bis->position_prec.x - (int)i_bis->position.x);
-			diff_y = abs((int)i_bis->position_prec.y - (int)i_bis->position.y);
-
-			/* Teste si il y a beaucoup de pixels d'écart entre les 2 positions */
-			if(diff_x < w->niveau->taille_blocs.x && diff_y < w->niveau->taille_blocs.y)
+			/* Si l'item a été supprimé, on revient au précédent dans la liste */
+			if(item_suppr)
 			{
-				/* Si non, on laisse comme c'était */
-				*item_actuel->occ_item = *i_bis;
-
+				item_actuel = precedent;
 			}
 			else
 			{
+				solve_collisions_item(i_bis, w->niveau, w->temps_ecoule);
 
-				/* Si oui, on stocke la différence */
-				nb_images_inter = max(diff_x / w->niveau->taille_blocs.x, diff_y / w->niveau->taille_blocs.y);
+				diff_x = abs((int)i_bis->position_prec.x - (int)i_bis->position.x);
+				diff_y = abs((int)i_bis->position_prec.y - (int)i_bis->position.y);
 
-				/* Pour chaque image intermédiaire de chaque perso, on teste si il n'y a pas eu de collision entre temps */
-				for(j = 0; j <= nb_images_inter; j++)
+				/* Teste si il y a beaucoup de pixels d'écart entre les 2 positions */
+				if(diff_x < w->niveau->taille_blocs.x && diff_y < w->niveau->taille_blocs.y)
 				{
-					MAJ_collision_item(item_actuel->occ_item, w->ecran, w->temps_ecoule / (nb_images_inter + 1));
+					/* Si non, on laisse comme c'était */
+					*item_actuel->occ_item = *i_bis;
 
-					/* Fonction résolvant les collisions */
-					solve_collisions_item(item_actuel->occ_item, w->niveau, w->temps_ecoule);
+				}
+				else
+				{
+
+					/* Si oui, on stocke la différence */
+					nb_images_inter = max(diff_x / w->niveau->taille_blocs.x, diff_y / w->niveau->taille_blocs.y);
+
+					/* Pour chaque image intermédiaire de chaque perso, on teste si il n'y a pas eu de collision entre temps */
+					for(j = 0; j <= nb_images_inter; j++)
+					{
+						MAJ_collision_item(item_actuel->occ_item, w->ecran, w->temps_ecoule / (nb_images_inter + 1));
+
+						/* Fonction résolvant les collisions */
+						solve_collisions_item(item_actuel->occ_item, w->niveau, w->temps_ecoule);
+					}
 				}
 			}
-
-			item_actuel = item_actuel->suivant;
+			precedent = item_actuel;
+			if(precedent != NULL)
+				item_actuel = item_actuel->suivant;
 		}
 	}
 }
@@ -406,7 +416,7 @@ void MAJ_collision_monstre(occ_monstre* monstre, ecran e, Uint32 duree) {
 	}
 }
 
-void MAJ_collision_item(occ_item* item, ecran e, Uint32 duree) {
+int MAJ_collision_item(occ_item* item, ecran e, Uint32 duree) {
 
 	pause_item(item, e);
 
@@ -423,11 +433,10 @@ void MAJ_collision_item(occ_item* item, ecran e, Uint32 duree) {
 		{
 			if(item->tps_sortie_bloc <= 0)
 			{
-				if(item->perso_destine != NULL)
+				if(item->type_item->nom == PIECE)
 				{
-					prend_item(*(item->perso_destine), item->type_item->nom);
 					supprime_item(item->type_item->occ_items, item);
-					return;
+					return 1;
 				}
 				else
 				{
@@ -450,6 +459,7 @@ void MAJ_collision_item(occ_item* item, ecran e, Uint32 duree) {
 		item->position.x += item->vitesse.x * duree;
 		item->position.y += item->vitesse.y * duree;
 	}
+	return 0;
 }
 
 void MAJ_collision_perso(perso *perso, niveau* lvl, keystate* keystate, Uint32 duree){
@@ -1013,7 +1023,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 									{
 										vitesse.y =  VIT_SORTIE_BLOC * 4;
 										item = new_occ_item(n->occ_blocs[i][j]->position.x, n->occ_blocs[i][j]->position.y, n->occ_blocs[i][j]->bloc_actuel->item, vitesse, SORT_DU_BLOC);
-										item->perso_destine = &p;
+										prend_item(p, item->type_item->nom);
 									}
 
 									item->tps_sortie_bloc = TPS_ITEM_SORT_BLOC;
