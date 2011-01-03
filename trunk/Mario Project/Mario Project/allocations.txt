@@ -1,9 +1,9 @@
 
 ==========================[Fuites de memoire]==========================
-@0205CA80:	11336 octets
+@01C2CA70:	11336 octets
 Allocation:	texte.c	ligne	13
 -----------------------------------------------------------------------
-@0205B878:	30 octets
+@01C2B620:	30 octets
 Allocation:	keystate.c	ligne	19
 
 ========================[Resume de l'execution]========================
@@ -11,4 +11,4 @@ Aucun debordement de tampon detecte
 ATTENTION: 2 fuites de memoire pour un total de 11366 octets (0Mo) ont ete detectees
 Aucune tentative de desallocation de pointeur NULL detectee
 Aucune tentative de desallocation de pointeur inconnu ou deja desalloue detectee
-Consomation maximale de ram: 53576 octets (0Mo)
+Consomation maximale de ram: 173380 octets (0Mo)
