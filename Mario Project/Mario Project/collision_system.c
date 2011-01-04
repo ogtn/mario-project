@@ -1012,33 +1012,44 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 
 									n->occ_blocs[i][j]->etat = POUSSE_PAR_LE_HAUT;
 									/* Si le bloc ne contient pas un pointeur sur un item,
-									l'item sera en fonction de la transformation actuelle 
-									du personnage */
-									if(n->occ_blocs[i][j]->bloc_actuel->item == NULL) {
+									l'item sera en fonction de la transformation actuelle du personnage */
+									if(n->occ_blocs[i][j]->bloc_actuel->item == NULL)
+									{
 										int index = (p->transformation == FIRE_MARIO)? p->transformation - 1: p->transformation;
 										vitesse.y = VIT_SORTIE_BLOC;
 										item = new_occ_item(n->occ_blocs[i][j]->position.x, n->occ_blocs[i][j]->position.y, n->items[index], vitesse, SORT_DU_BLOC);
+										FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_ITEM_BLOCK]);
 									}
 									else
 									{
 										vitesse.y =  VIT_SORTIE_BLOC * 4;
 										item = new_occ_item(n->occ_blocs[i][j]->position.x, n->occ_blocs[i][j]->position.y, n->occ_blocs[i][j]->bloc_actuel->item, vitesse, SORT_DU_BLOC);
 										prend_item(p, item->type_item->nom);
+
+										if((n->occ_blocs[i][j]->bloc_actuel->type_bloc & DISTRIBUTEUR_PIECE)
+ 											&& n->occ_blocs[i][j]->bloc_actuel->tps_piece == 0)
+										{
+											n->occ_blocs[i][j]->bloc_actuel->tps_piece = 50000;
+										}
 									}
 
 									item->tps_sortie_bloc = TPS_ITEM_SORT_BLOC;
-
 									item->type_item->occ_items = ajout_item(item->type_item->occ_items, item);
-									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_UNBREAKABLE_BLOCK]);
-									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_ITEM_BLOCK]);
 
-									/* Devient incassable */
-									n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif;//  A rendre plus propre
-									n->occ_blocs[i][j]->bloc_alternatif = NULL;
+									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_UNBREAKABLE_BLOCK]);
+
+									/* Devient incassable si ce n'est pas un ditributeur de pièce ou que son temps de distibution de pièces est écoulé*/
+									if(!(n->occ_blocs[i][j]->bloc_actuel->type_bloc & DISTRIBUTEUR_PIECE)
+										|| n->occ_blocs[i][j]->bloc_actuel->tps_piece < 0)
+									{
+										n->occ_blocs[i][j]->bloc_actuel->tps_piece = 0;
+										n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif;
+										n->occ_blocs[i][j]->bloc_alternatif = NULL;
+									}
 
 								}
 								else if(n->occ_blocs[i][j]->bloc_actuel->est_cassable && p->transformation >= SUPER_MARIO)
-								{	
+								{
 									/* Creation et ajout des 4 débris de blocs */
 									n->projectiles[0]->occ_projectiles = ajout_projectile(n->projectiles[0]->occ_projectiles, 
 										create_debris(n->projectiles[0], n->occ_blocs[i][j]->position.x, n->occ_blocs[i][j]->position.y, -n->projectiles[0]->vitesse.x, VITESSE_Y_EJECTION));
@@ -1956,21 +1967,21 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 		tuyau.est_bloc_pente = 0;
 		tuyau.hauteur_a_retirer = 0;
 
-		tuyau.position.x = n->tuyaux[i]->position.x * LARGEUR_BLOC;
-		tuyau.position.y = n->tuyaux[i]->position.y * LARGEUR_BLOC;
+		tuyau.position.x = n->tuyaux[i]->position.x * n->taille_blocs.x;
+		tuyau.position.y = n->tuyaux[i]->position.y * n->taille_blocs.y;
 
-		tuyau.position_prec.x = n->tuyaux[i]->position.x * LARGEUR_BLOC;
-		tuyau.position_prec.y = n->tuyaux[i]->position.y * LARGEUR_BLOC;
+		tuyau.position_prec.x = n->tuyaux[i]->position.x * n->taille_blocs.x;
+		tuyau.position_prec.y = n->tuyaux[i]->position.y * n->taille_blocs.y;
 
 		if(n->tuyaux[i]->sens_sortie == VERS_LE_HAUT ||
 			n->tuyaux[i]->sens_sortie == VERS_LE_BAS) {
-				tuyau.taille.x = (int)(2 * LARGEUR_BLOC);
-				tuyau.taille.y = (int)((n->tuyaux[i]->longueur + 1) * LARGEUR_BLOC);
+				tuyau.taille.x = (int)(2 * n->taille_blocs.x);
+				tuyau.taille.y = (int)((n->tuyaux[i]->longueur + 1) * n->taille_blocs.y);
 		}
 		else 
 		{
-			tuyau.taille.x = (int)((n->tuyaux[i]->longueur + 1) * LARGEUR_BLOC);
-			tuyau.taille.y = (int)(2 * LARGEUR_BLOC);
+			tuyau.taille.x = (int)((n->tuyaux[i]->longueur + 1) * n->taille_blocs.x);
+			tuyau.taille.y = (int)(2 * n->taille_blocs.y);
 		}
 
 		determinate_collision(monstre, tuyau, &collision);

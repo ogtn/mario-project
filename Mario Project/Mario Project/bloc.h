@@ -58,6 +58,9 @@ on enlève une certaine hauteur de l'ordonnée du point le plus à gauche de la pen
 
 
 /* Blocs avc lesquels Mario peut intéragir */
+#define CASSABLE				0x200000
+#define DISTRIBUTEUR_PIECE		0x400000
+#define EST_VIDE				0x800000
 #define BLOC_SPEC				(SOL | PLAFOND | MUR_A_DROITE | MUR_A_GAUCHE)
 
 typedef enum ETAT_BLOC
@@ -88,7 +91,9 @@ typedef struct bloc
 	int est_cassable;						/* indique si le bloc est cassable */
 	coordi coord_sprite;					/* les coordonnées du sprite dans la texture */
 	int phys;								/* Contient la physique du bloc sous la forme d'un flag */
+	int type_bloc;
 	item* item;								/* Contient l'item */
+	int tps_piece;							/* Temps restant avant qu'il ne reste qu'une pièce */
 } bloc;
 
 typedef struct occ_bloc

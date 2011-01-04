@@ -863,7 +863,7 @@ void charger_niveau_test(niveau *n)
 	strcpy(n->backgrounds[0].nom_text, "SnowHills");
 	
 	/* Layer tuyaux */
-	n->nb_tuyaux = 2;
+	n->nb_tuyaux = 1;
 	n->tuyaux = malloc(n->nb_tuyaux * sizeof(tuyau*));
 
 	n->tuyaux[0] = charger_tuyau("green_pipe", VERS_LA_DROITE);
@@ -876,7 +876,7 @@ void charger_niveau_test(niveau *n)
 
 	n->tuyaux[0]->monstre = NULL;
 
-	n->tuyaux[1] = charger_tuyau("green_pipe", VERS_LE_HAUT);
+	/*n->tuyaux[1] = charger_tuyau("green_pipe", VERS_LE_HAUT);
 	n->tuyaux[1]->longueur = 3;
 	n->tuyaux[1]->position.x = 10;
 	n->tuyaux[1]->position.y = 0;
@@ -884,7 +884,7 @@ void charger_niveau_test(niveau *n)
 	n->tuyaux[1]->pipe_dest = 0;
 	n->tuyaux[1]->level_dest = NULL;
 
-	n->tuyaux[1]->monstre = NULL;
+	n->tuyaux[1]->monstre = NULL;*/
 
 	/* Layer Particules */
 	/*n->nb_foreground_generators = 1;
@@ -944,7 +944,7 @@ void charger_niveau_test(niveau *n)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[0], NULL);
 			else if (i == 0)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[2], NULL);
-			else if (i > 10 && i < 16 && (j == 6 || j == 7))
+			else if (i == 2 && j == 6)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[18], &n->blocs[19]);
 			else if (i == 1 && j == 6)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[17], &n->blocs[19]);
@@ -1168,6 +1168,8 @@ void charger_niveau_test(niveau *n)
 	n->blocs[18].est_vide = FAUX;
 	n->blocs[18].est_cassable = FAUX;
 	n->blocs[18].item = n->items[0];
+	n->blocs[18].type_bloc = DISTRIBUTEUR_PIECE;
+	n->blocs[18].tps_piece = 0;
 
 	/* Boc incassable */
 	n->blocs[19].texture = 1;
@@ -1627,13 +1629,18 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
 
                     draw_sprite_(&sprite, n->last_texture);
                     n->last_texture = text_id;
-                }
+				}
+
+				/* Réduction du temps */
+				if((occ->bloc_actuel->type_bloc & DISTRIBUTEUR_PIECE) && occ->bloc_actuel->tps_piece > 0)
+ 					occ->bloc_actuel->tps_piece -= duree / 150;
             }
 
 			if(occ->etat != IMMOBILE && occ->compteur_etat == 0)
 			{
 				occ->etat = IMMOBILE;
 			}
+			
         }
     }
 
