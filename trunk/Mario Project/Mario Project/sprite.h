@@ -17,6 +17,18 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
+typedef enum LAYER 
+{
+	LAYER_BACKGROUND,
+	LAYER_BACKGROUND_PARTICLES,
+	LAYER_OBJECTS,
+	LAYER_BLOC_1,
+	LAYER_ITEM,
+	LAYER_BLOC_2,
+	LAYER_FOREGROUND,
+	LAYER_FOREGROUND_PARTICLES
+}LAYER;
+
 /******************************************************************************/
 /*=================================[INCLUDES]=================================*/
 /******************************************************************************/

@@ -1,9 +1,9 @@
 
 ==========================[Fuites de memoire]==========================
-@01AEC828:	11336 octets
+@00B8C828:	11336 octets
 Allocation:	texte.c	ligne	13
 -----------------------------------------------------------------------
-@01AEB620:	30 octets
+@00B8B620:	30 octets
 Allocation:	keystate.c	ligne	19
 
 ========================[Resume de l'execution]========================

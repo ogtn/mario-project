@@ -2462,6 +2462,10 @@ void solve_collisions_item(occ_item* it, niveau* n, Uint32 duree)
 	bloc_bg.x = (int) (it->position.x) / n->taille_blocs.x;
 	bloc_bg.y = (int) (it->position.y) / n->taille_blocs.y;
 
+	/* SI c'est une pièce on étend le champ des blocs testables d'un cran vers le bas */
+	if(it->type_item->nom == PIECE)
+		bloc_bg.y -= 1;
+
 	bloc_hd.x = (int) (it->position.x + it->type_item->taille.x) / n->taille_blocs.x;
 	bloc_hd.y = (int) (it->position.y + it->type_item->taille.y) / n->taille_blocs.y;
 
@@ -2533,6 +2537,7 @@ void solve_collisions_item(occ_item* it, niveau* n, Uint32 duree)
 										if(n->occ_blocs[i][j]->position.x > item.position.x + item.taille.x / 2)
 										{
 											it->vitesse.x = -it->vitesse.x;
+											it->vitesse.y = VIT_SORTIE_BLOC * 8;
 											it->position.x = (float)it->position.x + it->vitesse.x * duree;
 										}
 									}
@@ -2541,15 +2546,17 @@ void solve_collisions_item(occ_item* it, niveau* n, Uint32 duree)
 										if(n->occ_blocs[i][j]->position.x + n->taille_blocs.x / 2 < item.position.x)
 										{
 											it->vitesse.x = -it->vitesse.x;
+											it->vitesse.y = VIT_SORTIE_BLOC * 8;
 											it->position.x = (float)it->position.x + it->vitesse.x * duree;
 										}
 									}
 									else // vitesse = 0 -> PIECE
 									{
-
+										it->etat = SORT_DU_BLOC;
+										it->tps_sortie_bloc = TPS_ITEM_SORT_BLOC;
+										it->vitesse.y = VIT_SORTIE_BLOC * 3;
 									}
 
-									it->vitesse.y = VIT_SORTIE_BLOC * 8;
 									collision_bloc_releve = 1;
 								}
 								
