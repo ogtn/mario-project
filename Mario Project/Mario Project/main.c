@@ -168,7 +168,8 @@ void init_OpenGL(int x, int y)
 {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(0, x, 0, y);
+    glOrtho(0, x, 0, y, -1000, 1000);
+    //gluOrtho2D(0, x, 0, y);
 
 
     glEnable(GL_BGR_EXT);
