@@ -83,7 +83,7 @@ void draw_sprite_layer(sprite *s, GLuint last, int depth)
     glBindTexture(GL_TEXTURE_2D, s->text_id);
     glBegin(GL_QUADS);
 
-	glTexCoordf(s->point_bg.x, -s->point_bg.y);
+	glTexCoord2f(s->point_bg.x, -s->point_bg.y);
 	glVertex3i(s->position.x, s->position.y, depth);
 
 	glTexCoord2f(s->point_hd.x, -s->point_bg.y);
@@ -546,13 +546,11 @@ void draw_HUD(perso* p) {
 
 void draw_item(occ_item* item, Uint32 duree)
 {
-
 	int phase;
 	float gauche = 0, droite = (float) 1 / item->type_item->nb_sprites;
 	
 	if(item->type_item->nb_sprites > 1)
 	{
-
 		phase = (duree % 500) / (500 / (item->type_item->nb_sprites));
 
 		gauche += phase * (float)1 / item->type_item->nb_sprites;

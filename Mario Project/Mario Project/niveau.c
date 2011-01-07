@@ -839,9 +839,9 @@ void charger_niveau_test(niveau *n)
 	n->items[2] = charger_fleur();
 	
 	// Pièces
-	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(11 * LARGEUR_BLOC, 6 * LARGEUR_BLOC - 1, n->items[0], n->items[0]->vitesse, NORMAL));
-	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(12 * LARGEUR_BLOC, 6 * LARGEUR_BLOC - 1, n->items[0], n->items[0]->vitesse, NORMAL));
-	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(13 * LARGEUR_BLOC, 6 * LARGEUR_BLOC - 1, n->items[0], n->items[0]->vitesse, NORMAL));
+	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(11 * LARGEUR_BLOC, 6 * LARGEUR_BLOC, n->items[0], n->items[0]->vitesse, NORMAL));
+	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(12 * LARGEUR_BLOC, 6 * LARGEUR_BLOC, n->items[0], n->items[0]->vitesse, NORMAL));
+	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(13 * LARGEUR_BLOC, 6 * LARGEUR_BLOC, n->items[0], n->items[0]->vitesse, NORMAL));
 
 	/* Finish */
 	/*n->nb_finish = 1;
@@ -1569,7 +1569,7 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
 
     for(i = debut_x; i < fin_x; i++)
     {	
-        for(j = fin_y - 1; j >= debut_y; j--)
+        for(j = debut_y; j < fin_y; j++)
         {
             occ = n->occ_blocs[i][j];
 			
@@ -1581,34 +1581,6 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
 
                 if(sprite.taille.x != 0 && sprite.taille.y != 0)
                 {
-					switch(occ->etat)
-					{
-					case POUSSE_PAR_LA_DROITE:
-						sprite.position.x = occ->position.x + occ->compteur_etat * 2;
-						sprite.position.y = occ->position.y;
-						occ->compteur_etat = (occ->compteur_etat + 1) % 6;
-						break;
-					case POUSSE_PAR_LA_GAUCHE:
-						sprite.position.x = occ->position.x - occ->compteur_etat * 2;
-						sprite.position.y = occ->position.y;
-						occ->compteur_etat = (occ->compteur_etat + 1) % 6;
-						break;
-					case POUSSE_PAR_LE_HAUT:
-						occ->position_prec.y = occ->position.y;
-						sprite.position.y =  occ->position.y = occ->position.y + occ->compteur_etat;
-						sprite.position.x = occ->position.x;
-						occ->compteur_etat = (occ->compteur_etat + 1) % 5;
-						break;
-					default:
-						occ->position_prec = occ->position;
-						sprite.position.x =  occ->position.x = i * n->taille_blocs.x;
-						sprite.position.y =  occ->position.y = j * n->taille_blocs.y;
-						break;
-					}
-
-					if(occ->compteur_etat == 0)
-						occ->etat = IMMOBILE;
-                    
                     sprite.text_id = n->textures[text_id].id_text;
 
                     nb_sprites.x = n->textures[text_id].taille.x / sprite.taille.x;
@@ -1631,7 +1603,36 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
 						sprite.point_hd.y = (float)1 / nb_sprites.y * (occ->bloc_actuel->coord_sprite.y + 1);
 					}
 
-                    draw_sprite_(&sprite, n->last_texture);
+					switch(occ->etat)
+					{
+					case POUSSE_PAR_LA_DROITE:
+						sprite.position.x = occ->position.x + occ->compteur_etat * 2;
+						sprite.position.y = occ->position.y;
+						draw_sprite_layer(&sprite, n->last_texture, 1);
+						occ->compteur_etat = (occ->compteur_etat + 1) % 6;
+						break;
+					case POUSSE_PAR_LA_GAUCHE:
+						sprite.position.x = occ->position.x - occ->compteur_etat * 2;
+						sprite.position.y = occ->position.y;
+						draw_sprite_layer(&sprite, n->last_texture, 1);
+						occ->compteur_etat = (occ->compteur_etat + 1) % 6;
+						break;
+					case POUSSE_PAR_LE_HAUT:
+						sprite.position.y =  occ->position.y = occ->position.y + occ->compteur_etat;
+						sprite.position.x = occ->position.x;
+						draw_sprite_layer(&sprite, n->last_texture, 1);
+						occ->compteur_etat = (occ->compteur_etat + 1) % 5;
+						break;
+					default:
+						sprite.position.x =  occ->position.x = i * n->taille_blocs.x;
+						sprite.position.y =  occ->position.y = j * n->taille_blocs.y;
+						draw_sprite_layer(&sprite, n->last_texture, 0);
+						break;
+					}
+
+					if(occ->compteur_etat == 0)
+						occ->etat = IMMOBILE;
+
                     n->last_texture = text_id;
 				}
 
