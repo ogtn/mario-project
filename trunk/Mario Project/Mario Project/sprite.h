@@ -17,7 +17,6 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
-
 /******************************************************************************/
 /*=================================[INCLUDES]=================================*/
 /******************************************************************************/
@@ -78,6 +77,9 @@ void draw_sprite_90(int x, int y, int largeur, int hauteur, GLuint texture,
 /* Version optimisée de draw_sprite(), il faut lui fournir le dernier
 identificateur de texture OpenGL et un poiteur sur une structure sprite */
 void draw_sprite_(sprite *s, GLuint last);
+
+/* Version avec choix de la profonceur */
+void draw_sprite_layer(sprite *s, GLuint last, int depth);
 
 void draw_sprite_90_(sprite *s, GLuint last);
 

@@ -69,6 +69,36 @@ void draw_sprite_(sprite *s, GLuint last)
 	glVertex2i(s->position.x, s->position.y + s->taille.y);
 }
 
+
+void draw_sprite_layer(sprite *s, GLuint last, int depth)
+{
+    if(depth == 0)
+    {
+        draw_sprite_(s, last);
+        return;
+    }
+
+    glEnd();
+    glEnable(GL_DEPTH_TEST);
+    glBindTexture(GL_TEXTURE_2D, s->text_id);
+    glBegin(GL_QUADS);
+
+	glTexCoordf(s->point_bg.x, -s->point_bg.y);
+	glVertex3i(s->position.x, s->position.y, depth);
+
+	glTexCoord2f(s->point_hd.x, -s->point_bg.y);
+	glVertex3i(s->position.x + s->taille.x, s->position.y, depth);
+
+	glTexCoord2f(s->point_hd.x, -s->point_hd.y);
+	glVertex3i(s->position.x + s->taille.x, s->position.y + s->taille.y, depth);
+
+	glTexCoord2f(s->point_bg.x, -s->point_hd.y);
+	glVertex3i(s->position.x, s->position.y + s->taille.y, depth);
+
+    glDisable(GL_DEPTH_TEST);
+}
+
+
 void draw_sprite_90_(sprite *s, GLuint last)
 {
 	/* Si c'est une texture differente de l'actuelle on change */
