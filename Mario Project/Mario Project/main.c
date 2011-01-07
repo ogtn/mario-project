@@ -214,6 +214,7 @@ void jouer(world *w_)
     {
 		temps_rendu = SDL_GetTicks();
         glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_DEPTH_BUFFER_BIT);
 
         /* Mise à jour de l'etat des touches du clavier */
         maj_keystate(w->keystate, &continuer);

@@ -99,6 +99,7 @@ typedef struct bloc
 typedef struct occ_bloc
 {
 	coordi position;						/* Position actuelle du bloc */
+	coordi position_prec;					/* POsition du bloc à l'image précédente */
 	ETAT_BLOC etat;							/* Contient l'etat du bloc */
 	int compteur_etat;						/* Définit l'étape de dessin d'un mouvement de bloc */
 	bloc* bloc_actuel;						/* Pointeur sur le bloc modèle actuel */

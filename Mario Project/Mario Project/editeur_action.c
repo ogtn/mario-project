@@ -280,7 +280,7 @@ void ac_supprimer(action *a)
 
             for(i = x1; i <= x2; i++)
                 for(j = y1; j <= y2; j++)
-                    e->world->niveau->occ_blocs[i][j] = BLOC_VIDE;
+                    e->world->niveau->occ_blocs[i][j] = NULL;
 
             eb->selection = 0;
         }
@@ -370,7 +370,7 @@ void ac_remplissage(action *a)
                 hg = h = hd = g = c = d = bg = b = bd = unique;
             };
 
-            /* Calcul du rectange de selection dans le bon sens */
+            /* Calcul du rectangle de selection dans le bon sens */
             x1 = min(eb->debut_selection.x, eb->fin_selection.x);
             y1 = min(eb->debut_selection.y, eb->fin_selection.y);
             x2 = max(eb->debut_selection.x, eb->fin_selection.x);

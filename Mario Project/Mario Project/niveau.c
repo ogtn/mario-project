@@ -784,13 +784,13 @@ void charger_niveau_test_vide(niveau *n)
 
 	/************ layer blocs ***********/
 
-	n->occ_blocs = malloc(n->taille.x * sizeof(id*));
+	n->occ_blocs = malloc(n->taille.x * sizeof(occ_bloc***));
 	for(i = 0; i < n->taille.x; i++)
 	{
-		n->occ_blocs[i] = malloc(n->taille.y * sizeof(id));
+		n->occ_blocs[i] = malloc(n->taille.y * sizeof(occ_bloc**));
 	}
 
-	/* Remplissage des ID des blocs */
+	/* Remplissage des blocs */
 	for(i = 0; i < n->taille.x; i++)
 	{
 		for(j = 0; j < n->taille.y; j++)
@@ -839,9 +839,9 @@ void charger_niveau_test(niveau *n)
 	n->items[2] = charger_fleur();
 	
 	// Pièces
-	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(128, 172, n->items[0], n->items[0]->vitesse, NORMAL));
-	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(160, 172, n->items[0], n->items[0]->vitesse, NORMAL));
-	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(192, 172, n->items[0], n->items[0]->vitesse, NORMAL));
+	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(11 * LARGEUR_BLOC, 6 * LARGEUR_BLOC - 1, n->items[0], n->items[0]->vitesse, NORMAL));
+	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(12 * LARGEUR_BLOC, 6 * LARGEUR_BLOC - 1, n->items[0], n->items[0]->vitesse, NORMAL));
+	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(13 * LARGEUR_BLOC, 6 * LARGEUR_BLOC - 1, n->items[0], n->items[0]->vitesse, NORMAL));
 
 	/* Finish */
 	/*n->nb_finish = 1;
@@ -944,13 +944,13 @@ void charger_niveau_test(niveau *n)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[0], NULL);
 			else if (i == 0)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[2], NULL);
-			else if (i == 2 && j == 6)
+			else if (i == 2 && j == 5)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[18], &n->blocs[19]);
-			else if (i == 1 && j == 6)
+			else if (i == 1 && j == 5)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[17], &n->blocs[19]);
-			/*else if (i == 17 && j == 6)
+			else if (i > 10 && i < 15 && j == 5)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[18], NULL);
-			else if (i == 14 && j == 6)
+			/*else if (i == 14 && j == 6)
 				n->occ_blocs[i][j] = 18;
 			else if (i == 14 && j == 10)
 				n->occ_blocs[i][j] = 17;
@@ -1165,10 +1165,10 @@ void charger_niveau_test(niveau *n)
 	n->blocs[18].coord_sprite.x = 0;
 	n->blocs[18].coord_sprite.y = 4;
 	n->blocs[18].phys = BLOC_SPEC;
-	n->blocs[18].est_vide = FAUX;
-	n->blocs[18].est_cassable = FAUX;
+	n->blocs[18].est_vide = VRAI;
+	n->blocs[18].est_cassable = VRAI;
 	n->blocs[18].item = n->items[0];
-	n->blocs[18].type_bloc = DISTRIBUTEUR_PIECE;
+	//n->blocs[18].type_bloc = DISTRIBUTEUR_PIECE;
 	n->blocs[18].tps_piece = 0;
 
 	/* Boc incassable */
@@ -1331,16 +1331,18 @@ void draw_main(niveau *lvl, perso **persos, ecran e, Uint32 duree)
 
 	// Mise en couleur de la hitbox du personnage
 	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_DEPTH_TEST);
 	glBegin(GL_QUADS);
 	glColor4f(0, 1, 0, 0.5);
 
-	glVertex2f((GLfloat)persos[0]->position.x + persos[0]->texture_act->abscisse_bas, (GLfloat)persos[0]->position.y);
+	glVertex3f((GLfloat)persos[0]->position.x + persos[0]->texture_act->abscisse_bas, (GLfloat)persos[0]->position.y, -1);
 	glVertex2f((GLfloat)persos[0]->position.x + persos[0]->texture_act->abscisse_bas, (GLfloat)persos[0]->position.y + persos[0]->texture_act->ordonnee_haut);
 	glVertex2f((GLfloat)persos[0]->position.x + persos[0]->taille.x - persos[0]->texture_act->abscisse_bas,(GLfloat) persos[0]->position.y + persos[0]->texture_act->ordonnee_haut);
 	glVertex2f((GLfloat)persos[0]->position.x + persos[0]->taille.x - persos[0]->texture_act->abscisse_bas, (GLfloat)persos[0]->position.y);
 
 	glColor4f(1, 1, 1, 1);
 	glEnd();
+	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
 
 #endif
@@ -1592,13 +1594,15 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
 						occ->compteur_etat = (occ->compteur_etat + 1) % 6;
 						break;
 					case POUSSE_PAR_LE_HAUT:
-						sprite.position.y = occ->position.y + occ->compteur_etat * 2;
+						occ->position_prec.y = occ->position.y;
+						sprite.position.y =  occ->position.y = occ->position.y + occ->compteur_etat;
 						sprite.position.x = occ->position.x;
-						occ->compteur_etat = (occ->compteur_etat + 1) % 6;
+						occ->compteur_etat = (occ->compteur_etat + 1) % 5;
 						break;
 					default:
-						sprite.position.x = i * n->taille_blocs.x;
-						sprite.position.y = j * n->taille_blocs.y;
+						occ->position_prec = occ->position;
+						sprite.position.x =  occ->position.x = i * n->taille_blocs.x;
+						sprite.position.y =  occ->position.y = j * n->taille_blocs.y;
 						break;
 					}
 

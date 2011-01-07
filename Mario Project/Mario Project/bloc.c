@@ -25,6 +25,7 @@ occ_bloc* init_occ_bloc(occ_bloc* occ, int pos_x, int pos_y, bloc* bloc_actuel, 
 	{
 		occ->position.x = pos_x;
 		occ->position.y = pos_y;
+		occ->position_prec = occ->position;
 		occ->bloc_actuel = bloc_actuel;
 		occ->bloc_alternatif = bloc_alternatif;
 		occ->etat = IMMOBILE;
