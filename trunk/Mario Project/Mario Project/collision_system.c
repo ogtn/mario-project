@@ -2468,8 +2468,7 @@ void solve_collisions_item(occ_item* it, niveau* n, Uint32 duree)
 	/************************************************ DETECTIONS ET RESOLUTIONS DE COLLISIONS *******************************************/
 
 	/* Si l'item est soumis aux collisions avec le niveau => détection et résolution */
-	if((it->type_item->soumission & SOUMIS_COLLISIONS_SOL)
-		&& it->etat == NORMAL) {
+	if(it->etat == NORMAL) {
 
 			/* Initialisation du carre projectile */
 			item.position.x = it->position.x;
@@ -2494,11 +2493,11 @@ void solve_collisions_item(occ_item* it, niveau* n, Uint32 duree)
 							phys_bloc_actuel = n->occ_blocs[i][j]->bloc_actuel->phys;
 
 							/* Initialisation du carré bloc */
-							bloc.position.x = (float)i * n->taille_blocs.x;
-							bloc.position.y = (float)j * n->taille_blocs.y;
+							bloc.position.x = (float)n->occ_blocs[i][j]->position.x;
+							bloc.position.y = (float)n->occ_blocs[i][j]->position.y;
 
-							bloc.position_prec.x = bloc.position.x;
-							bloc.position_prec.y = bloc.position.y;
+							bloc.position_prec.x = (float)n->occ_blocs[i][j]->position_prec.x;
+							bloc.position_prec.y = (float)n->occ_blocs[i][j]->position_prec.y;
 
 							bloc.taille.x = n->taille_blocs.x;
 							bloc.taille.y = n->taille_blocs.y;
@@ -2537,13 +2536,17 @@ void solve_collisions_item(occ_item* it, niveau* n, Uint32 duree)
 											it->position.x = (float)it->position.x + it->vitesse.x * duree;
 										}
 									}
-									else
+									else if (it->vitesse.x < 0)
 									{
 										if(n->occ_blocs[i][j]->position.x + n->taille_blocs.x / 2 < item.position.x)
 										{
 											it->vitesse.x = -it->vitesse.x;
 											it->position.x = (float)it->position.x + it->vitesse.x * duree;
 										}
+									}
+									else // vitesse = 0 -> PIECE
+									{
+
 									}
 
 									it->vitesse.y = VIT_SORTIE_BLOC * 8;
