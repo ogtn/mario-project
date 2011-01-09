@@ -131,7 +131,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate);
 void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p, niveau* n, Uint32 duree);
 
 /* Detection/resolution de collisions sur l'item */
-void solve_collisions_item(occ_item* it, niveau* n, Uint32 duree);
+void solve_collisions_item(occ_item* it, perso** persos, niveau* n, Uint32 duree);
 
 /* Detection/resolution de collisions sur le projectile */
 void solve_collisions_projectile(occ_projectile* projectile, niveau *n);

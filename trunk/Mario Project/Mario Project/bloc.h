@@ -87,8 +87,6 @@ typedef enum ETAT_BLOC
 typedef struct bloc
 {
 	id texture;								/* l'id de la texture dans la structure niveau */
-	int est_vide;							/* indique si le bloc contient est vide ou contient qqch */
-	int est_cassable;						/* indique si le bloc est cassable */
 	coordi coord_sprite;					/* les coordonnées du sprite dans la texture */
 	int phys;								/* Contient la physique du bloc sous la forme d'un flag */
 	int type_bloc;
@@ -102,6 +100,7 @@ typedef struct occ_bloc
 	coordi position_prec;					/* POsition du bloc à l'image précédente */
 	ETAT_BLOC etat;							/* Contient l'etat du bloc */
 	int compteur_etat;						/* Définit l'étape de dessin d'un mouvement de bloc */
+	int id_perso;							/* Identifiant du perso qui a frappé dans le bloc */
 	bloc* bloc_actuel;						/* Pointeur sur le bloc modèle actuel */
 	bloc* bloc_alternatif;					/* Pointeur sur le bloc modèle alternatif */
 } occ_bloc;
