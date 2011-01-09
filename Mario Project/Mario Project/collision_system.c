@@ -211,7 +211,7 @@ void main_collisions(world *w)
 			}
 			else
 			{
-				solve_collisions_item(i_bis, w->niveau, w->temps_ecoule);
+				solve_collisions_item(i_bis, w->persos, w->niveau, w->temps_ecoule);
 
 				diff_x = abs((int)i_bis->position_prec.x - (int)i_bis->position.x);
 				diff_y = abs((int)i_bis->position_prec.y - (int)i_bis->position.y);
@@ -235,7 +235,7 @@ void main_collisions(world *w)
 						MAJ_collision_item(item_actuel->occ_item, w->ecran, w->temps_ecoule / (nb_images_inter + 1));
 
 						/* Fonction résolvant les collisions */
-						solve_collisions_item(item_actuel->occ_item, w->niveau, w->temps_ecoule);
+						solve_collisions_item(item_actuel->occ_item, w->persos, w->niveau, w->temps_ecoule);
 					}
 				}
 			}
@@ -1002,7 +1002,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 								p->vitesse.y = 0;
 								p->position.y = (float)bloc.position.y - p->taille.y + (p->taille.y - ordonnee_haut);
 
-								if(!n->occ_blocs[i][j]->bloc_actuel->est_vide)
+								if(!(n->occ_blocs[i][j]->bloc_actuel->type_bloc & EST_VIDE))
 								{
 									/* Ajout de l'occurence d'item */
 									coordf vitesse;
@@ -1048,23 +1048,23 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 									}
 
 								}
-								else if(n->occ_blocs[i][j]->bloc_actuel->est_cassable && p->transformation >= SUPER_MARIO)
+								else if((n->occ_blocs[i][j]->bloc_actuel->type_bloc & CASSABLE) && p->transformation >= SUPER_MARIO)
 								{
 									/* Creation et ajout des 4 débris de blocs */
-									n->projectiles[0]->occ_projectiles = ajout_projectile(n->projectiles[0]->occ_projectiles, 
-										create_debris(n->projectiles[0], n->occ_blocs[i][j]->position.x, n->occ_blocs[i][j]->position.y, -n->projectiles[0]->vitesse.x, VITESSE_Y_EJECTION));
+									n->projectiles[DEBRIS]->occ_projectiles = ajout_projectile(n->projectiles[DEBRIS]->occ_projectiles, 
+										create_debris(n->projectiles[DEBRIS], n->occ_blocs[i][j]->position.x, n->occ_blocs[i][j]->position.y, -n->projectiles[DEBRIS]->vitesse.x, VITESSE_Y_EJECTION));
 
-									n->projectiles[0]->occ_projectiles = ajout_projectile(n->projectiles[0]->occ_projectiles, 
-										create_debris(n->projectiles[0], n->occ_blocs[i][j]->position.x, (int)(n->occ_blocs[i][j]->position.y + n->taille_blocs.y / 2), -n->projectiles[0]->vitesse.x, VITESSE_Y_EJECTION * 2));
+									n->projectiles[DEBRIS]->occ_projectiles = ajout_projectile(n->projectiles[DEBRIS]->occ_projectiles, 
+										create_debris(n->projectiles[DEBRIS], n->occ_blocs[i][j]->position.x, (int)(n->occ_blocs[i][j]->position.y + n->taille_blocs.y / 2), -n->projectiles[DEBRIS]->vitesse.x, VITESSE_Y_EJECTION * 2));
 
-									n->projectiles[0]->occ_projectiles = ajout_projectile(n->projectiles[0]->occ_projectiles, 
-										create_debris(n->projectiles[0], n->occ_blocs[i][j]->position.x, n->occ_blocs[i][j]->position.y, n->projectiles[0]->vitesse.x, VITESSE_Y_EJECTION));
+									n->projectiles[DEBRIS]->occ_projectiles = ajout_projectile(n->projectiles[DEBRIS]->occ_projectiles, 
+										create_debris(n->projectiles[DEBRIS], n->occ_blocs[i][j]->position.x, n->occ_blocs[i][j]->position.y, n->projectiles[DEBRIS]->vitesse.x, VITESSE_Y_EJECTION));
 
-									n->projectiles[0]->occ_projectiles = ajout_projectile(n->projectiles[0]->occ_projectiles, 
-										create_debris(n->projectiles[0], n->occ_blocs[i][j]->position.x, (int)(n->occ_blocs[i][j]->position.y + n->taille_blocs.y / 2), n->projectiles[0]->vitesse.x, VITESSE_Y_EJECTION * 2));
-
+									n->projectiles[DEBRIS]->occ_projectiles = ajout_projectile(n->projectiles[DEBRIS]->occ_projectiles, 
+										create_debris(n->projectiles[DEBRIS], n->occ_blocs[i][j]->position.x, (int)(n->occ_blocs[i][j]->position.y + n->taille_blocs.y / 2), n->projectiles[DEBRIS]->vitesse.x, VITESSE_Y_EJECTION * 2));
 
 									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_BREAK_BLOCK]);
+									n->occ_blocs[i][j]->id_perso = p->personnage;
 									n->occ_blocs[i][j]->etat = POUSSE_PAR_LE_HAUT;
 
 									n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif;
@@ -1073,8 +1073,11 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 								else 
 								{
 
-									if(n->occ_blocs[i][j]->bloc_actuel->est_cassable && p->transformation < SUPER_MARIO)
+									if((n->occ_blocs[i][j]->bloc_actuel->type_bloc & CASSABLE) && p->transformation < SUPER_MARIO)
+									{
 										n->occ_blocs[i][j]->etat = POUSSE_PAR_LE_HAUT;
+										n->occ_blocs[i][j]->id_perso = p->personnage;
+									}
 									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_UNBREAKABLE_BLOCK]);
 								}
 
@@ -1810,7 +1813,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 
 							if(m->etat == M_RETRACTED)
 							{
-								if(!n->occ_blocs[i][j]->bloc_actuel->est_vide)
+								if(!(n->occ_blocs[i][j]->bloc_actuel->type_bloc & EST_VIDE))
 								{
 									/* Ajout de l'occurence d'item */
 									coordf vitesse;
@@ -1843,7 +1846,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 									n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif; // A rendre plus propre
 									n->occ_blocs[i][j]->bloc_alternatif = NULL;
 								}
-								else if(n->occ_blocs[i][j]->bloc_actuel->est_cassable)
+								else if(n->occ_blocs[i][j]->bloc_actuel->type_bloc & CASSABLE)
 								{
 									n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif;//  A rendre plus propre
 									n->occ_blocs[i][j]->bloc_alternatif = NULL;	// Suppression du bloc, rajouter les débris
@@ -1889,7 +1892,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 
 							if(m->etat == M_RETRACTED)
 							{
-								if(!n->occ_blocs[i][j]->bloc_actuel->est_vide)
+								if(!(n->occ_blocs[i][j]->bloc_actuel->type_bloc & EST_VIDE))
 								{
 									/* Ajout de l'occurence d'item */
 									coordf vitesse;
@@ -1909,7 +1912,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 									}
 									else
 									{
-										vitesse.y =  (n->occ_blocs[i][j]->bloc_actuel->est_vide)? VIT_SORTIE_BLOC * 5:VIT_SORTIE_BLOC;
+										vitesse.y =  (n->occ_blocs[i][j]->bloc_actuel->type_bloc & EST_VIDE)? VIT_SORTIE_BLOC * 5 : VIT_SORTIE_BLOC;
 										item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, n->occ_blocs[i][j]->bloc_actuel->item, vitesse, SORT_DU_BLOC);
 									}
 
@@ -1923,7 +1926,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 									n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif; // A rendre plus propre
 									n->occ_blocs[i][j]->bloc_alternatif = NULL;
 								}
-								else if(n->occ_blocs[i][j]->bloc_actuel->est_cassable) {
+								else if(n->occ_blocs[i][j]->bloc_actuel->type_bloc & CASSABLE) {
 									n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif;//  A rendre plus propre
 									n->occ_blocs[i][j]->bloc_alternatif = NULL;	// Suppression du bloc, rajouter les débris
 
@@ -2446,7 +2449,7 @@ void solve_collisions_projectile(occ_projectile* p, niveau *n)
 	}
 }
 
-void solve_collisions_item(occ_item* it, niveau* n, Uint32 duree)
+void solve_collisions_item(occ_item* it, perso** persos, niveau* n, Uint32 duree)
 {
 	/* Variables pour l'initialisation */
 	coordi bloc_bg, bloc_hd;
@@ -2490,8 +2493,17 @@ void solve_collisions_item(occ_item* it, niveau* n, Uint32 duree)
 				for(j = bloc_bg.y; j <= bloc_hd.y; j++)
 				{
 
-					if(i >= 0 && i < n->taille.x && j >= 0) {
-						if(n->occ_blocs[i][j]->bloc_actuel != NULL)
+					if(i >= 0 && i < n->taille.x && j >= 0)
+					{
+						if(n->occ_blocs[i][j]->bloc_actuel == NULL && n->occ_blocs[i][j]->etat == POUSSE_PAR_LE_HAUT && it->type_item->nom == PIECE)
+						{
+							n->occ_blocs[i][j]->etat = IMMOBILE;
+							it->etat = SORT_DU_BLOC;
+							it->vitesse.y = VIT_SORTIE_BLOC * 3;
+							it->tps_sortie_bloc = TPS_ITEM_SORT_BLOC;
+							prend_item(persos[n->occ_blocs[i][j]->id_perso], it->type_item->nom);
+						}
+						else if(n->occ_blocs[i][j]->bloc_actuel != NULL)
 						{
 							/* On récupère la physique du bloc */
 							phys_bloc_actuel = n->occ_blocs[i][j]->bloc_actuel->phys;
@@ -2555,6 +2567,7 @@ void solve_collisions_item(occ_item* it, niveau* n, Uint32 duree)
 										it->etat = SORT_DU_BLOC;
 										it->tps_sortie_bloc = TPS_ITEM_SORT_BLOC;
 										it->vitesse.y = VIT_SORTIE_BLOC * 3;
+										prend_item(persos[n->occ_blocs[i][j]->id_perso], it->type_item->nom);
 									}
 
 									collision_bloc_releve = 1;

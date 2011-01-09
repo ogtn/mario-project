@@ -224,9 +224,6 @@ void jouer(world *w_)
 		{
 			/* Mise à jour de toutes les positions des objets/enemis */
 			main_collisions(w);
-
-			/* Mise à jour des positions des particules */
-			MAJ_particules(w->niveau, w->temps_ecoule);
 		}
         else
         {
@@ -244,6 +241,9 @@ void jouer(world *w_)
 
         /* Mise à jour de la position de l'ecran (en fonction de celle du perso) */
         update_screen(w);
+
+		/* Mise à jour des positions des particules */
+		MAJ_particules(w->niveau, w->temps_ecoule);
 
 		draw_main(w->niveau, w->persos, w->ecran, w->temps_actuel);
 

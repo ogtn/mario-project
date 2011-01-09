@@ -679,14 +679,10 @@ void draw_particules(particule_generator* generator)
 {
 	int i;
     sprite s = {0};
-	int nb_particules_dessinees = 0;
 
     s.point_hd.x = s.point_hd.y = 1;
 	s.taille = generator->taille_particule;
     s.text_id = generator->texture_id;
-	screen_printf_dbg("nombre de particules : %d\n", generator->nb_particules);
-	screen_printf_dbg("Indice de début : %d\n", generator->indice_debut);
-	screen_printf_dbg("indice de fin : %d\n", generator->indice_fin);
 
 	for(i = 0; i < generator->max_particules; i ++)
     {
@@ -707,12 +703,10 @@ void draw_particules(particule_generator* generator)
         {
             s.position.x = (int)p.position.x;
             s.position.y = (int)p.position.y;
-			//draw_sprite_(&s, 1);
-			nb_particules_dessinees++;
+			//draw_sprite_layer(&s, s.text_id, 0);
 			draw_sprite(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y);
         }
     }
-	screen_printf_dbg("Nb particules dessinees : %d\n", nb_particules_dessinees);
 	glColor4f(1, 1, 1, 1);
 }
 
