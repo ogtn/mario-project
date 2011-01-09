@@ -594,75 +594,83 @@ void draw_pipe(tuyau* t)
 	switch(t->sens_sortie)
 	{
 	case VERS_LA_DROITE:
+		// Reste du tuyau (Plus pratique de commencer par le reste)
 		s.point_bg.x = 1;
 		s.point_bg.y = 0;
 		s.point_hd.x = 0;
 		s.point_hd.y = 0.5F;
 		s.taille.x = (int)(t->longueur * LARGEUR_BLOC);
 		s.taille.y = (int)(2 * LARGEUR_BLOC);
-		draw_sprite_90(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y); // Reste du tuyau
+		draw_sprite_90(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y);
 
+		// Haut du tuyau
 		s.position.x = (int)((t->position.x + t->longueur) * LARGEUR_BLOC);
 		s.point_bg.x = 1;
 		s.point_bg.y = 0.5F;
 		s.point_hd.x = 0;
 		s.point_hd.y = 1;
 		s.taille.x = (int)(LARGEUR_BLOC);
-		draw_sprite_90(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y); // Haut du tuyau
+		draw_sprite_90(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y);
 		break;
 
 	case VERS_LA_GAUCHE:
-		s.point_bg.x = 0;
+		// Haut du tuyau
+		s.point_bg.x = 1;
 		s.point_bg.y = 1;
-		s.point_hd.x = 1;
+		s.point_hd.x = 0;
 		s.point_hd.y = 0.5F;
 		s.taille.x = (int)(LARGEUR_BLOC);
 		s.taille.y = (int)(2 * LARGEUR_BLOC);
-		draw_sprite_90(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y); // Haut du tuyau
+		draw_sprite_90(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y);
 
+		 // Reste du tuyau
 		s.position.x = (int)((t->position.x + 1) * LARGEUR_BLOC);
+		s.point_bg.x = 1;
+		s.point_bg.y = 0.5F;
+		s.point_hd.x = 0;
+		s.point_hd.y = 0;
+		s.taille.x = (int)(t->longueur * LARGEUR_BLOC);
+		draw_sprite_90(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y);
+		break;
+
+	case VERS_LE_BAS:
+		// Haut du tuyau
+		s.point_bg.x = 0;
+		s.point_bg.y = 1;
+		s.point_hd.x = 1;
+		s.point_hd.y = 0.5F;
+		s.taille.x = (int)(2 * LARGEUR_BLOC);
+		s.taille.y = (int)(LARGEUR_BLOC);
+		draw_sprite(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y);
+
+		// Reste du tuyau
+		s.position.y = (int)((t->position.y + 1) * LARGEUR_BLOC);
 		s.point_bg.x = 0;
 		s.point_bg.y = 0.5F;
 		s.point_hd.x = 1;
 		s.point_hd.y = 0;
-		s.taille.x = (int)(t->longueur * LARGEUR_BLOC);
-		draw_sprite_90(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y); // Haut du tuyau // reste du tuyau
-		break;
-
-	case VERS_LE_BAS:
-		s.point_bg.x = 1;
-		s.point_bg.y = 1;
-		s.point_hd.x = 0;
-		s.point_hd.y = 0.5F;
-		s.taille.x = (int)(2 * LARGEUR_BLOC);
-		s.taille.y = (int)(LARGEUR_BLOC);
-		draw_sprite(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y); // Haut du tuyau
-
-		s.position.y = (int)((t->position.y + 1) * LARGEUR_BLOC);
-		s.point_bg.x = 1;
-		s.point_bg.y = 0.5F;
-		s.point_hd.x = 0;
-		s.point_hd.y = 0;
 		s.taille.y = (int)(t->longueur * LARGEUR_BLOC);
-		draw_sprite(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y); // Reste du tuyau
+		draw_sprite(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y);
 		break;
 
 	default : // VERS_LE_HAUT
+		 // Reste du tuyau (Plus pratique de commencer par le reste)
 		s.point_bg.x = 0;
 		s.point_bg.y = 0;
 		s.point_hd.x = 1;
 		s.point_hd.y = 0.5;
 		s.taille.x = (int)(2 * LARGEUR_BLOC);
 		s.taille.y = (int)(t->longueur * LARGEUR_BLOC);
-		draw_sprite(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y); // Reste du tuyau
+		draw_sprite(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y);
 
+		// Haut du tuyau
 		s.position.y = (int)((t->position.y + t->longueur) * LARGEUR_BLOC);
 		s.point_bg.x = 0;
 		s.point_bg.y = 0.5F;
 		s.point_hd.x = 1;
 		s.point_hd.y = 1;
 		s.taille.y = (int)(LARGEUR_BLOC);
-		draw_sprite(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y); // Haut du tuyau
+		draw_sprite(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y);
 		break;
 	}
 }
