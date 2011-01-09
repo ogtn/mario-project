@@ -876,15 +876,15 @@ void charger_niveau_test(niveau *n)
 
 	n->tuyaux[0]->monstre = NULL;
 
-	/*n->tuyaux[1] = charger_tuyau("green_pipe", VERS_LE_HAUT);
-	n->tuyaux[1]->longueur = 3;
-	n->tuyaux[1]->position.x = 10;
-	n->tuyaux[1]->position.y = 0;
-	n->tuyaux[1]->etat = OUVERT;
-	n->tuyaux[1]->pipe_dest = 0;
-	n->tuyaux[1]->level_dest = NULL;
+	//n->tuyaux[1] = charger_tuyau("green_pipe", VERS_LE_BAS);
+	//n->tuyaux[1]->longueur = 3;
+	//n->tuyaux[1]->position.x = 10;
+	//n->tuyaux[1]->position.y = 5;
+	//n->tuyaux[1]->etat = OUVERT;
+	//n->tuyaux[1]->pipe_dest = 0;
+	//n->tuyaux[1]->level_dest = NULL;
 
-	n->tuyaux[1]->monstre = NULL;*/
+	//n->tuyaux[1]->monstre = NULL;
 
 	/* Layer Particules */
 	/*n->nb_foreground_generators = 1;
