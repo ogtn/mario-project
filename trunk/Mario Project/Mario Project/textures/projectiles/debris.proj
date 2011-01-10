@@ -1,0 +1,11 @@
+vitesse_x : 0.1
+abscisse_bas : 0
+ordonnee_haut : 16
+nb_sprites_marche : 1
+nb_sprites_mort : 0
+v_anim_marche : 1
+v_anim_mort : 0
+tps_apparition : 0
+tps_vie : 10000
+tps_disparition : 10000
+soumission : 0x0000002
