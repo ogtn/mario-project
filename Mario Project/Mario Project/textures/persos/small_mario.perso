@@ -1,0 +1,14 @@
+abscisse_bas : 9
+ordonnee_haut : 31
+nb_sprites_marche : 3
+nb_sprites_course : 3
+nb_sprites_saut : 3
+nb_sprites_verticaux : 4
+nb_sprites_marche_carapace : 2
+nb_sprites_carapace : 4
+v_anim_marche : 400
+v_anim_course : 200
+v_anim_saut : 400
+v_anim_verticaux : 400
+v_anim_marche_carapace : 200
+v_anim_carapace : 200
