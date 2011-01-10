@@ -168,15 +168,14 @@ void init_OpenGL(int x, int y)
 {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(0, x, 0, y);
-
-
+    glOrtho(0, x, 0, y, -1000, 1000);
     glEnable(GL_BGR_EXT);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_ALPHA_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//glMatrixMode(GL_MODELVIEW);
+    glAlphaFunc(GL_GREATER, 0.1);
+    glEnable(GL_ALPHA_TEST);
 }
 
 
