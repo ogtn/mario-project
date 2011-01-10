@@ -180,9 +180,6 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="allocations.txt">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
     <None Include="level_design_log.txt">
       <Filter>Fichiers de ressources</Filter>
     </None>

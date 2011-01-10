@@ -85,6 +85,7 @@ typedef struct item {
 	coordi taille;							/* la taille de l'item (en pixels) */
 	GLuint texture;							/* l'id de la texture de l'item */
 	int nom;								/* nom de l'item */
+	char nom_text[TAILLE_NOM_TEXTURE];		/* nom de la texture de l'item */
 	coordf vitesse;							/* indique la vitesse de référende de l'item */
 	int soumission;							/* indique le type de soumission dont est victime l'item */
 	int nb_sprites;							/* indique le nombre de sprites dont est composé l'item */
@@ -96,10 +97,10 @@ typedef struct item {
 /******************************************************************************/
 
 /* Allocation d'un item */
-item* new_item(void);
+item* new_item(char* nom);
 
 /* Initialisation d'un item */
-item* init_item(item* i);
+item* init_item(item* i, char* nom);
 
 /* Allocation d'une occurence d'un item */
 occ_item* new_occ_item(float position_x, float position_y,item* type_item, coordf vitesse, ETAT_ITEM etat);

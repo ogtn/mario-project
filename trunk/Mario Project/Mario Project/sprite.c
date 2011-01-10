@@ -508,6 +508,7 @@ void draw_projectile(occ_projectile* proj, Uint32 duree)
 			gauche = droite;
 			droite = temp;
 		}
+		draw_sprite((int)proj->position.x, (int)proj->position.y, proj->type_projectile->taille.x, proj->type_projectile->taille.y, proj->type_projectile->texture, gauche, droite, bas, haut);
 
 	}
 	else if(proj->tps_disparition && !proj->tps_vie)
@@ -526,9 +527,8 @@ void draw_projectile(occ_projectile* proj, Uint32 duree)
 				break;
 			}
 		}
+		draw_sprite((int)proj->position.x, (int)proj->position.y, proj->type_projectile->taille.x, proj->type_projectile->taille.y, proj->type_projectile->texture, gauche, droite, bas, haut);
 	}
-
-	draw_sprite((int)proj->position.x, (int)proj->position.y, proj->type_projectile->taille.x, proj->type_projectile->taille.y, proj->type_projectile->texture, gauche, droite, bas, haut);
 }
 
 void draw_HUD(perso* p) {

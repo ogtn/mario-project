@@ -746,10 +746,17 @@ void MAJ_perso_tuyau(perso* perso, niveau* lvl)
 
 void throw_projectile_perso(perso *perso, niveau* lvl, occ_projectile *p)
 {
-
+	
 	perso->etat = ATTAQUE;
+	
 	// Le tps d'attaque doit être proportionnel aux nombre de sprites de l'attaque
 	perso->tps_attaque = perso->texture_act->v_anim[ATTAQUE] * perso->texture_act->nb_sprites[ATTAQUE]; 
+
+	/* Condition à remplir pour une attaque spéciale ?? */
+	//perso->etat = ATTAQUE_SPECIALE;
+	//
+	//// Le tps d'attaque doit être proportionnel aux nombre de sprites de l'attaque
+	//perso->tps_attaque_speciale = perso->texture_act->v_anim[ATTAQUE_SPECIALE] * perso->texture_act->nb_sprites[ATTAQUE_SPECIALE]; 
 
 	FSOUND_PlaySound(FSOUND_FREE, perso->sons[SND_FIREBALL]);
 

@@ -1,5 +1,5 @@
 /*============================================================================*/
-/*== [projectile.h] [Version: 0.028a]                                           ==*/
+/*== [projectile.h] [Version: 0.028a]                                       ==*/
 /*============================================================================*/
 /*===         _____         _        _____           _         _           ===*/
 /*===        |     |___ ___|_|___   |  _  |___ ___  |_|___ ___| |_         ===*/
@@ -95,6 +95,7 @@ typedef struct projectile {
 	int nb_sprites_mort;					/* indique le nombre de sprites contenus dans la 'mort' du projectile */
 	int soumission;							/* indique le type de soumission dont est victime le projectile */
 	liste_projectile* occ_projectiles;
+	char nom_text[TAILLE_NOM_TEXTURE];		/* nom de la texture */
 }projectile;
 
 
@@ -103,10 +104,10 @@ typedef struct projectile {
 /******************************************************************************/
 
 /* Allocation d'un nouveau projectile */
-projectile* new_projectile(void);
+projectile* new_projectile(char* nom);
 
 /* Initialisation d'un nouveau projectile */
-projectile* init_projectile(projectile* p);
+projectile* init_projectile(projectile* p, char* nom);
 
 /* Allocation d'une occurence d'un projectile */
 occ_projectile* new_occ_projectile(int tps_vie, int tps_apparition, int tps_disparition);

@@ -33,7 +33,8 @@ typedef struct particule {
 	coordf vitesse;					/* Vitesse actuelle */
 } particule;
 
-typedef struct particule_generator {
+typedef struct particule_generator 
+{
 	particule* particules;			/* Tableau dynamique de particules */
 	int nb_particules;				/* Nombre actuel de particules */
 	int max_particules;				/* Nombre maximum de particules */
@@ -49,23 +50,15 @@ typedef struct particule_generator {
 	unsigned int couleur_debut;		/* Couleur en début de vie de la particule */
 	unsigned int couleur_fin;		/* Couleur en fin de vie de la particule */
 	int gravity;
+	char nom_text[TAILLE_NOM_TEXTURE];
 } particule_generator;
 
 /******************************************************************************/
 /*================================[PROTOTYPES]================================*/
 /******************************************************************************/
 
-/* Crée un génrateur de particules fumée */
-particule_generator* new_particule_generator_smoke(coordf position, Uint32 vie_particules, Uint32 debit);
-
-/* Crée un génrateur de particules feu */
-particule_generator* new_particule_generator_fire(coordf position, Uint32 vie_particules, Uint32 debit);
-
-/* Crée un générateur de particules pluie */
-particule_generator* new_particule_generator_rain(coordf position, Uint32 vie_particules, Uint32 debit);
-
-/* Crée un générateur de particules neige */
-particule_generator* new_particule_generator_snow(coordf position, Uint32 vie_particules, Uint32 debit);
+/* Crée un génrateur de particules */
+particule_generator* new_particule_generator(coordf position, coordi taille, Uint32 vie_particules, Uint32 debit, char* nom_texture, int gravity, int couleur_debut, int couleur_fin);
 
 /* Libère le générateur en mémoire */
 void free_particule_generator(particule_generator **generator);

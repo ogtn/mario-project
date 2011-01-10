@@ -44,6 +44,7 @@ typedef enum {
 /* Structure Tuyau */
 typedef struct tuyau
 {
+	char nom_text[TAILLE_NOM_TEXTURE];		/* Nom de la texture */
     GLuint texture;							/* Identifiant de la texture */
 	coordi position;
     int longueur;							/* Longueur du tuyau, en pixels ou en blocs comme pour au dessus */
@@ -60,9 +61,9 @@ typedef struct tuyau
 /*================================[PROTOTYPES]================================*/
 /******************************************************************************/
 
-tuyau* new_tuyau(SENS_SORTIE sens);
+tuyau* new_tuyau(SENS_SORTIE sens, char* nom);
 
-tuyau* init_tuyau(tuyau* t, SENS_SORTIE sens);
+tuyau* init_tuyau(tuyau* t, SENS_SORTIE sens, char* nom);
 
 tuyau* charger_tuyau(char* nom, SENS_SORTIE sens);
 
