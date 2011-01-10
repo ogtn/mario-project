@@ -1,13 +1,27 @@
+/*============================================================================*/
+/*== [projectile.c] [Version: 0.028a]                                       ==*/
+/*============================================================================*/
+/*===         _____         _        _____           _         _           ===*/
+/*===        |     |___ ___|_|___   |  _  |___ ___  |_|___ ___| |_         ===*/
+/*===        | | | | .'|  _| | . |  |   __|  _| . | | | -_|  _|  _|        ===*/
+/*===        |_|_|_|__,|_| |_|___|  |__|  |_| |___|_| |___|___|_|          ===*/
+/*===                                             |___|                    ===*/
+/*============================================================================*/
+/*===      =LagMan=                =McCaml=                 =MouleMan=     ===*/
+/*============================================================================*/
+
+
 #include "projectile.h"
 
-projectile* new_projectile(void){
+projectile* new_projectile(char* nom)
+{
 
 	projectile* proc = malloc(sizeof(projectile));
 
-	return init_projectile(proc);
+	return init_projectile(proc, nom);
 }
 
-projectile *init_projectile(projectile* p)
+projectile *init_projectile(projectile* p, char* nom)
 {
 	if(p != NULL)
 	{
@@ -24,6 +38,7 @@ projectile *init_projectile(projectile* p)
 
 		p->v_anim_marche = 0;
 		p->v_anim_mort = 0;
+		strcpy(p->nom_text, nom);
 	}
 
 	return p;
@@ -166,7 +181,7 @@ projectile* charger_projectile(char* nom, int type_projectile){
 	FILE *proj_file;
 	float tmp;
 	int tmp_2;
-	projectile* proj = new_projectile();
+	projectile* proj = new_projectile(nom);
 
 	// Chargement de la texture et initialisation de la taille
 	strcpy(nom_texture, "textures/projectiles/");

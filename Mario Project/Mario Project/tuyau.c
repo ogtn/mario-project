@@ -12,14 +12,14 @@
 
 #include "tuyau.h"
 
-tuyau* new_tuyau(SENS_SORTIE sens) {
-
+tuyau* new_tuyau(SENS_SORTIE sens, char* nom)
+{
 	tuyau* t = malloc(sizeof(tuyau));
 
-	return init_tuyau(t,sens);
+	return init_tuyau(t, sens, nom);
 }
 
-tuyau* init_tuyau(tuyau* t, SENS_SORTIE sens) {
+tuyau* init_tuyau(tuyau* t, SENS_SORTIE sens, char* nom) {
 
 	if( t != NULL) {
 		t->texture = 0;
@@ -31,6 +31,7 @@ tuyau* init_tuyau(tuyau* t, SENS_SORTIE sens) {
 		t->pipe_dest = 0;
 		t->level_dest = NULL;
 		t->tps_sortie_monstre = TPS_SORTIE_MONSTRE;
+		strcpy(t->nom_text, nom);
 	}
 	return t;
 }
@@ -49,7 +50,7 @@ tuyau* free_tuyau(tuyau* t)
 tuyau* charger_tuyau(char* nom, SENS_SORTIE sens)
 {
 	char nom_texture[TAILLE_NOM_TEXTURE];
-	tuyau *t = new_tuyau(sens);
+	tuyau *t = new_tuyau(sens, nom);
 
 	// Chargement de la texture et initiailisation de la taille
 	strcpy(nom_texture, "textures/tuyaux/");

@@ -12,14 +12,14 @@
 
 #include "items.h"
 
-item* new_item()
+item* new_item(char* nom)
 {
 	item* i = malloc(sizeof(item));
 
-	return init_item(i);
+	return init_item(i, nom);
 }
 
-item* init_item(item* i)
+item* init_item(item* i, char* nom)
 {
 	if( i != NULL)
 	{
@@ -36,6 +36,7 @@ item* init_item(item* i)
 
 		i->nom = 0;
 		i->nb_sprites = 0;
+		strcpy(i->nom_text, nom);
 	}
 
 	return i;
@@ -153,10 +154,10 @@ liste_item* supprime_item(liste_item* liste, occ_item *i){
 	return liste;
 }
 
-item* charger_item(char* nom, int type_item){
-
+item* charger_item(char* nom, int type_item)
+{
 	char nom_texture[TAILLE_NOM_TEXTURE];
-	item* i = new_item();
+	item* i = new_item(nom);
 	FILE * item_file;
 	int nb = 0;
 	float nb1 = 0;

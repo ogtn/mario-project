@@ -17,12 +17,11 @@
 #include "particules.h"
 #include "texte.h"
 
-particule_generator* new_particule_generator_smoke(coordf position, Uint32 vie_particules, Uint32 debit)
+particule_generator* new_particule_generator(coordf position, coordi taille, Uint32 vie_particules, Uint32 debit, char* nom_texture, int gravity, int couleur_debut, int couleur_fin)
 {
 	particule_generator* generator = malloc(sizeof(particule_generator));
 
-	generator->taille.x = 0;
-	generator->taille.y = 0;
+	generator->taille = taille;
 
 	generator->indice_debut = 0;
 	generator->indice_fin = 0;	
@@ -35,107 +34,12 @@ particule_generator* new_particule_generator_smoke(coordf position, Uint32 vie_p
 	generator->particules = malloc(sizeof(particule) * generator->max_particules);
 	memset(generator->particules, 0, sizeof(particule) * generator->max_particules);
 
-	generator->texture_id = charger_texture_bis("particle7.png", &generator->taille_particule);
-	generator->gravity = 1; // Particules soumises à la gravité
+	strcpy(generator->nom_text, nom_texture);
+	generator->texture_id = charger_texture_bis(nom_texture, &generator->taille_particule);
+	generator->gravity = gravity; // Particules soumises à la gravité
 	
-	generator->couleur_debut = 0xFF808080;
-	generator->couleur_fin = 0;
-
-	generator->nb_particules = 0;
-	generator->temps_ecoule = 0;
-
-	srand(SDL_GetTicks());
-
-	return generator;
-}
-
-particule_generator* new_particule_generator_fire(coordf position, Uint32 vie_particules, Uint32 debit)
-{
-	particule_generator* generator = malloc(sizeof(particule_generator));
-
-	generator->taille.x = 0;
-	generator->taille.y = 0;
-
-	generator->indice_debut = 0;
-	generator->indice_fin = 0;
-
-	generator->position = position;
-	generator->vie_particules = vie_particules;
-
-	generator->debit = debit;
-	generator->max_particules = (vie_particules / 1000) * debit + 1;
-	generator->particules = malloc(sizeof(particule) * generator->max_particules);
-	memset(generator->particules, 0, sizeof(particule) * generator->max_particules);
-
-	generator->texture_id = charger_texture_bis("particle7.png", &generator->taille_particule);
-	generator->gravity = 1; // Particules soumises à la gravité
-	
-	generator->couleur_debut = 0xFFFF0000;
-	generator->couleur_fin = 0x00FFFF00;
-
-	generator->nb_particules = 0;
-	generator->temps_ecoule = 0;
-
-	srand(SDL_GetTicks());
-
-	return generator;
-}
-
-particule_generator* new_particule_generator_rain(coordf position, Uint32 vie_particules, Uint32 debit)
-{
-	particule_generator* generator = malloc(sizeof(particule_generator));
-
-	generator->taille.x = LARGEUR_FENETRE;
-	generator->taille.y = 0;
-
-	generator->indice_debut = 0;
-	generator->indice_fin = 0;
-
-	generator->position = position;
-	generator->vie_particules = vie_particules;
-
-	generator->debit = debit;
-	generator->max_particules = (vie_particules / 1000) * debit + 1;
-	generator->particules = malloc(sizeof(particule) * generator->max_particules);
-	memset(generator->particules, 0, sizeof(particule) * generator->max_particules);
-
-	generator->texture_id = charger_texture_bis("particle6.png", &generator->taille_particule);
-	generator->gravity = 1; // Particules non soumises à la gravité
-	
-	generator->couleur_debut = 0xFFFFFFFF;
-	generator->couleur_fin = 0xFFFFFFFF;
-
-	generator->nb_particules = 0;
-	generator->temps_ecoule = 0;
-
-	srand(SDL_GetTicks());
-
-	return generator;
-}
-
-particule_generator* new_particule_generator_snow(coordf position, Uint32 vie_particules, Uint32 debit)
-{
-	particule_generator* generator = malloc(sizeof(particule_generator));
-
-	generator->taille.x = LARGEUR_FENETRE;
-	generator->taille.y = 0;
-
-	generator->indice_debut = 0;
-	generator->indice_fin = 0;
-
-	generator->position = position;
-	generator->vie_particules = vie_particules;
-
-	generator->debit = debit;
-	generator->max_particules = (vie_particules / 1000) * debit + 1;
-	generator->particules = malloc(sizeof(particule) * generator->max_particules);
-	memset(generator->particules, 0, sizeof(particule) * generator->max_particules);
-
-	generator->texture_id = charger_texture_bis("Snow_back.png", &generator->taille_particule);
-	generator->gravity = 1; // Particules soumises à la gravité
-	
-	generator->couleur_debut = 0xFFFFFFFF;
-	generator->couleur_fin = 0xFFFFFFFF;
+	generator->couleur_debut = couleur_debut;
+	generator->couleur_fin = couleur_fin;
 
 	generator->nb_particules = 0;
 	generator->temps_ecoule = 0;
