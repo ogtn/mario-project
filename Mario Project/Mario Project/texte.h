@@ -39,7 +39,7 @@ typedef struct caractere
 
 /* Police en 2 dimensions, genere avec Bitmap Font Generator:
 http://www.angelcode.com/products/bmfont/ */
-typedef struct font_2d
+struct font_2d
 {
 	caractere carac[NB_CARACTERES];			/* Tableau des caracteres */
 	GLuint id_texture;						/* Identifiant OpenGL de la texture */
@@ -47,7 +47,7 @@ typedef struct font_2d
 	vecti resolution;						/* Resolution de l'image, en pixels */
 	int hauteur_ligne;						/* Hauteur d'une ligne, en pixels */
 	int outline;							/* Largeur du liseret autour des caracteres */
-} font_2d;
+};
 
 
 /* Chaine de caractere en 2 dimensions */
