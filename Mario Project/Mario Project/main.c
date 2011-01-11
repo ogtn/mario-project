@@ -362,6 +362,7 @@ void affichage_debug(world *w)
  * Written by Lukás Chmela
  * Released under GPLv3.
  */
+ #ifdef linux
 char* itoa(int value, char* result, int base) {
     // check that the base if valid
     if (base < 2 || base > 36) { *result = '\0'; return result; }
@@ -385,3 +386,4 @@ char* itoa(int value, char* result, int base) {
     }
     return result;
 }
+#endif
