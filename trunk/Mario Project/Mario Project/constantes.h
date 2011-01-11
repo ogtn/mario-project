@@ -66,11 +66,11 @@ typedef unsigned char id, nb;
 
 /* Pause portable */
 #ifdef WIN32
-#define pause(x) Sleep(x)
+#define my_sleep(x) Sleep(x)
 #endif
 
 #ifdef linux
-#define pause(x) usleep(x * 1000)
+#define my_sleep(x) usleep(x * 1000)
 #endif
 
 

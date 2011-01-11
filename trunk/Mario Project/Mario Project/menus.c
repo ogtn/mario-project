@@ -234,7 +234,7 @@ int main_menu(keystate *k)
 				choix = 1;
 		}
 
-		pause(1);
+		my_sleep(1);
 		SDL_GL_SwapBuffers();
 	}
 
