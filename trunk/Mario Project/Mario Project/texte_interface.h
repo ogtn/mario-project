@@ -37,6 +37,7 @@ typedef enum colors
 /*			=======================[Includes]=========================		  */
 
 #include "alloc_free.h"
+#include <stdlib.h>
 #include "vectors.h"
 
 
