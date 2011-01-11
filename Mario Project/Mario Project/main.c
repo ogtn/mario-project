@@ -68,7 +68,7 @@ int main_bak(int argc, char *argv[])
 	screen_printf_dbg("Hello, World!");
 	screen_flush();
 	SDL_GL_SwapBuffers();
-	pause(1000);
+	my_sleep(1000);
 
 	SDL_Quit();
 	quit_text();
@@ -271,11 +271,11 @@ void jouer(world *w_)
 		//}
 		//else
 		//{
-		//	pause(1);
+		//	my_sleep(1);
 		//}
 
 		if(temps_rendu < 17)
-			pause(17 - temps_rendu);
+			my_sleep(17 - temps_rendu);
 
         screen_flush();
 	    SDL_GL_SwapBuffers();
