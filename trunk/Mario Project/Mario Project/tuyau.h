@@ -50,7 +50,7 @@ typedef struct tuyau
     int longueur;							/* Longueur du tuyau, en pixels ou en blocs comme pour au dessus */
     SENS_SORTIE sens_sortie;				/* Définit le sens de la sortie du tuyau: si j'ai bien compris ça serait TUYAU_GAUCHE, TUYAU_DROITE, TUYAU_HAUT ou TUYAU_BAS? */
     ETAT_TUYAU etat;                        /* Ouvert ou fermé ? */
-    monstre* monstre;						/* Des monstres sortiront-ils de là ? ok, avec NULL si pas de monstres qui sortent, on peut compléter avec un champs qui donne le temps qui sépare chaque sortie :p */
+    int index_monstre;						/* Index du monstre qui sortira du tuyau */
 	int tps_sortie_monstre;
     int pipe_dest;							/* L'index du tuyau dans le tableau des tuyaux */
     char *level_dest;						/* Le nom du niveau de sortie ou NULL */
@@ -61,11 +61,11 @@ typedef struct tuyau
 /*================================[PROTOTYPES]================================*/
 /******************************************************************************/
 
-tuyau* new_tuyau(SENS_SORTIE sens, char* nom);
+tuyau* new_tuyau(char* nom, SENS_SORTIE sens, int longueur, int position_x, int position_y, ETAT_TUYAU etat, int pipe_dest, char* level_dest, int index_monstre);
 
-tuyau* init_tuyau(tuyau* t, SENS_SORTIE sens, char* nom);
+tuyau* init_tuyau(tuyau* t, char* nom, SENS_SORTIE sens, int longueur, int position_x, int position_y, ETAT_TUYAU etat, int pipe_dest, char* level_dest, int index_monstre);
 
-tuyau* charger_tuyau(char* nom, SENS_SORTIE sens);
+tuyau* charger_tuyau(char* nom, SENS_SORTIE sens, int longueur, int position_x, int position_y, ETAT_TUYAU etat, int pipe_dest, char* level_dest, int index_monstre);
 
 tuyau* free_tuyau(tuyau* t);
 

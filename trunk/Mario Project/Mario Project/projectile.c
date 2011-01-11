@@ -34,7 +34,7 @@ projectile *init_projectile(projectile* p, char* nom)
 		p->vitesse.y = 0;
 
 		p->type = 0;
-		p->occ_projectiles = malloc(sizeof(liste_projectile));
+		p->occ_projectiles = new_liste_projectile();
 
 		p->v_anim_marche = 0;
 		p->v_anim_mort = 0;

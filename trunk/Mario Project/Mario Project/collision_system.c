@@ -23,7 +23,7 @@ void main_collisions(world *w)
 
 	/* PARTIE TUYAUX */
 	for(i = 0; i < w->niveau->nb_tuyaux; i++)
-		MAJ_tuyau(w->niveau->tuyaux[i], w->temps_ecoule);
+		MAJ_tuyau(w->niveau, w->niveau->tuyaux[i], w->temps_ecoule);
 
 	/* PARTIE PROJECTILES */
 	for(i = 0; i < w->niveau->nb_projectiles; i++)
@@ -246,9 +246,9 @@ void main_collisions(world *w)
 	}
 }
 
-void MAJ_tuyau(tuyau *t, Uint32 duree)
+void MAJ_tuyau(niveau* n, tuyau *t, Uint32 duree)
 {
-	if(t->monstre != NULL)
+	if(t->index_monstre > 0)
 	{
 		if(t->tps_sortie_monstre <= 0) {
 			occ_monstre* occ_m = NULL;
@@ -256,23 +256,23 @@ void MAJ_tuyau(tuyau *t, Uint32 duree)
 			switch(t->sens_sortie)
 			{
 			case VERS_LE_HAUT :
-				occ_m = new_occ_monstre((float)t->position.x * LARGEUR_BLOC + LARGEUR_BLOC / 2, (float)t->position.y * LARGEUR_BLOC + t->longueur * LARGEUR_BLOC, t->monstre);
+				occ_m = new_occ_monstre((float)t->position.x * LARGEUR_BLOC + LARGEUR_BLOC / 2, (float)t->position.y * LARGEUR_BLOC + t->longueur * LARGEUR_BLOC, n->monstres[t->index_monstre]);
 				occ_m->vitesse.y = V_SORTIE_MONSTRE;
 				occ_m->vitesse.x = 0;
 				break;
 			case VERS_LE_BAS :
-				occ_m = new_occ_monstre((float)t->position.x * LARGEUR_BLOC + LARGEUR_BLOC / 2, (float)t->position.y * LARGEUR_BLOC, t->monstre);
+				occ_m = new_occ_monstre((float)t->position.x * LARGEUR_BLOC + LARGEUR_BLOC / 2, (float)t->position.y * LARGEUR_BLOC, n->monstres[t->index_monstre]);
 				occ_m->vitesse.y = -V_SORTIE_MONSTRE;
 				occ_m->vitesse.x = 0;
 				break;
 			case VERS_LA_DROITE :
-				occ_m = new_occ_monstre((float)(t->position.x + t->longueur) * LARGEUR_BLOC, (float)t->position.y * LARGEUR_BLOC, t->monstre);
+				occ_m = new_occ_monstre((float)(t->position.x + t->longueur) * LARGEUR_BLOC, (float)t->position.y * LARGEUR_BLOC, n->monstres[t->index_monstre]);
 				occ_m->vitesse.x = V_SORTIE_MONSTRE;
 				occ_m->vitesse.y = 0;
 				occ_m->cote = COTE_DROIT;
 				break;
 			case VERS_LA_GAUCHE :
-				occ_m = new_occ_monstre((float)t->position.x * LARGEUR_BLOC, (float)t->position.y * LARGEUR_BLOC, t->monstre);
+				occ_m = new_occ_monstre((float)t->position.x * LARGEUR_BLOC, (float)t->position.y * LARGEUR_BLOC, n->monstres[t->index_monstre]);
 				occ_m->vitesse.x = -V_SORTIE_MONSTRE;
 				occ_m->vitesse.y = 0;
 				occ_m->cote = COTE_GAUCHE;
