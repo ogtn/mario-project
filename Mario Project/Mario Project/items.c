@@ -32,7 +32,7 @@ item* init_item(item* i, char* nom)
 		i->vitesse.y = 0;
 
 		i->soumission = 0;
-		i->occ_items = malloc(sizeof(liste_item));
+		i->occ_items = new_liste_item();
 
 		i->nom = 0;
 		i->nb_sprites = 0;

@@ -248,16 +248,9 @@ niveau *free_niveau(niveau *n)
 void balise_level(niveau *n, const char **attrs)
 {
     strcpy(n->nom, attrs[1]);
-    n->taille.x = atoi(attrs[3]);
-    n->taille.y = atoi(strchr(attrs[3], ':') + 1);
-
-    /* Projectiles
-    n->occ_projectiles = new_liste_projectile();
-    */
-
-    /* Items
-    n->occ_items = new_liste_item();
-    */
+    n->taille.x = atoi(attrs[2]);
+    n->taille.y = atoi(strchr(attrs[2], ':') + 1);
+	strcpy(n->titre_zik, attrs[3]);
 }
 
 
@@ -285,39 +278,129 @@ void balise_backgrounds(niveau *n, const char **attrs)
 void balise_background(niveau *n, const char **attrs)
 {
     int i = atoi(attrs[1]);                             // remplaçable par un int static, incrémenté à chaque passage
-    strcpy(n->backgrounds[i].nom_text, attrs[3]);
+	strcpy(n->backgrounds[i].nom_text, attrs[2]);
+}
+
+void balise_background_generators(niveau *n, const char **attrs)
+{
+	n->nb_background_generators = atoi(attrs[1]);
+	n->background_generators = malloc(sizeof(particule_generator) * n->nb_background_generators);
+}
+
+void balise_background_generator(niveau *n, const char **attrs)
+{
+	int i = atoi(attrs[1]);
+	coordf position = { atoi(attrs[2]),   atoi(strchr(attrs[2], ':') + 1) };
+	coordi taille = { atoi(attrs[3]),   atoi(strchr(attrs[3], ':') + 1) };
+	n->background_generators[i] = new_particule_generator(position, taille, atoi(attrs[4]), atoi(attrs[5]), attrs[6], atoi(attrs[7]), atoi(attrs[8]), atoi(attrs[9]));
+}
+
+void balise_foregrounds(niveau *n, const char **attrs)
+{
+	n->nb_foregrounds = atoi(attrs[1]);
+	n->foregrounds = malloc(sizeof(background) * n->nb_backgrounds);
+}
+
+void balise_foreground(niveau *n, const char **attrs)
+{
+	int i = atoi(attrs[1]);                             // remplaçable par un int static, incrémenté à chaque passage
+	strcpy(n->foregrounds[i].nom_text, attrs[2]);
+}
+
+void balise_foreground_generators(niveau *n, const char **attrs)
+{
+	n->nb_foreground_generators = atoi(attrs[1]);
+	n->foreground_generators = malloc(sizeof(particule_generator) * n->nb_foreground_generators);
+}
+
+void balise_foreground_generator(niveau *n, const char **attrs)
+{
+	int i = atoi(attrs[1]);
+	coordf position = { atoi(attrs[2]),   atoi(strchr(attrs[2], ':') + 1) };
+	coordi taille = { atoi(attrs[3]),   atoi(strchr(attrs[3], ':') + 1) };
+	n->foreground_generators[i] = new_particule_generator(position, taille, atoi(attrs[4]), atoi(attrs[5]), attrs[6], atoi(attrs[7]), atoi(attrs[8]), atoi(attrs[9]));
+}
+
+void balise_objects(niveau *n, const char **attrs)
+{
+	n->nb_objets = atoi(attrs[1]);
+	n->objets = malloc(sizeof(objet) * n->nb_objets);
+}
+
+void balise_object(niveau *n, const char **attrs)
+{
+	int i = atoi(attrs[1]);                             // remplaçable par un int static, incrémenté à chaque passage
+	strcpy(n->objets[i].nom_text, attrs[3]);
+}
+
+void balise_finishes(niveau *n, const char **attrs)
+{
+	n->nb_finish = atoi(attrs[1]);
+	n->finishes = malloc(sizeof(finish) * n->nb_finish);
+}
+
+void balise_finish(niveau *n, const char **attrs)
+{
+	int i = atoi(attrs[1]);                             // remplaçable par un int static, incrémenté à chaque passage
+	strcpy(n->finishes[i].nom_text, attrs[2]);
+	n->finishes[i].position.x = atoi(attrs[3]);
+	n->finishes[i].position.y = atoi(strchr(attrs[3], ':') + 1);
+}
+
+void balise_projectiles(niveau *n, const char **attrs)
+{
+	n->nb_projectiles = atoi(attrs[1]);
+	n->projectiles = malloc(sizeof(projectile) * n->nb_projectiles);
+}
+
+void balise_projectile(niveau *n, const char **attrs)
+{
+	int i = atoi(attrs[1]);                             // remplaçable par un int static, incrémenté à chaque passage
+	n->projectiles[i] = charger_projectile(attrs[2], atoi(attrs[3]));
+}
+
+void balise_items(niveau *n, const char **attrs)
+{
+	n->nb_items = atoi(attrs[1]);
+	n->items = malloc(sizeof(item) * n->nb_items);
+}
+
+void balise_item(niveau *n, const char **attrs)
+{
+	int i = atoi(attrs[1]);                             // remplaçable par un int static, incrémenté à chaque passage
+	n->items[i] = charger_item(attrs[2], atoi(attrs[3]));
 }
 
 
 void balise_monsters(niveau *n, const char **attrs)
 {
-    /*
     n->nb_monstres = atoi(attrs[1]);
 	n->monstres = malloc(sizeof(monstre*) * n->nb_monstres);
-    n->occ_monstres = new_liste_monstre();
-    */
 }
 
 
 void balise_monster(niveau *n, const char **attrs)
 {
-    /*
-    n->monstres[atoi(attrs[3])] = charger_monstre(attrs[1]);
-    */
+    n->monstres[atoi(attrs[1])] = charger_monstre(attrs[2]);
 }
 
 
 void balise_occ(niveau *n, const char **attrs)
 {
-    /*
-    n->occ_monstres = ajout_monstre(n->occ_monstres, new_occ_monstre());
-    n->occ_monstres->monstre->occ_monstre->type_monstre = n->monstres[i];          // il faut un compteur pour i
-	n->occ_monstres->monstre->occ_monstre->position.x = atoi(attrs[1]);
-	n->occ_monstres->monstre->occ_monstre->position.y = atoi(strchr(attrs[1], ':') + 1);
-    n->occ_monstres->monstre->occ_monstre->tps_disparition = n->occ_monstres->monstre->occ_monstre->type_monstre->tps_disparition;  // WTF????
-    */
+	n->monstres[atoi(attrs[1])]->occ_monstres = ajout_monstre(n->monstres[atoi(attrs[1])]->occ_monstres, new_occ_monstre(atoi(attrs[1]), atoi(strchr(attrs[1], ':') + 1), n->monstres[atoi(attrs[1])]));
 }
 
+void balise_pipes(niveau *n, const char **attrs)
+{
+	n->nb_tuyaux = atoi(attrs[1]);
+	n->tuyaux = malloc(sizeof(tuyau) * n->nb_tuyaux);
+}
+
+void balise_pipe(niveau *n, const char **attrs)
+{
+	int i = atoi(attrs[1]);
+	n->tuyaux[i] = charger_tuyau(attrs[2], atoi(attrs[3]), atoi(attrs[4]), attrs[5], atoi(strchr(attrs[5], ':') + 1), atoi(attrs[6]), atoi(attrs[7]), attrs[8], atoi(attrs[9]));
+}
 
 void balise_blocs(niveau *n, const char **attrs)
 {
@@ -361,10 +444,26 @@ void debut_element(void *user_data, const xmlChar *name, const xmlChar **attrs)
         BAD_CAST"spawn", 
         BAD_CAST"check", 
         BAD_CAST"backgrounds", 
-        BAD_CAST"background", 
+        BAD_CAST"background",
+		BAD_CAST"background_generators",
+		BAD_CAST"background_generator",
+		BAD_CAST"foregrounds", 
+        BAD_CAST"foreground",
+		BAD_CAST"foreground_generators",
+		BAD_CAST"foreground_generator",
+		BAD_CAST"objects",
+		BAD_CAST"object",
+		BAD_CAST"finishes",
+		BAD_CAST"finish",
+		BAD_CAST"projectiles",
+		BAD_CAST"projectile",
+		BAD_CAST"items",
+		BAD_CAST"item",
         BAD_CAST"monsters", 
         BAD_CAST"monster", 
-        BAD_CAST"occ", 
+        BAD_CAST"occ",
+		BAD_CAST"pipes",
+		BAD_CAST"pipe",
         BAD_CAST"blocs", 
         BAD_CAST"bloc", 
         BAD_CAST"layers", 
@@ -376,9 +475,25 @@ void debut_element(void *user_data, const xmlChar *name, const xmlChar **attrs)
         balise_check,
         balise_backgrounds,
         balise_background,
+		balise_background_generators,
+		balise_background_generator,
+		balise_foregrounds,
+		balise_foreground,
+		balise_foreground_generators,
+		balise_foreground_generator,
+		balise_objects,
+		balise_object,
+		balise_finishes,
+		balise_finish,
+		balise_projectiles,
+		balise_projectile,
+		balise_items,
+		balise_item,
         balise_monsters,
         balise_monster,
         balise_occ,
+		balise_pipes,
+		balise_pipe,
         balise_blocs,
         balise_blocs,
         balise_layers,
@@ -386,7 +501,7 @@ void debut_element(void *user_data, const xmlChar *name, const xmlChar **attrs)
     };
     int i;
 
-    for(i = 0; i < 12; i++)
+    for(i = 0; i < 28; i++)
     {
         if(!xmlStrcmp(name, elements[i]))
         {
@@ -476,8 +591,8 @@ void sauver_niveau(char *nom, niveau *n)
     /* Balise niveau */
     open_element(fic, "level");
     add_attrib(fic, "name", "%s", n->nom);
-    add_attrib(fic, "taille", "%d:%d", n->taille.x, n->taille.y);
-	add_attrib(fic, "musique", "%s", n->titre_zik);
+    add_attrib(fic, "size", "%d:%d", n->taille.x, n->taille.y);
+	add_attrib(fic, "music", "%s", n->titre_zik);
     end_element(fic);
 
     /* Spawn */
@@ -513,14 +628,14 @@ void sauver_niveau(char *nom, niveau *n)
 
         open_element(fic, "background_generator");
         add_attrib(fic, "index", "%d", i);
-		add_attrib(fic, "position", "%d:%d", gen->position.x, gen->position.y);
-		add_attrib(fic, "taille", "%d:%d", gen->taille.x, gen->taille.y);
-		add_attrib(fic, "vie_particules", "%d", gen->vie_particules);
-		add_attrib(fic, "debit", "%d", gen->debit);
-		add_attrib(fic, "gravity", "%d", gen->gravity);
-		add_attrib(fic, "couleur_debut", "%x", gen->couleur_debut);
-		add_attrib(fic, "couleur_fin", "%x", gen->couleur_fin);
 		add_attrib(fic, "img", "%s", gen->nom_text);
+		add_attrib(fic, "position", "%d:%d", gen->position.x, gen->position.y);
+		add_attrib(fic, "size", "%d:%d", gen->taille.x, gen->taille.y);
+		add_attrib(fic, "particles_life", "%d", gen->vie_particules);
+		add_attrib(fic, "flow", "%d", gen->debit);
+		add_attrib(fic, "gravity", "%d", gen->gravity);
+		add_attrib(fic, "beginning_color", "%d", gen->couleur_debut);
+		add_attrib(fic, "end_color", "%d", gen->couleur_fin);
         close_element_short(fic);
     }
     close_element(fic, "background_generators");
@@ -548,30 +663,30 @@ void sauver_niveau(char *nom, niveau *n)
 
         open_element(fic, "foreground_generator");
         add_attrib(fic, "index", "%d", i);
-		add_attrib(fic, "position", "%d:%d", gen->position.x, gen->position.y);
-		add_attrib(fic, "taille", "%d:%d", gen->taille.x, gen->taille.y);
-		add_attrib(fic, "vie_particules", "%d", gen->vie_particules);
-		add_attrib(fic, "debit", "%d", gen->debit);
-		add_attrib(fic, "gravity", "%d", gen->gravity);
-		add_attrib(fic, "couleur_debut", "0x%x", gen->couleur_debut);
-		add_attrib(fic, "couleur_fin", "0x%x", gen->couleur_fin);
 		add_attrib(fic, "img", "%s", gen->nom_text);
+		add_attrib(fic, "position", "%d:%d", gen->position.x, gen->position.y);
+		add_attrib(fic, "size", "%d:%d", gen->taille.x, gen->taille.y);
+		add_attrib(fic, "particles_life", "%d", gen->vie_particules);
+		add_attrib(fic, "flow", "%d", gen->debit);
+		add_attrib(fic, "gravity", "%d", gen->gravity);
+		add_attrib(fic, "beginning_color", "0x%x", gen->couleur_debut);
+		add_attrib(fic, "end_color", "0x%x", gen->couleur_fin);
         close_element_short(fic);
     }
     close_element(fic, "foreground_generators");
 
 	/* Objets */
-    open_element(fic, "objets");
+    open_element(fic, "objects");
 	add_attrib(fic, "nb", "%d", n->nb_foregrounds);
     end_element(fic);
 	for(i = 0; i < n->nb_foregrounds; i++)
     {
-        open_element(fic, "objet");
+        open_element(fic, "object");
         add_attrib(fic, "index", "%d", i);
 		add_attrib(fic, "img", "%s", n->objets[i].nom_text);
         close_element_short(fic);
     }
-    close_element(fic, "objets");
+    close_element(fic, "objects");
 
 	/* Finish */
     open_element(fic, "finishes");
@@ -582,6 +697,7 @@ void sauver_niveau(char *nom, niveau *n)
         open_element(fic, "finish");
         add_attrib(fic, "index", "%d", i);
 		add_attrib(fic, "img", "%s", n->finishes[i].nom_text);
+		add_attrib(fic, "position", "%d:%d", n->finishes[i].position.x, n->finishes[i].position.y);
         close_element_short(fic);
     }
 	close_element(fic, "finishes");
@@ -595,6 +711,7 @@ void sauver_niveau(char *nom, niveau *n)
         open_element(fic, "projectile");
         add_attrib(fic, "index", "%d", i);
 		add_attrib(fic, "img", "%s", n->projectiles[i]->nom_text);
+		add_attrib(fic, "type", "%d", n->projectiles[i]->type);
         close_element_short(fic);
     }
     close_element(fic, "projectiles");
@@ -608,6 +725,7 @@ void sauver_niveau(char *nom, niveau *n)
         open_element(fic, "item");
         add_attrib(fic, "index", "%d", i);
 		add_attrib(fic, "img", "%s", n->items[i]->nom_text);
+		add_attrib(fic, "type", "%d", n->items[i]->nom);
         close_element_short(fic);
     }
     close_element(fic, "items");
@@ -640,24 +758,33 @@ void sauver_niveau(char *nom, niveau *n)
     close_element(fic, "monsters");
 
 	/* Tuyaux */
-    open_element(fic, "tuyaux");
+    open_element(fic, "pipes");
     add_attrib(fic, "nb", "%d", n->nb_tuyaux);
     end_element(fic);
     for(i = 0; i < n->nb_tuyaux; i++)
     {
-        open_element(fic, "tuyau");
+		tuyau* t = n->tuyaux[i];
+        open_element(fic, "pipe");
         add_attrib(fic, "index", "%d", i);
-		add_attrib(fic, "img", "%s", n->tuyaux[i]);
+		add_attrib(fic, "img", "%s", t->nom_text);
+		add_attrib(fic, "sens", "%d", t->sens_sortie);
+		add_attrib(fic, "length", "%d", t->longueur);
+		add_attrib(fic, "pos", "%d:%d", t->position.x, t->position.y);
+		add_attrib(fic, "state", "%d", t->etat);
+		add_attrib(fic, "destination_pipe", "%d", t->pipe_dest);
+		add_attrib(fic, "level_destination", "%d", t->level_dest);
+		add_attrib(fic, "monster", "%d", t->index_monstre);
+
         close_element_short(fic);
     }
-    close_element(fic, "tuyaux");
+    close_element(fic, "pipes");
 
     /* Blocs */
     open_element(fic, "blocs");
     add_attrib(fic, "nb", "%d", n->nb_textures);
     end_element(fic);
 
-	/* texture utilisées pour les blocs */
+        /* texture utilisées pour les blocs */
     for(i = 0; i < n->nb_textures; i++)
     {
         open_element(fic, "bloc");
@@ -685,6 +812,7 @@ void sauver_niveau(char *nom, niveau *n)
     close_element(fic, "level");
 
     fclose(fic);
+
 }
 
 
@@ -994,25 +1122,8 @@ void charger_niveau_test(niveau *n)
 	n->nb_tuyaux = 1;
 	n->tuyaux = malloc(n->nb_tuyaux * sizeof(tuyau*));
 
-	n->tuyaux[0] = charger_tuyau("green_pipe", VERS_LA_DROITE);
-	n->tuyaux[0]->longueur = 2;
-	n->tuyaux[0]->position.x = 0;
-	n->tuyaux[0]->position.y = 20;
-	n->tuyaux[0]->etat = FERME;
-	n->tuyaux[0]->pipe_dest = 0;
-	n->tuyaux[0]->level_dest = NULL;
-
-	n->tuyaux[0]->monstre = NULL;
-
-	//n->tuyaux[1] = charger_tuyau("green_pipe", VERS_LE_BAS);
-	//n->tuyaux[1]->longueur = 3;
-	//n->tuyaux[1]->position.x = 10;
-	//n->tuyaux[1]->position.y = 5;
-	//n->tuyaux[1]->etat = OUVERT;
-	//n->tuyaux[1]->pipe_dest = 0;
-	//n->tuyaux[1]->level_dest = NULL;
-
-	//n->tuyaux[1]->monstre = NULL;
+	n->tuyaux[0] = charger_tuyau("green_pipe", VERS_LA_DROITE, 2, 0, 20, FERME, 0, NULL, NULL);
+	//n->tuyaux[1] = charger_tuyau("green_pipe", VERS_LE_BAS, 3, 10, 0, OUVERT, 0, NULL, NULL);
 
 	/* Layer Particules */
 	n->nb_foreground_generators = 1;

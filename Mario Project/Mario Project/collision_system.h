@@ -101,7 +101,7 @@ et de d'interractions avec l'environement */
 void main_collisions(world *w);
 
 /* MAJ des éléments contenus dnas les tuyaux, s'il y en a */
-void MAJ_tuyau(tuyau *t, Uint32 duree);
+void MAJ_tuyau(niveau* n, tuyau *t, Uint32 duree);
 
 /* MAJ des positions et vitesses du perso */
 void MAJ_collision_perso(perso *perso, niveau* lvl, keystate* keystate, Uint32 duree);

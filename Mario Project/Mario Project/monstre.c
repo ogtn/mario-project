@@ -35,7 +35,7 @@ monstre* init_monstre(monstre *m)
 		m->points = 0;
 		m->tps_disparition = 0;
 		m->tps_sortie_tuyau = 650;
-		m->occ_monstres = malloc(sizeof(liste_monstre));
+		m->occ_monstres = new_liste_monstre();
 
 		/* Initialisation du tableau des sons */
 		m->sons[SND_JUMP_ON] = FSOUND_Sample_Load(FSOUND_FREE, "musics/JumpOnMonster.wav", 0, 0, 0);
