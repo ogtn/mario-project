@@ -40,6 +40,7 @@ typedef unsigned char id, nb;
 #define TAILLE_NOM_NIVEAU			40
 #define TAILLE_TITRE_MENUS			40
 #define TAILLE_TITRE_MUSIQUE		40
+#define TAILLE_NOM_TEXTURE          50
 #define BLOC_VIDE					255
 #define OBJET_VIDE					255
 #define TPS_PROTEC_COLLISIONS		500
@@ -73,6 +74,19 @@ typedef unsigned char id, nb;
 #define my_sleep(x) usleep(x * 1000)
 #endif
 
+/* Macros pratiques */
+#ifndef min
+#define min(a, b) (((a)<(b))?(a):(b))
+#endif
+
+#ifndef max
+#define max(a, b) (((a)>(b))?(a):(b))
+#endif
+
+/* Pour gcc qui ne fournit pas cette fonction non standard */
+#ifndef itoa
+char* itoa(int value, char* result, int base);
+#endif
 
 /* Touches utilisées */
 enum{
@@ -241,9 +255,9 @@ static char const *chaines_environement[] =
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <errno.h>
 #include "vectors.h"
 #include "alloc_free.h"
-#include "texture.h"
 
 
 /******************************************************************************/
@@ -256,6 +270,8 @@ static char const *chaines_environement[] =
 /******************************************************************************/
 
 void print_time(void);
+typedef struct bouton bouton;
+typedef struct action action;
 
 
 #endif

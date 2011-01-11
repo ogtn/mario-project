@@ -57,9 +57,7 @@ enum{
 /*================================[STRUCTURES]================================*/
 /******************************************************************************/
 
-typedef struct action action;
-
-typedef struct bouton
+struct bouton
 {
 	coordi taille;                      /* taille en pixels */
 	coordi pos;                         /* position en pixels */
@@ -81,7 +79,7 @@ typedef struct bouton
     char aide[TAILLE_AIDE_BOUTON];      /* aide/infobulle associée */
     char label[TAILLE_LABEL_BOUTON];    /* label du bouton, pratique pour les menus */
 	coordi label_pos;                   /* position du label */
-} bouton;
+};
 
 
 /******************************************************************************/

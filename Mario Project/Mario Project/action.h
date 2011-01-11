@@ -31,10 +31,7 @@
 /*================================[STRUCTURES]================================*/
 /******************************************************************************/
 
-typedef struct bouton bouton;
-
-
-typedef struct action
+struct action
 {
     int enabled;					    /* L'action est-elle active? */
     void (*func)(struct action *);	    /* Fonction associée */
@@ -44,7 +41,7 @@ typedef struct action
     bouton **boutons;				    /* Boutons associés */
     int *btn_flag;					    /* Flags pour savoir lors de quelle action sur les boutons lancer l'action */
     int shortcut;					    /* Racourci clavier */
-} action;
+};
 
 
 /******************************************************************************/
