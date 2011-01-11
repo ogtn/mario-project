@@ -586,7 +586,7 @@ void add_attrib(FILE *f, char *name, char *format, ...)
 void sauver_niveau(char *nom, niveau *n)
 {
     int i, j, k;
-    FILE *fic = fopen(nom, "wb");
+    FILE *fic = fopen(nom, "wb+");
 
     /* Balise niveau */
     open_element(fic, "level");
@@ -849,7 +849,6 @@ void charger_textures_niveau(niveau *n)
 	{
 		charger_infos_texture(&n->textures[i]);
 	}
-    perror("charger_textures_niveau()");
 
 	/* Chargement des textures des blocs */
 	for(i = 0; i < n->nb_textures; i++)

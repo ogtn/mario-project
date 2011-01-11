@@ -130,7 +130,7 @@ void load_world(world *w)
 	w->persos[0]->hud->nom_niveau = w->niveau->nom;
 	w->persos[0]->hud->time = 4000;
 
-	//sauver_niveau("test_xml.xml", w->niveau);
+	sauver_niveau("test_xml.xml", w->niveau);
 }
 
 
