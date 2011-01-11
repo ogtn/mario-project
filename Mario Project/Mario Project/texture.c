@@ -68,8 +68,10 @@ void charger_infos_texture(texture *t)
 	strcat(nom, "txtr2");
     printf("nom = %s\n", nom);
 
+    perror("fscanf()");
 	flux = fopen(nom, "r");
-
+    perror("fscanf()");
+    
 	if(flux == NULL || t ==  NULL)
 	{
 		/* gestion d'erreur? valeurs par defaut? à terminer... */
@@ -77,7 +79,6 @@ void charger_infos_texture(texture *t)
 
     
 	fscanf(flux, "%d %d %d %d",&(t->taille.x), &(t->taille.y), &(t->taille_sprite.x), &(t->taille_sprite.y));
-    perror("fscanf()");
 	nb_sprites = (t->taille.x / t->taille_sprite.x) * (t->taille.y / t->taille_sprite.y);
     printf("(%d / %d) * (%d / %d) = %d\n", t->taille.x, t->taille_sprite.x, t->taille.y, t->taille_sprite.y, nb_sprites);
     t->phys = malloc(sizeof(id) * nb_sprites);

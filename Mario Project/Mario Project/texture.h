@@ -18,10 +18,6 @@
 #define TEXTURE_H
 
 #define	NB_TEXTURES_BASE	26
-#define TAILLE_NOM_TEXTURE  50
-
-
-
 
 
 /* Textures de base du jeu (boutons, polices...) */
@@ -53,6 +49,7 @@ enum {
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include "vectors.h"
+#include "constantes.h"
 
 
 /******************************************************************************/
@@ -60,8 +57,8 @@ enum {
 /******************************************************************************/
 
 /* Types */
-typedef unsigned int ID, NB;
-typedef unsigned char id, nb;
+//typedef unsigned int ID, NB;
+//typedef unsigned char id, nb;
 
 
 /* Structure texture
