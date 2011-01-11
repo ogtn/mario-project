@@ -84,7 +84,7 @@ typedef unsigned char id, nb;
 #endif
 
 /* Pour gcc qui ne fournit pas cette fonction non standard */
-#ifndef itoa
+#ifdef linux
 char* itoa(int value, char* result, int base);
 #endif
 
