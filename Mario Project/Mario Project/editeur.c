@@ -76,7 +76,7 @@ void main_editeur(void)
         /* Impression du texte */
         screen_flush();
         SDL_GL_SwapBuffers();
-        pause(1);
+        my_sleep(1);
     }
 
     //liberer_textures_niveau(e.world->niveau);
