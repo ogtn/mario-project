@@ -74,15 +74,6 @@ typedef unsigned char id, nb;
 #define my_sleep(x) usleep(x * 1000)
 #endif
 
-/* Macros pratiques */
-#ifndef min
-#define min(a, b) (((a)<(b))?(a):(b))
-#endif
-
-#ifndef max
-#define max(a, b) (((a)>(b))?(a):(b))
-#endif
-
 /* Pour gcc qui ne fournit pas cette fonction non standard */
 #ifdef linux
 char* itoa(int value, char* result, int base);
@@ -258,6 +249,15 @@ static char const *chaines_environement[] =
 #include <errno.h>
 #include "vectors.h"
 #include "alloc_free.h"
+
+/* Macros pratiques */
+#ifndef min
+#define min(a, b) (((a)<(b))?(a):(b))
+#endif
+
+#ifndef max
+#define max(a, b) (((a)>(b))?(a):(b))
+#endif
 
 
 /******************************************************************************/
