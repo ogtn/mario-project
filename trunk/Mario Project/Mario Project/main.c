@@ -83,27 +83,27 @@ int main(int argc, char *argv[])
     keystate *k = NULL;
     perror("main()");
     //FSOUND_STREAM *musique = NULL;
-
+    
     //Pour le module de surveillance des allocations
 #ifdef _DEBUG
-    fic = fopen("allocations.txt", "w");
+    fic = fopen("allocations.txt", "w+");
 #endif
 
-    // Chargement de la SDL, de OpenGL et de FMOD 
+    // Chargement de la SDL, de OpenGL et de FMOD
     init_SDL(LARGEUR_FENETRE, HAUTEUR_FENETRE);
     init_OpenGL(LARGEUR_FENETRE, HAUTEUR_FENETRE);
     FSOUND_Init(44100, 32, 0);
 
-	init_text("fonts/consolas.fnt", 100, COLOR_RED);
+    init_text("fonts/consolas.fnt", 100, COLOR_RED);
+    errno = 0;
 
-    // chargement de textures de base à faire plus proprement plus tard 
-    charger_texture_bis("textures/rien.png", NULL);
+    // chargement de textures de base à faire plus proprement plus tard
+    charger_texture_bis("textures/rien.PNG", NULL);
     charger_texture_bis("textures/ascii_2.png", NULL);
     charger_texture_bis("textures/title_screen.jpg", NULL);
     charger_texture_bis("textures/button_blu.png", NULL);
     charger_texture_bis("textures/button_red.png", NULL);
     charger_texture_bis("textures/button_blk.png", NULL);
-
 
     //musique = charger_musique("musics/Ice Mario.mp3", 255, 1);
 
@@ -158,7 +158,6 @@ void init_SDL(int x, int y)
 
 	SDL_ShowCursor(0);
 
-
     sprintf(str, "=Mario Project= V0.028a [%d * %d]", x, y);	
 	SDL_WM_SetCaption(str, NULL);
 }
@@ -203,7 +202,6 @@ void jouer(world *w_)
     w->ecran.taille.y = HAUTEUR_FENETRE;
     w->ecran.origine.x = 0;
     w->ecran.origine.y = 0;
-
 	
 	/* Boucle principale du programme à modifier pour qu'elle soit plus "intelligente"
     il faut que lorsqu' on presse echap le menu pause s'ouvre, et qu'on retourne dans
@@ -216,12 +214,13 @@ void jouer(world *w_)
 
         /* Mise à jour de l'etat des touches du clavier */
         maj_keystate(w->keystate, &continuer);
-
         /* Test de collisions */
         if(perso_mort_ou_transforme(w))
 		{
+            puts("hey!!!");
 			/* Mise à jour de toutes les positions des objets/enemis */
 			main_collisions(w);
+            puts("hoy!");
 		}
         else
         {
@@ -354,4 +353,35 @@ void affichage_debug(world *w)
 
     /* Hitbox */
     screen_printf_dbg("Hitbox : bg.x : %f bg.y : %f\n", w->persos[0]->position.x + w->persos[0]->texture_act->abscisse_bas, w->persos[0]->position.y);
+}
+
+
+/*
+ * http://www.jb.man.ac.uk/~slowe/cpp/itoa.html
+ * C++ version 0.4 char* style "itoa":
+ * Written by Lukás Chmela
+ * Released under GPLv3.
+ */
+char* itoa(int value, char* result, int base) {
+    // check that the base if valid
+    if (base < 2 || base > 36) { *result = '\0'; return result; }
+
+    char* ptr = result, *ptr1 = result, tmp_char;
+    int tmp_value;
+
+    do {
+        tmp_value = value;
+        value /= base;
+        *ptr++ = "zyxwvutsrqponmlkjihgfedcba9876543210123456789abcdefghijklmnopqrstuvwxyz" [35 + (tmp_value - value * base)];
+    } while ( value );
+
+    // Apply negative sign
+    if (tmp_value < 0) *ptr++ = '-';
+    *ptr-- = '\0';
+    while(ptr1 < ptr) {
+        tmp_char = *ptr;
+        *ptr--= *ptr1;
+        *ptr1++ = tmp_char;
+    }
+    return result;
 }
