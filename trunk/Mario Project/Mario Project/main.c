@@ -81,7 +81,6 @@ int main(int argc, char *argv[])
 {
     //int choix = 1;
     keystate *k = NULL;
-    perror("main()");
     //FSOUND_STREAM *musique = NULL;
     
     //Pour le module de surveillance des allocations
@@ -95,7 +94,6 @@ int main(int argc, char *argv[])
     FSOUND_Init(44100, 32, 0);
 
     init_text("fonts/consolas.fnt", 100, COLOR_RED);
-    errno = 0;
 
     // chargement de textures de base à faire plus proprement plus tard
     charger_texture_bis("textures/rien.PNG", NULL);
@@ -208,7 +206,7 @@ void jouer(world *w_)
     la boucle en quittant le menu (sauf si on decide d'arreter de jouer) */
     while(continuer)
     {
-		temps_rendu = SDL_GetTicks();
+        temps_rendu = SDL_GetTicks();
         glClear(GL_COLOR_BUFFER_BIT);
 		glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -217,10 +215,8 @@ void jouer(world *w_)
         /* Test de collisions */
         if(perso_mort_ou_transforme(w))
 		{
-            puts("hey!!!");
 			/* Mise à jour de toutes les positions des objets/enemis */
 			main_collisions(w);
-            puts("hoy!");
 		}
         else
         {
@@ -247,6 +243,7 @@ void jouer(world *w_)
         /* Infos debug */
 #ifdef _DEBUG
         //affichage_debug(w);
+        screen_printf_dbg("FPS! %d\n", w->fps);
 #endif
 
         /* audio? */
@@ -273,8 +270,8 @@ void jouer(world *w_)
 		//	my_sleep(1);
 		//}
 
-		if(temps_rendu < 17)
-			my_sleep(17 - temps_rendu);
+		//if(temps_rendu < 17)
+		//	my_sleep(17 - temps_rendu);
 
         screen_flush();
 	    SDL_GL_SwapBuffers();
