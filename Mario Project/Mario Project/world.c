@@ -65,6 +65,7 @@ world *init_world(world *w)
 	return w;
 }
 
+
 world *free_world(world *w)
 {
 	int i;
@@ -129,7 +130,7 @@ void load_world(world *w)
 	w->persos[0]->hud->nom_niveau = w->niveau->nom;
 	w->persos[0]->hud->time = 4000;
 
-	sauver_niveau("test_xml.xml", w->niveau);
+	//sauver_niveau("test_xml.xml", w->niveau);
 }
 
 
@@ -217,7 +218,7 @@ void update_taille_fenetre(world *w)
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluOrtho2D(0, w->taille_fenetre.x, 0, w->taille_fenetre.y);
+        glOrtho(0, w->taille_fenetre.x, 0, w->taille_fenetre.y, -1000, 1000);
 		glMatrixMode(GL_MODELVIEW);
 	}
 }
