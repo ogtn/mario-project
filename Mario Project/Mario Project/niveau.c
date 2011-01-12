@@ -248,9 +248,9 @@ niveau *free_niveau(niveau *n)
 void balise_level(niveau *n, const char **attrs)
 {
     strcpy(n->nom, attrs[1]);
-    n->taille.x = atoi(attrs[2]);
-    n->taille.y = atoi(strchr(attrs[2], ':') + 1);
-	strcpy(n->titre_zik, attrs[3]);
+    n->taille.x = atoi(attrs[3]);
+    n->taille.y = atoi(strchr(attrs[3], ':') + 1);
+	strcpy(n->titre_zik, attrs[5]);
 }
 
 
@@ -278,7 +278,7 @@ void balise_backgrounds(niveau *n, const char **attrs)
 void balise_background(niveau *n, const char **attrs)
 {
     int i = atoi(attrs[1]);                             // remplaçable par un int static, incrémenté à chaque passage
-	strcpy(n->backgrounds[i].nom_text, attrs[2]);
+	strcpy(n->backgrounds[i].nom_text, attrs[3]);
 }
 
 void balise_background_generators(niveau *n, const char **attrs)
@@ -316,9 +316,9 @@ void balise_foreground_generators(niveau *n, const char **attrs)
 void balise_foreground_generator(niveau *n, const char **attrs)
 {
 	int i = atoi(attrs[1]);
-	coordf position = { atoi(attrs[2]),   atoi(strchr(attrs[2], ':') + 1) };
-	coordi taille = { atoi(attrs[3]),   atoi(strchr(attrs[3], ':') + 1) };
-	n->foreground_generators[i] = new_particule_generator(position, taille, atoi(attrs[4]), atoi(attrs[5]), attrs[6], atoi(attrs[7]), atoi(attrs[8]), atoi(attrs[9]));
+	coordf position = { atoi(attrs[5]),   atoi(strchr(attrs[5], ':') + 1) };
+	coordi taille = { atoi(attrs[7]),   atoi(strchr(attrs[7], ':') + 1) };
+	n->foreground_generators[i] = new_particule_generator(position, taille, atoi(attrs[9]), atoi(attrs[11]), attrs[3], atoi(attrs[13]), atoi(attrs[15]), atoi(attrs[17]));
 }
 
 void balise_objects(niveau *n, const char **attrs)
@@ -342,9 +342,9 @@ void balise_finishes(niveau *n, const char **attrs)
 void balise_finish(niveau *n, const char **attrs)
 {
 	int i = atoi(attrs[1]);                             // remplaçable par un int static, incrémenté à chaque passage
-	strcpy(n->finishes[i].nom_text, attrs[2]);
-	n->finishes[i].position.x = atoi(attrs[3]);
-	n->finishes[i].position.y = atoi(strchr(attrs[3], ':') + 1);
+	strcpy(n->finishes[i].nom_text, attrs[3]);
+	n->finishes[i].position.x = atoi(attrs[5]);
+	n->finishes[i].position.y = atoi(strchr(attrs[5], ':') + 1);
 }
 
 void balise_projectiles(niveau *n, const char **attrs)
@@ -356,7 +356,7 @@ void balise_projectiles(niveau *n, const char **attrs)
 void balise_projectile(niveau *n, const char **attrs)
 {
 	int i = atoi(attrs[1]);                             // remplaçable par un int static, incrémenté à chaque passage
-	n->projectiles[i] = charger_projectile(attrs[2], atoi(attrs[3]));
+	n->projectiles[i] = charger_projectile(attrs[3], atoi(attrs[5]));
 }
 
 void balise_items(niveau *n, const char **attrs)
@@ -368,7 +368,7 @@ void balise_items(niveau *n, const char **attrs)
 void balise_item(niveau *n, const char **attrs)
 {
 	int i = atoi(attrs[1]);                             // remplaçable par un int static, incrémenté à chaque passage
-	n->items[i] = charger_item(attrs[2], atoi(attrs[3]));
+	n->items[i] = charger_item(attrs[3], atoi(attrs[5]));
 }
 
 
@@ -378,16 +378,17 @@ void balise_monsters(niveau *n, const char **attrs)
 	n->monstres = malloc(sizeof(monstre*) * n->nb_monstres);
 }
 
-
 void balise_monster(niveau *n, const char **attrs)
 {
-    n->monstres[atoi(attrs[1])] = charger_monstre(attrs[2]);
+	static int i = 0;
+    n->monstres[i] = charger_monstre(attrs[1]);
+	i++;
 }
 
 
 void balise_occ(niveau *n, const char **attrs)
 {
-	n->monstres[atoi(attrs[1])]->occ_monstres = ajout_monstre(n->monstres[atoi(attrs[1])]->occ_monstres, new_occ_monstre(atoi(attrs[1]), atoi(strchr(attrs[1], ':') + 1), n->monstres[atoi(attrs[1])]));
+	n->monstres[atoi(attrs[1])]->occ_monstres = ajout_monstre(n->monstres[atoi(attrs[1])]->occ_monstres, new_occ_monstre(atoi(attrs[3]), atoi(strchr(attrs[3], ':') + 1), n->monstres[atoi(attrs[1])]));
 }
 
 void balise_pipes(niveau *n, const char **attrs)
@@ -399,7 +400,7 @@ void balise_pipes(niveau *n, const char **attrs)
 void balise_pipe(niveau *n, const char **attrs)
 {
 	int i = atoi(attrs[1]);
-	n->tuyaux[i] = charger_tuyau(attrs[2], atoi(attrs[3]), atoi(attrs[4]), attrs[5], atoi(strchr(attrs[5], ':') + 1), atoi(attrs[6]), atoi(attrs[7]), attrs[8], atoi(attrs[9]));
+	n->tuyaux[i] = charger_tuyau(attrs[3], atoi(attrs[5]), atoi(attrs[7]), attrs[9], atoi(strchr(attrs[9], ':') + 1), atoi(attrs[11]), atoi(attrs[13]), attrs[15], atoi(attrs[17]));
 }
 
 void balise_blocs(niveau *n, const char **attrs)
@@ -662,7 +663,7 @@ void sauver_niveau(char *nom, niveau *n)
 
 	/* Foreground Generators */
     open_element(fic, "foreground_generators");
-	add_attrib(fic, "nb", "%d", n->foreground_generators);
+	add_attrib(fic, "nb", "%d", n->nb_foreground_generators);
     end_element(fic);
     for(i = 0; i < n->nb_foreground_generators; i++)
     {
@@ -676,8 +677,8 @@ void sauver_niveau(char *nom, niveau *n)
 		add_attrib(fic, "particles_life", "%d", gen->vie_particules);
 		add_attrib(fic, "flow", "%d", gen->debit);
 		add_attrib(fic, "gravity", "%d", gen->gravity);
-		add_attrib(fic, "beginning_color", "0x%x", gen->couleur_debut);
-		add_attrib(fic, "end_color", "0x%x", gen->couleur_fin);
+		add_attrib(fic, "beginning_color", "%d", gen->couleur_debut);
+		add_attrib(fic, "end_color", "%d", gen->couleur_fin);
         close_element_short(fic);
     }
     close_element(fic, "foreground_generators");
@@ -704,7 +705,7 @@ void sauver_niveau(char *nom, niveau *n)
         open_element(fic, "finish");
         add_attrib(fic, "index", "%d", i);
 		add_attrib(fic, "img", "%s", n->finishes[i].nom_text);
-		add_attrib(fic, "position", "%d:%d", n->finishes[i].position.x, n->finishes[i].position.y);
+		add_attrib(fic, "position", "%0.f:%0.f", n->finishes[i].position.x, n->finishes[i].position.y);
         close_element_short(fic);
     }
 	close_element(fic, "finishes");
@@ -754,6 +755,7 @@ void sauver_niveau(char *nom, niveau *n)
         while(occ_m != NULL)
         {
             open_element(fic, "occ");
+			add_attrib(fic, "actual", "%d", i);
             add_attrib(fic, "pos", "%d:%d",
                 (int)occ_m->occ_monstre->position.x,
                 (int)occ_m->occ_monstre->position.y);
