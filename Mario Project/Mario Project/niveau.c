@@ -290,7 +290,7 @@ void balise_background_generators(niveau *n, const char **attrs)
 void balise_background_generator(niveau *n, const char **attrs)
 {
 	int i = atoi(attrs[1]);
-	coordf position = { atoi(attrs[2]),   atoi(strchr(attrs[2], ':') + 1) };
+	coordf position = { atoi(attrs[2]),  atoi(strchr(attrs[2], ':') + 1) };
 	coordi taille = { atoi(attrs[3]),   atoi(strchr(attrs[3], ':') + 1) };
 	n->background_generators[i] = new_particule_generator(position, taille, atoi(attrs[4]), atoi(attrs[5]), attrs[6], atoi(attrs[7]), atoi(attrs[8]), atoi(attrs[9]));
 }
@@ -586,7 +586,7 @@ void add_attrib(FILE *f, char *name, char *format, ...)
 void sauver_niveau(char *nom, niveau *n)
 {
     int i, j, k;
-    FILE *fic = fopen(nom, "wb+");
+    FILE *fic = fopen(nom, "wb");
 
     /* Balise niveau */
     open_element(fic, "level");
@@ -849,6 +849,7 @@ void charger_textures_niveau(niveau *n)
 	{
 		charger_infos_texture(&n->textures[i]);
 	}
+    perror("charger_textures_niveau()");
 
 	/* Chargement des textures des blocs */
 	for(i = 0; i < n->nb_textures; i++)
@@ -1083,7 +1084,7 @@ void charger_niveau_test(niveau *n)
 	/* Layer projectile */
 	n->nb_projectiles = 2;
 	n->projectiles = malloc(sizeof(projectile*) * n->nb_projectiles);
-	n->projectiles[FIREBALL] = charger_projectile("special_fireball", FIREBALL);
+	n->projectiles[FIREBALL] = charger_projectile("fireball", FIREBALL);
 	n->projectiles[DEBRIS] = charger_projectile("debris", DEBRIS);	
 
 	/* Layer items */
@@ -1179,15 +1180,15 @@ void charger_niveau_test(niveau *n)
 		for(j = 0; j < n->taille.y; j++)
 		{
 			if(j == 1 && i < 75)
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[0], NULL);
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 0, -1);
 			else if (i == 0)
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[2], NULL);
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 2, -1);
 			else if (i == 2 && j == 5)
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[17], &n->blocs[19]);
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, 19);
 			else if (i == 1 && j == 5)
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[17], &n->blocs[19]);
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, 19);
 			else if (i > 10 && i < 15 && j == 5)
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, &n->blocs[18], NULL);
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 18, -1);
 			/*else if (i == 14 && j == 6)
 				n->occ_blocs[i][j] = 18;
 			else if (i == 14 && j == 10)
@@ -1248,7 +1249,7 @@ void charger_niveau_test(niveau *n)
 			//else if(j == 13 && i == 25)
 			//	n->occ_blocs[i][j] = 7;*/
 			else
-				n->occ_blocs[i][j] = new_occ_bloc(i * LARGEUR_BLOC, j * LARGEUR_BLOC, NULL, NULL);
+				n->occ_blocs[i][j] = new_occ_bloc(i * LARGEUR_BLOC, j * LARGEUR_BLOC, -1, -1);
 		}
 	}
 
@@ -1786,9 +1787,9 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
         {
             occ = n->occ_blocs[i][j];
 			
-			if(occ->bloc_actuel != NULL)
+			if(occ->bloc_actuel >= 0)
             {
-				text_id = occ->bloc_actuel->texture;
+				text_id = n->blocs[occ->bloc_actuel].texture;
                 sprite.taille.x = n->textures[text_id].taille_sprite.x;
                 sprite.taille.y = n->textures[text_id].taille_sprite.y;
 
@@ -1803,17 +1804,17 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
 					{
 						phase = (duree % V_ANIM_BLOC_SPEC) / (V_ANIM_BLOC_SPEC / nb_sprites.x);
 						
-						sprite.point_bg.x = (float)1 / nb_sprites.x * (occ->bloc_actuel->coord_sprite.x + phase);
-						sprite.point_bg.y = (float)1 / nb_sprites.y * occ->bloc_actuel->coord_sprite.y;
-						sprite.point_hd.x = (float)1 / nb_sprites.x * (occ->bloc_actuel->coord_sprite.x + phase + 1);
-						sprite.point_hd.y = (float)1 / nb_sprites.y * (occ->bloc_actuel->coord_sprite.y + 1);
+						sprite.point_bg.x = (float)1 / nb_sprites.x * (n->blocs[occ->bloc_actuel].coord_sprite.x + phase);
+						sprite.point_bg.y = (float)1 / nb_sprites.y * n->blocs[occ->bloc_actuel].coord_sprite.y;
+						sprite.point_hd.x = (float)1 / nb_sprites.x * (n->blocs[occ->bloc_actuel].coord_sprite.x + phase + 1);
+						sprite.point_hd.y = (float)1 / nb_sprites.y * (n->blocs[occ->bloc_actuel].coord_sprite.y + 1);
 					}
 					else 
 					{
-						sprite.point_bg.x = (float)1 / nb_sprites.x * occ->bloc_actuel->coord_sprite.x;
-						sprite.point_bg.y = (float)1 / nb_sprites.y * occ->bloc_actuel->coord_sprite.y;
-						sprite.point_hd.x = (float)1 / nb_sprites.x * (occ->bloc_actuel->coord_sprite.x + 1);
-						sprite.point_hd.y = (float)1 / nb_sprites.y * (occ->bloc_actuel->coord_sprite.y + 1);
+						sprite.point_bg.x = (float)1 / nb_sprites.x * n->blocs[occ->bloc_actuel].coord_sprite.x;
+						sprite.point_bg.y = (float)1 / nb_sprites.y * n->blocs[occ->bloc_actuel].coord_sprite.y;
+						sprite.point_hd.x = (float)1 / nb_sprites.x * (n->blocs[occ->bloc_actuel].coord_sprite.x + 1);
+						sprite.point_hd.y = (float)1 / nb_sprites.y * (n->blocs[occ->bloc_actuel].coord_sprite.y + 1);
 					}
 
 					switch(occ->etat)
@@ -1850,8 +1851,8 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
 				}
 
 				/* Réduction du temps */
-				if((occ->bloc_actuel->type_bloc & DISTRIBUTEUR_PIECE) && occ->bloc_actuel->tps_piece > 0)
- 					occ->bloc_actuel->tps_piece -= duree / 150;
+				if((n->blocs[occ->bloc_actuel].type_bloc & DISTRIBUTEUR_PIECE) && n->blocs[occ->bloc_actuel].tps_piece > 0)
+ 					n->blocs[occ->bloc_actuel].tps_piece -= duree / 150;
             }
 
 			if(occ->etat != IMMOBILE && occ->compteur_etat == 0)

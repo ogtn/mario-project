@@ -101,8 +101,8 @@ typedef struct occ_bloc
 	ETAT_BLOC etat;							/* Contient l'etat du bloc */
 	int compteur_etat;						/* Définit l'étape de dessin d'un mouvement de bloc */
 	int id_perso;							/* Identifiant du perso qui a frappé dans le bloc */
-	bloc* bloc_actuel;						/* Pointeur sur le bloc modèle actuel */
-	bloc* bloc_alternatif;					/* Pointeur sur le bloc modèle alternatif */
+	int bloc_actuel;						/* Pointeur sur le bloc modèle actuel */
+	int bloc_alternatif;					/* Pointeur sur le bloc modèle alternatif */
 } occ_bloc;
 
 /* Liste simplement chainee de blocs */
@@ -123,9 +123,9 @@ typedef struct liste_bloc
 /*================================[PROTOTYPES]================================*/
 /******************************************************************************/
 
-occ_bloc* new_occ_bloc(int pos_x, int pos_y, bloc* bloc_actuel, bloc* bloc_alternatif);
+occ_bloc* new_occ_bloc(int pos_x, int pos_y, int bloc_actuel, int bloc_alternatif);
 
-occ_bloc* init_occ_bloc(occ_bloc* occ, int pos_x, int pos_y, bloc* bloc_actuel, bloc* bloc_alternatif);
+occ_bloc* init_occ_bloc(occ_bloc* occ, int pos_x, int pos_y, int bloc_actuel, int bloc_alternatif);
 
 /*********** Gestion des listes chainees ***********/
 
