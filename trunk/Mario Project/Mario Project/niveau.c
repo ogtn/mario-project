@@ -436,6 +436,11 @@ void balise_layer(niveau *n, const char **attrs)
     attrs[1];   // index
 }
 
+void balise_occ_block(niveau *n, const char **attrs)
+{
+    int i = atoi(attrs[1]) , j = atoi(strchr(attrs[1], ':') + 1);
+	n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, atoi(attrs[2]), atoi(attrs[3]));
+}
 
 void debut_element(void *user_data, const xmlChar *name, const xmlChar **attrs) 
 {
@@ -467,7 +472,8 @@ void debut_element(void *user_data, const xmlChar *name, const xmlChar **attrs)
         BAD_CAST"blocs", 
         BAD_CAST"bloc", 
         BAD_CAST"layers", 
-        BAD_CAST"layer"
+        BAD_CAST"layer",
+		BAD_CAST"occ_block"
     };
     static const balise_func functions[] = {
         balise_level,
@@ -497,11 +503,12 @@ void debut_element(void *user_data, const xmlChar *name, const xmlChar **attrs)
         balise_blocs,
         balise_blocs,
         balise_layers,
-        balise_layer
+        balise_layer,
+		balise_occ_block
     };
     int i;
 
-    for(i = 0; i < 28; i++)
+    for(i = 0; i < 29; i++)
     {
         if(!xmlStrcmp(name, elements[i]))
         {
@@ -800,10 +807,17 @@ void sauver_niveau(char *nom, niveau *n)
         open_element(fic, "layer");
         add_attrib(fic, "index", "%d", i);
         end_element(fic);
-        fseek(fic, -1, SEEK_CUR);
         for(j = 0; j < n->taille.x; j++)
+		{
             for(k = 0; k < n->taille.y; k++)
-                fprintf(fic, "%d:", n->occ_blocs[j][k]);
+			{
+				open_element(fic, "occ_block");
+				add_attrib(fic, "indexes", "%d:%d", j, k);
+				add_attrib(fic, "actual", "%d", n->occ_blocs[j][k]->bloc_actuel);
+                add_attrib(fic, "alt", "%d", n->occ_blocs[j][k]->bloc_alternatif);
+				close_element_short(fic);
+			}
+		}
         close_element(fic, "layer");
     }
     close_element(fic, "layers");
@@ -1122,8 +1136,8 @@ void charger_niveau_test(niveau *n)
 	n->nb_tuyaux = 1;
 	n->tuyaux = malloc(n->nb_tuyaux * sizeof(tuyau*));
 
-	n->tuyaux[0] = charger_tuyau("green_pipe", VERS_LA_DROITE, 2, 0, 20, FERME, 0, NULL, NULL);
-	//n->tuyaux[1] = charger_tuyau("green_pipe", VERS_LE_BAS, 3, 10, 0, OUVERT, 0, NULL, NULL);
+	n->tuyaux[0] = charger_tuyau("green_pipe", VERS_LA_DROITE, 2, 0, 20, FERME, 0, NULL, -1);
+	//n->tuyaux[1] = charger_tuyau("green_pipe", VERS_LE_BAS, 3, 10, 0, OUVERT, 0, NULL, -1);
 
 	/* Layer Particules */
 	n->nb_foreground_generators = 1;
@@ -1446,13 +1460,13 @@ void affiche_occ_blocs(niveau* n)
 	for(i = n->taille.x - 1; i >= 0 ; i--){ 
 		for(j = 0; j < n->taille.y; j++){
 
-			if(n->occ_blocs[i][j]->bloc_actuel != NULL)
+			if(n->occ_blocs[i][j]->bloc_actuel >= 0)
 			{
-				fprintf(flux, "%d ", n->occ_blocs[i][j]);
+				fprintf(flux, "%d ", n->occ_blocs[i][j]->bloc_actuel);
 			}
 			else
 			{
-				fprintf(flux, "0 ", n->occ_blocs[i][j]);
+				fprintf(flux, "-1 ", n->occ_blocs[i][j]->bloc_actuel);
 			}
 		}
 		fprintf(flux,"\n");
