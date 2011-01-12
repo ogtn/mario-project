@@ -21,7 +21,6 @@ HEADERS += action.h \
            keystate.h \
            menus.h \
            monstre.h \
-           my_dirent.h \
            niveau.h \
            particules.h \
            perso.h \
@@ -48,7 +47,6 @@ SOURCES += action.c \
            main.c \
            menus.c \
            monstre.c \
-           my_dirent.c \
            niveau.c \
            particules.c \
            perso.c \
