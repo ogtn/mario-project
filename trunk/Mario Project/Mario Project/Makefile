@@ -9,33 +9,16 @@
 ####### Compiler, tools and options
 
 CC            = gcc
-CXX           = g++
 DEFINES       = -D_DEBUG
 CFLAGS        = -pipe -O2 -Wall -W -D_REENTRANT $(DEFINES)
-CXXFLAGS      = -pipe -O2 -Wall -W -D_REENTRANT $(DEFINES)
 INCPATH       = -I. -I/usr/include/libxml2
-LINK          = g++
+LINK          = gcc
 LFLAGS        = -Wl,-O1
 LIBS          = $(SUBLIBS)  -L/usr/lib -lSDL -lSDL_image -lGL -lxml2 -lfmod-3.75
-AR            = ar cqs
-RANLIB        = 
 QMAKE         = /usr/bin/qmake
-TAR           = tar -cf
-COMPRESS      = gzip -9f
-COPY          = cp -f
-SED           = sed
-COPY_FILE     = $(COPY)
-COPY_DIR      = $(COPY) -r
-STRIP         = strip
-INSTALL_FILE  = install -m 644 -p
-INSTALL_DIR   = $(COPY_DIR)
-INSTALL_PROGRAM = install -m 755 -p
 DEL_FILE      = rm -f
-SYMLINK       = ln -f -s
 DEL_DIR       = rmdir
-MOVE          = mv -f
 CHK_DIR_EXISTS= test -d
-MKDIR         = mkdir -p
 
 ####### Output directory
 
@@ -93,26 +76,7 @@ OBJECTS       = action.o \
 		tuyau.o \
 		vectors.o \
 		world.o
-DIST          = /usr/share/qt4/mkspecs/common/g++.conf \
-		/usr/share/qt4/mkspecs/common/unix.conf \
-		/usr/share/qt4/mkspecs/common/linux.conf \
-		/usr/share/qt4/mkspecs/qconfig.pri \
-		/usr/share/qt4/mkspecs/features/qt_functions.prf \
-		/usr/share/qt4/mkspecs/features/qt_config.prf \
-		/usr/share/qt4/mkspecs/features/exclusive_builds.prf \
-		/usr/share/qt4/mkspecs/features/default_pre.prf \
-		/usr/share/qt4/mkspecs/features/release.prf \
-		/usr/share/qt4/mkspecs/features/default_post.prf \
-		/usr/share/qt4/mkspecs/features/warn_on.prf \
-		/usr/share/qt4/mkspecs/features/qt.prf \
-		/usr/share/qt4/mkspecs/features/unix/thread.prf \
-		/usr/share/qt4/mkspecs/features/moc.prf \
-		/usr/share/qt4/mkspecs/features/resources.prf \
-		/usr/share/qt4/mkspecs/features/uic.prf \
-		/usr/share/qt4/mkspecs/features/yacc.prf \
-		/usr/share/qt4/mkspecs/features/lex.prf \
-		/usr/share/qt4/mkspecs/features/include_source_dir.prf \
-		Mario Project.pro
+DIST          = Mario Project.pro
 QMAKE_TARGET  = Mario\ Project
 DESTDIR       = 
 TARGET        = Mario\ Project
@@ -144,89 +108,20 @@ all: Makefile $(TARGET)
 $(TARGET):  $(OBJECTS)  
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJCOMP) $(LIBS)
 
-Makefile: Mario\ Project.pro  /usr/share/qt4/mkspecs/linux-g++/qmake.conf /usr/share/qt4/mkspecs/common/g++.conf \
-		/usr/share/qt4/mkspecs/common/unix.conf \
-		/usr/share/qt4/mkspecs/common/linux.conf \
-		/usr/share/qt4/mkspecs/qconfig.pri \
-		/usr/share/qt4/mkspecs/features/qt_functions.prf \
-		/usr/share/qt4/mkspecs/features/qt_config.prf \
-		/usr/share/qt4/mkspecs/features/exclusive_builds.prf \
-		/usr/share/qt4/mkspecs/features/default_pre.prf \
-		/usr/share/qt4/mkspecs/features/release.prf \
-		/usr/share/qt4/mkspecs/features/default_post.prf \
-		/usr/share/qt4/mkspecs/features/warn_on.prf \
-		/usr/share/qt4/mkspecs/features/qt.prf \
-		/usr/share/qt4/mkspecs/features/unix/thread.prf \
-		/usr/share/qt4/mkspecs/features/moc.prf \
-		/usr/share/qt4/mkspecs/features/resources.prf \
-		/usr/share/qt4/mkspecs/features/uic.prf \
-		/usr/share/qt4/mkspecs/features/yacc.prf \
-		/usr/share/qt4/mkspecs/features/lex.prf \
-		/usr/share/qt4/mkspecs/features/include_source_dir.prf
+Makefile: Mario\ Project.pro
 	$(QMAKE) -o Makefile Mario\ Project.pro
-/usr/share/qt4/mkspecs/common/g++.conf:
-/usr/share/qt4/mkspecs/common/unix.conf:
-/usr/share/qt4/mkspecs/common/linux.conf:
-/usr/share/qt4/mkspecs/qconfig.pri:
-/usr/share/qt4/mkspecs/features/qt_functions.prf:
-/usr/share/qt4/mkspecs/features/qt_config.prf:
-/usr/share/qt4/mkspecs/features/exclusive_builds.prf:
-/usr/share/qt4/mkspecs/features/default_pre.prf:
-/usr/share/qt4/mkspecs/features/release.prf:
-/usr/share/qt4/mkspecs/features/default_post.prf:
-/usr/share/qt4/mkspecs/features/warn_on.prf:
-/usr/share/qt4/mkspecs/features/qt.prf:
-/usr/share/qt4/mkspecs/features/unix/thread.prf:
-/usr/share/qt4/mkspecs/features/moc.prf:
-/usr/share/qt4/mkspecs/features/resources.prf:
-/usr/share/qt4/mkspecs/features/uic.prf:
-/usr/share/qt4/mkspecs/features/yacc.prf:
-/usr/share/qt4/mkspecs/features/lex.prf:
-/usr/share/qt4/mkspecs/features/include_source_dir.prf:
+
 qmake:  FORCE
 	@$(QMAKE) -o Makefile Mario\ Project.pro
 
-dist: 
-	@$(CHK_DIR_EXISTS) .tmp/Mario\ Project1.0.0 || $(MKDIR) .tmp/Mario\ Project1.0.0 
-	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/Mario\ Project1.0.0/ && $(COPY_FILE) --parents action.h alloc_free.h bloc.h bouton.h browser.h collision_system.h constantes.h editeur.h group_box.h items.h keystate.h menus.h monstre.h niveau.h particules.h perso.h projectile.h sound.h sprite.h texte.h texte_interface.h texture.h tuyau.h vectors.h world.h .tmp/Mario\ Project1.0.0/ && $(COPY_FILE) --parents action.c alloc_free.c bloc.c bouton.c browser.c collision_system.c editeur.c editeur_action.c group_box.c items.c keystate.c main.c menus.c monstre.c my_dirent.c niveau.c particules.c perso.c projectile.c sound.c sprite.c texte.c texture.c tuyau.c vectors.c world.c .tmp/Mario\ Project1.0.0/ && (cd `dirname .tmp/Mario\ Project1.0.0` && $(TAR) Mario\ Project1.0.0.tar Mario\ Project1.0.0 && $(COMPRESS) Mario\ Project1.0.0.tar) && $(MOVE) `dirname .tmp/Mario\ Project1.0.0`/Mario\ Project1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/Mario\ Project1.0.0
-
-
-clean:compiler_clean 
+clean: 
 	-$(DEL_FILE) $(OBJECTS)
 	-$(DEL_FILE) *~ core *.core
 
 
 ####### Sub-libraries
 
-distclean: clean
-	-$(DEL_FILE) $(TARGET) 
-	-$(DEL_FILE) Makefile
-
-
 check: first
-
-mocclean: compiler_moc_header_clean compiler_moc_source_clean
-
-mocables: compiler_moc_header_make_all compiler_moc_source_make_all
-
-compiler_moc_header_make_all:
-compiler_moc_header_clean:
-compiler_rcc_make_all:
-compiler_rcc_clean:
-compiler_image_collection_make_all: qmake_image_collection.cpp
-compiler_image_collection_clean:
-	-$(DEL_FILE) qmake_image_collection.cpp
-compiler_moc_source_make_all:
-compiler_moc_source_clean:
-compiler_uic_make_all:
-compiler_uic_clean:
-compiler_yacc_decl_make_all:
-compiler_yacc_decl_clean:
-compiler_yacc_impl_make_all:
-compiler_yacc_impl_clean:
-compiler_lex_make_all:
-compiler_lex_clean:
-compiler_clean: 
 
 ####### Compile
 
@@ -573,12 +468,3 @@ world.o: world.c world.h \
 		bouton.h \
 		action.h
 	$(CC) -c $(CFLAGS) $(INCPATH) -o world.o world.c
-
-####### Install
-
-install:   FORCE
-
-uninstall:   FORCE
-
-FORCE:
-
