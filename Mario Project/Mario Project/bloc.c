@@ -12,14 +12,14 @@
 
 #include "bloc.h"
 
-occ_bloc* new_occ_bloc(int pos_x, int pos_y, int bloc_actuel, int bloc_alternatif)
+occ_bloc* new_occ_bloc(int pos_x, int pos_y, int bloc_actuel, int bloc_alternatif, int id_item)
 {
 	occ_bloc* occ = malloc(sizeof(occ_bloc));
 
-	return init_occ_bloc(occ, pos_x, pos_y, bloc_actuel, bloc_alternatif);
+	return init_occ_bloc(occ, pos_x, pos_y, bloc_actuel, bloc_alternatif, id_item);
 }
 
-occ_bloc* init_occ_bloc(occ_bloc* occ, int pos_x, int pos_y, int bloc_actuel, int bloc_alternatif)
+occ_bloc* init_occ_bloc(occ_bloc* occ, int pos_x, int pos_y, int bloc_actuel, int bloc_alternatif, int id_item)
 {
 	if(occ != NULL)
 	{
@@ -30,6 +30,7 @@ occ_bloc* init_occ_bloc(occ_bloc* occ, int pos_x, int pos_y, int bloc_actuel, in
 		occ->bloc_alternatif = bloc_alternatif;
 		occ->etat = IMMOBILE;
 		occ->compteur_etat = 0;
+		occ->item = id_item;
 	}
 	return occ;
 }
