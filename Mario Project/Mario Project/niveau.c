@@ -356,7 +356,7 @@ void balise_projectiles(niveau *n, const char **attrs)
 void balise_projectile(niveau *n, const char **attrs)
 {
 	int i = atoi(attrs[1]);                             // remplaçable par un int static, incrémenté à chaque passage
-	n->projectiles[i] = charger_projectile(attrs[3], atoi(attrs[5]));
+	n->projectiles[i] = charger_projectile(attrs[3]);
 }
 
 void balise_items(niveau *n, const char **attrs)
@@ -1431,7 +1431,7 @@ void affiche_occ_blocs(niveau* n)
 			}
 			else
 			{
-				fprintf(flux, "-1 ", n->occ_blocs[i][j]->bloc_actuel);
+                fprintf(flux, "-1 ");
 			}
 		}
 		fprintf(flux,"\n");
