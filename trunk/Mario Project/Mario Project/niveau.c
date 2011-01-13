@@ -719,7 +719,6 @@ void sauver_niveau(char *nom, niveau *n)
         open_element(fic, "projectile");
         add_attrib(fic, "index", "%d", i);
 		add_attrib(fic, "img", "%s", n->projectiles[i]->nom_text);
-		add_attrib(fic, "type", "%d", n->projectiles[i]->type);
         close_element_short(fic);
     }
     close_element(fic, "projectiles");
@@ -1098,11 +1097,8 @@ void charger_niveau_test(niveau *n)
 	/* Layer projectile */
 	n->nb_projectiles = 2;
 	n->projectiles = malloc(sizeof(projectile*) * n->nb_projectiles);
-    puts("============================================");
-	n->projectiles[FIREBALL] = charger_projectile("fireball", FIREBALL);
-    puts("============================================");
-	n->projectiles[DEBRIS] = charger_projectile("debris", DEBRIS);
-    puts("============================================");
+	n->projectiles[DEBRIS] = charger_projectile("debris");	
+	n->projectiles[FIREBALL] = charger_projectile("fireball");
 
 	/* Layer items */
 	n->nb_items = 3;
@@ -1110,8 +1106,6 @@ void charger_niveau_test(niveau *n)
 	n->items[0] = charger_piece();
 	n->items[1] = charger_champignon();
 	n->items[2] = charger_fleur();
-
-    puts("============================================");
 	
 	// Pièces
 	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(11 * LARGEUR_BLOC, 6 * LARGEUR_BLOC, n->items[0], n->items[0]->vitesse, NORMAL));
@@ -1119,7 +1113,6 @@ void charger_niveau_test(niveau *n)
 	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(13 * LARGEUR_BLOC, 6 * LARGEUR_BLOC, n->items[0], n->items[0]->vitesse, NORMAL));
 
 	/* Finish */
-    puts("============================================");
 	n->nb_finish = 1;
 	n->finishes = malloc(sizeof(finish) * n->nb_finish);
 	strcpy(n->finishes[0].nom_text, "big_castle");
@@ -1160,7 +1153,6 @@ void charger_niveau_test(niveau *n)
 	n->taille_blocs.y = (int)LARGEUR_BLOC;
 
 	/*********** layer objets ************/
-    puts("============================================");
 	n->id_objets = malloc(n->taille.x * sizeof(id*));
 
 	for(i = 0; i < n->taille.x; i++)
@@ -1187,7 +1179,7 @@ void charger_niveau_test(niveau *n)
 	//strcpy(n->objets[1].nom_text, "cloud_2_test");
 
 	/************ layer blocs ***********/
-    puts("============================================");
+
 	n->occ_blocs = malloc(n->taille.x * sizeof(occ_bloc***));
 
 	for(i = 0; i < n->taille.x; i++)

@@ -32,8 +32,6 @@ projectile *init_projectile(projectile* p, char* nom)
 
 		p->vitesse.x = 0;
 		p->vitesse.y = 0;
-
-		p->type = 0;
 		p->occ_projectiles = new_liste_projectile();
 
 		p->v_anim_marche = 0;
@@ -175,7 +173,7 @@ occ_projectile* create_debris(projectile* proj, int x, int y, float vitesse_x, f
 	return occ_p;
 }
 
-projectile* charger_projectile(char* nom, int type_projectile){
+projectile* charger_projectile(char* nom){
 
 	char nom_texture[TAILLE_NOM_TEXTURE];
 	FILE *proj_file;
@@ -196,12 +194,6 @@ projectile* charger_projectile(char* nom, int type_projectile){
 	strcat(nom_texture, ".proj");
 
 	proj_file = fopen(nom_texture, "r");
-
-    if(proj_file == NULL)
-    {
-        printf("Echec de l'ouverture de %s\n", nom_texture);
-        exit(0);
-    }
 
 	fscanf(proj_file, "vitesse_x : %f\n", &tmp);
 	proj->vitesse.x = tmp;
@@ -246,7 +238,6 @@ projectile* charger_projectile(char* nom, int type_projectile){
 	/* Calcul de la taille d'un sprite à partir des données chargées */
 	proj->taille.x = proj->taille.x / proj->nb_sprites_marche;
 	proj->taille.y = (proj->nb_sprites_mort == 0)? proj->taille.y : proj->taille.y / 2;
-	proj->type = type_projectile;
 
 	return proj;
 }

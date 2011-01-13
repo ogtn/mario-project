@@ -82,7 +82,6 @@ typedef struct liste_projectile {
 typedef struct projectile {
 	coordi taille;							/* la taille du projectile (en pixels) */
 	GLuint texture;							/* l'id de la texture du projectile */
-	int type;								/* type de projectile */
 	coordf vitesse;							/* vitesse du projectile (c'est la même pour tous les projectiles du même type) */
 	int abscisse_bas;						/* contient l'abscisse du point d'où l'on calculera les collisions */
 	int ordonnee_haut;						/* contient l'ordonnee du point d'où l'on calculera les collisions */
@@ -131,7 +130,7 @@ liste_projectile* ajout_projectile(liste_projectile* liste, occ_projectile* proj
 liste_projectile* supprime_projectile(liste_projectile* liste, occ_projectile *p);
 
 /* Charge un projectile à partir d'un fichier */
-projectile* charger_projectile(char* nom, int type_projectile);
+projectile* charger_projectile(char* nom);
 
 /* Créer un debris de bloc */
 occ_projectile* create_debris(projectile* proj, int x, int y, float vitesse_x, float vitesse_y);
