@@ -197,6 +197,12 @@ projectile* charger_projectile(char* nom, int type_projectile){
 
 	proj_file = fopen(nom_texture, "r");
 
+    if(proj_file == NULL)
+    {
+        printf("Echec de l'ouverture de %s\n", nom_texture);
+        exit(0);
+    }
+
 	fscanf(proj_file, "vitesse_x : %f\n", &tmp);
 	proj->vitesse.x = tmp;
 
