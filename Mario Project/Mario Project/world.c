@@ -124,15 +124,13 @@ void load_world(world *w)
 	charger_niveau_test(w->niveau);
 	//affiche_occ_blocs(w->niveau);
 	//charger_niveau("test_xml.xml", w->niveau);
-    charger_textures_niveau(w->niveau);
+	charger_textures_niveau(w->niveau);
 	
 	/* Initialisation du nom et du temps dans le HUD pour chaque niveau chargé */
 	w->persos[0]->hud->nom_niveau = w->niveau->nom;
 	w->persos[0]->hud->time = 4000;
 
-    puts("avant sauvegarde xml");
 	sauver_niveau("test_xml.xml", w->niveau);
-    puts("apres sauvegarde xml");
 }
 
 
