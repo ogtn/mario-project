@@ -61,7 +61,7 @@ on enlève une certaine hauteur de l'ordonnée du point le plus à gauche de la pen
 #define CASSABLE				0x200000
 #define DISTRIBUTEUR_PIECE		0x400000
 #define EST_VIDE				0x800000
-#define BLOC_SPEC				(SOL | PLAFOND | MUR_A_DROITE | MUR_A_GAUCHE)
+#define BLOC_SPEC				(SOL | PLAFOND | MUR_A_DROITE | MUR_A_GAUCHE )
 
 typedef enum ETAT_BLOC
 {
@@ -90,7 +90,6 @@ typedef struct bloc
 	coordi coord_sprite;					/* les coordonnées du sprite dans la texture */
 	int phys;								/* Contient la physique du bloc sous la forme d'un flag */
 	int type_bloc;
-	item* item;								/* Contient l'item */
 	int tps_piece;							/* Temps restant avant qu'il ne reste qu'une pièce */
 } bloc;
 
@@ -103,6 +102,7 @@ typedef struct occ_bloc
 	int id_perso;							/* Identifiant du perso qui a frappé dans le bloc */
 	int bloc_actuel;						/* Pointeur sur le bloc modèle actuel */
 	int bloc_alternatif;					/* Pointeur sur le bloc modèle alternatif */
+	int item;								/* Contient l'identifiant de l'item */
 } occ_bloc;
 
 /* Liste simplement chainee de blocs */
@@ -123,9 +123,9 @@ typedef struct liste_bloc
 /*================================[PROTOTYPES]================================*/
 /******************************************************************************/
 
-occ_bloc* new_occ_bloc(int pos_x, int pos_y, int bloc_actuel, int bloc_alternatif);
+occ_bloc* new_occ_bloc(int pos_x, int pos_y, int bloc_actuel, int bloc_alternatif, int id_item);
 
-occ_bloc* init_occ_bloc(occ_bloc* occ, int pos_x, int pos_y, int bloc_actuel, int bloc_alternatif);
+occ_bloc* init_occ_bloc(occ_bloc* occ, int pos_x, int pos_y, int bloc_actuel, int bloc_alternatif, int id_item);
 
 /*********** Gestion des listes chainees ***********/
 

@@ -440,7 +440,7 @@ void balise_layer(niveau *n, const char **attrs)
 void balise_occ_block(niveau *n, const char **attrs)
 {
     int i = atoi(attrs[1]) , j = atoi(strchr(attrs[1], ':') + 1);
-	n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, atoi(attrs[2]), atoi(attrs[3]));
+	//n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, atoi(attrs[2]), atoi(attrs[3]));
 }
 
 void debut_element(void *user_data, const xmlChar *name, const xmlChar **attrs) 
@@ -865,13 +865,11 @@ void charger_textures_niveau(niveau *n)
 	{
 		charger_infos_texture(&n->textures[i]);
 	}
-    perror("charger_textures_niveau()");
 
 	/* Chargement des textures des blocs */
 	for(i = 0; i < n->nb_textures; i++)
 	{
-		n->textures[i].id_text = 
-			charger_texture_bis(n->textures[i].nom, &n->textures[i].taille);
+		n->textures[i].id_text = charger_texture_bis(n->textures[i].nom, &n->textures[i].taille);
 	}
 }
 
@@ -1196,25 +1194,15 @@ void charger_niveau_test(niveau *n)
 		for(j = 0; j < n->taille.y; j++)
 		{
 			if(j == 1 && i < 75)
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 0, -1);
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 0, -1, -1);
 			else if (i == 0)
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 2, -1);
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 2, -1, -1);
 			else if (i == 2 && j == 5)
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, 19);
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, 19, 0);
 			else if (i == 1 && j == 5)
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, 19);
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, 19, -1);
 			else if (i > 10 && i < 15 && j == 5)
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 18, -1);
-			/*else if (i == 14 && j == 6)
-				n->occ_blocs[i][j] = 18;
-			else if (i == 14 && j == 10)
-				n->occ_blocs[i][j] = 17;
-			else if (i == 13 && j == 14)
-				n->occ_blocs[i][j] = 18;
-			else if (i == 15 && j == 6)
-				n->occ_blocs[i][j] = 17;
-			else if(j == 1 && i >= 75)
-				n->occ_blocs[i][j] = 23;
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 18, -1, -1);
 			//// pente 30° en bas à gauche
 			//else if(j == 1 && i <= 1)
 			//	n->occ_blocs[i][j] = 0;
@@ -1263,184 +1251,11 @@ void charger_niveau_test(niveau *n)
 			//else if(j == 6 && i == 25)
 			//	n->occ_blocs[i][j] = 6;
 			//else if(j == 13 && i == 25)
-			//	n->occ_blocs[i][j] = 7;*/
+			//	n->occ_blocs[i][j] = 7;
 			else
-				n->occ_blocs[i][j] = new_occ_bloc(i * LARGEUR_BLOC, j * LARGEUR_BLOC, -1, -1);
+				n->occ_blocs[i][j] = new_occ_bloc(i * LARGEUR_BLOC, j * LARGEUR_BLOC, -1, -1, -1);
 		}
 	}
-
-	/* remplissage des blocs du niveau */
-	n->blocs[0].texture = 0;
-	n->blocs[0].coord_sprite.x = 2;
-	n->blocs[0].coord_sprite.y = 0;
-	n->blocs[0].phys = SOL;
-	n->blocs[0].item = NULL;
-	n->blocs[0].type_bloc = EST_VIDE;
-
-	n->blocs[1].texture = 0;
-	n->blocs[1].coord_sprite.x = 8;
-	n->blocs[1].coord_sprite.y = 0;
-	n->blocs[1].phys = PLAFOND;
-	n->blocs[1].item = NULL;
-	n->blocs[1].type_bloc = EST_VIDE;
-
-	n->blocs[2].texture = 0;
-	n->blocs[2].coord_sprite.x = 6;
-	n->blocs[2].coord_sprite.y = 0;
-	n->blocs[2].phys = MUR_A_GAUCHE;
-	n->blocs[2].item = NULL;
-	n->blocs[2].type_bloc = EST_VIDE;
-
-	n->blocs[3].texture = 0;
-	n->blocs[3].coord_sprite.x = 4;
-	n->blocs[3].coord_sprite.y = 0;
-	n->blocs[3].phys = MUR_A_DROITE;
-	n->blocs[3].item = NULL;
-	n->blocs[3].type_bloc = EST_VIDE;
-
-	n->blocs[4].texture = 0;
-	n->blocs[4].coord_sprite.x = 3;
-	n->blocs[4].coord_sprite.y = 0;
-	n->blocs[4].phys = COIN_HAUT_A_GAUCHE;
-	n->blocs[4].item = NULL;
-	n->blocs[4].type_bloc = EST_VIDE;
-
-	n->blocs[5].texture = 0;
-	n->blocs[5].coord_sprite.x = 1;
-	n->blocs[5].coord_sprite.y = 0;
-	n->blocs[5].phys = COIN_HAUT_A_DROITE;
-	n->blocs[5].item = NULL;
-	n->blocs[5].type_bloc = EST_VIDE;
-
-	n->blocs[6].texture = 0;
-	n->blocs[6].coord_sprite.x = 9;
-	n->blocs[6].coord_sprite.y = 0;
-	n->blocs[6].phys = COIN_BAS_A_GAUCHE;
-	n->blocs[6].item = NULL;
-	n->blocs[6].type_bloc = EST_VIDE;
-
-	n->blocs[7].texture = 0;
-	n->blocs[7].coord_sprite.x = 7;
-	n->blocs[7].coord_sprite.y = 0;
-	n->blocs[7].phys = COIN_BAS_A_DROITE;
-	n->blocs[7].item = NULL;
-	n->blocs[7].type_bloc = EST_VIDE;
-
-	n->blocs[8].texture = 0;
-	n->blocs[8].coord_sprite.x = 4;
-	n->blocs[8].coord_sprite.y = 1;
-	n->blocs[8].phys = PLEIN;
-	n->blocs[8].item = NULL;
-	n->blocs[8].type_bloc = EST_VIDE;
-
-	n->blocs[9].texture = 0;
-	n->blocs[9].coord_sprite.x = 5;
-	n->blocs[9].coord_sprite.y = 0;
-	n->blocs[9].phys = PLEIN;
-	n->blocs[9].item = NULL;
-	n->blocs[9].type_bloc = EST_VIDE;
-	
-	n->blocs[10].texture = 0;
-	n->blocs[10].coord_sprite.x = 11;
-	n->blocs[10].coord_sprite.y = 0;
-	n->blocs[10].phys = BORD_A_DROITE;
-	n->blocs[10].item = NULL;
-	n->blocs[10].type_bloc = EST_VIDE;
-
-	n->blocs[11].texture = 0;
-	n->blocs[11].coord_sprite.x = 0;
-	n->blocs[11].coord_sprite.y = 1;
-	n->blocs[11].phys = PENTE_45_DROITE;
-	n->blocs[11].item = NULL;
-	n->blocs[11].type_bloc = EST_VIDE;
-
-	n->blocs[12].texture = 0;
-	n->blocs[12].coord_sprite.x = 3;
-	n->blocs[12].coord_sprite.y = 2;
-	n->blocs[12].phys = PENTE_30_GAUCHE_8;
-	n->blocs[12].item = NULL;
-	n->blocs[12].type_bloc = EST_VIDE;
-
-	n->blocs[13].texture = 0;
-	n->blocs[13].coord_sprite.x = 2;
-	n->blocs[13].coord_sprite.y = 2;
-	n->blocs[13].phys = PENTE_30_GAUCHE_16;
-	n->blocs[13].item = NULL;
-	n->blocs[13].type_bloc = EST_VIDE;
-
-	n->blocs[14].texture = 0;
-	n->blocs[14].coord_sprite.x = 0;
-	n->blocs[14].coord_sprite.y = 2;
-	n->blocs[14].phys = PENTE_30_DROITE_0;
-	n->blocs[14].item = NULL;
-	n->blocs[14].type_bloc = EST_VIDE;
-
-	n->blocs[15].texture = 0;
-	n->blocs[15].coord_sprite.x = 1;
-	n->blocs[15].coord_sprite.y = 2;
-	n->blocs[15].phys = PENTE_30_DROITE_8;
-	n->blocs[15].item = NULL;
-	n->blocs[15].type_bloc = EST_VIDE;
-
-	n->blocs[16].texture = 0;
-	n->blocs[16].coord_sprite.x = 1;
-	n->blocs[16].coord_sprite.y = 1;
-	n->blocs[16].phys = PENTE_45_GAUCHE;
-	n->blocs[16].item = NULL;
-	n->blocs[16].type_bloc = EST_VIDE;
-
-	/* BLOC '?' */
-	n->blocs[17].texture = 1;
-	n->blocs[17].coord_sprite.x = 0;
-	n->blocs[17].coord_sprite.y = 3;
-	n->blocs[17].phys = BLOC_SPEC;
-	n->blocs[17].item = NULL;
-	n->blocs[17].type_bloc = 0;
-
-	/* Bloc cassable */
-	n->blocs[18].texture = 1;
-	n->blocs[18].coord_sprite.x = 0;
-	n->blocs[18].coord_sprite.y = 4;
-	n->blocs[18].phys = BLOC_SPEC;
-	n->blocs[18].item = NULL;
-	n->blocs[18].type_bloc = EST_VIDE | CASSABLE;
-	n->blocs[18].tps_piece = 0;
-
-	/* Boc incassable */
-	n->blocs[19].texture = 1;
-	n->blocs[19].coord_sprite.x = 0;
-	n->blocs[19].coord_sprite.y = 2;
-	n->blocs[19].phys = BLOC_SPEC;
-	n->blocs[19].item = NULL;
-	n->blocs[19].type_bloc = EST_VIDE;
-
-	n->blocs[20].texture = 1;
-	n->blocs[20].coord_sprite.x = 0;
-	n->blocs[20].coord_sprite.y = 4;
-	n->blocs[20].phys = BLOC_SPEC;
-	n->blocs[20].type_bloc = EST_VIDE;
-	n->blocs[20].item = NULL;
-
-	n->blocs[21].texture = 1;
-	n->blocs[21].coord_sprite.x = 0;
-	n->blocs[21].coord_sprite.y = 4;
-	n->blocs[21].phys = BLOC_SPEC;
-	n->blocs[21].type_bloc = EST_VIDE;
-	n->blocs[21].item = 0;
-
-	n->blocs[22].texture = 1;
-	n->blocs[22].coord_sprite.x = 0;
-	n->blocs[22].coord_sprite.y = 4;
-	n->blocs[22].phys = BLOC_SPEC;
-	n->blocs[22].type_bloc = EST_VIDE;
-	n->blocs[22].item = NULL;
-
-	n->blocs[23].texture = 1;
-	n->blocs[23].coord_sprite.x = 0;
-	n->blocs[23].coord_sprite.y = 1;
-	n->blocs[23].phys = EAU;
-	n->blocs[23].type_bloc = EST_VIDE;
-	n->blocs[23].item = NULL;
 
 	// Nouvelle ecriture pour la texture : n->[n->occ_blocs[i][j]].texture
 	// Flag correspondant à la physique du bloc : n->blocs[n->occ_blocs[i][j]].phys
@@ -1451,6 +1266,155 @@ void charger_niveau_test(niveau *n)
 
 	strcpy(n->textures[0].nom, "floor_rc4.png");
 	strcpy(n->textures[1].nom, "blocs_spec.png");
+
+	/* remplissage des blocs du niveau */
+	n->blocs[0].texture = 0;
+	n->blocs[0].coord_sprite.x = 2;
+	n->blocs[0].coord_sprite.y = 0;
+	n->blocs[0].phys = SOL;
+	n->blocs[0].type_bloc = EST_VIDE;
+
+	n->blocs[1].texture = 0;
+	n->blocs[1].coord_sprite.x = 8;
+	n->blocs[1].coord_sprite.y = 0;
+	n->blocs[1].phys = PLAFOND;
+	n->blocs[1].type_bloc = EST_VIDE;
+
+	n->blocs[2].texture = 0;
+	n->blocs[2].coord_sprite.x = 6;
+	n->blocs[2].coord_sprite.y = 0;
+	n->blocs[2].phys = MUR_A_GAUCHE;
+	n->blocs[2].type_bloc = EST_VIDE;
+
+	n->blocs[3].texture = 0;
+	n->blocs[3].coord_sprite.x = 4;
+	n->blocs[3].coord_sprite.y = 0;
+	n->blocs[3].phys = MUR_A_DROITE;
+	n->blocs[3].type_bloc = EST_VIDE;
+
+	n->blocs[4].texture = 0;
+	n->blocs[4].coord_sprite.x = 3;
+	n->blocs[4].coord_sprite.y = 0;
+	n->blocs[4].phys = COIN_HAUT_A_GAUCHE;
+	n->blocs[4].type_bloc = EST_VIDE;
+
+	n->blocs[5].texture = 0;
+	n->blocs[5].coord_sprite.x = 1;
+	n->blocs[5].coord_sprite.y = 0;
+	n->blocs[5].phys = COIN_HAUT_A_DROITE;
+	n->blocs[5].type_bloc = EST_VIDE;
+
+	n->blocs[6].texture = 0;
+	n->blocs[6].coord_sprite.x = 9;
+	n->blocs[6].coord_sprite.y = 0;
+	n->blocs[6].phys = COIN_BAS_A_GAUCHE;
+	n->blocs[6].type_bloc = EST_VIDE;
+
+	n->blocs[7].texture = 0;
+	n->blocs[7].coord_sprite.x = 7;
+	n->blocs[7].coord_sprite.y = 0;
+	n->blocs[7].phys = COIN_BAS_A_DROITE;
+	n->blocs[7].type_bloc = EST_VIDE;
+
+	n->blocs[8].texture = 0;
+	n->blocs[8].coord_sprite.x = 4;
+	n->blocs[8].coord_sprite.y = 1;
+	n->blocs[8].phys = PLEIN;
+	n->blocs[8].type_bloc = EST_VIDE;
+
+	n->blocs[9].texture = 0;
+	n->blocs[9].coord_sprite.x = 5;
+	n->blocs[9].coord_sprite.y = 0;
+	n->blocs[9].phys = PLEIN;
+	n->blocs[9].type_bloc = EST_VIDE;
+	
+	n->blocs[10].texture = 0;
+	n->blocs[10].coord_sprite.x = 11;
+	n->blocs[10].coord_sprite.y = 0;
+	n->blocs[10].phys = BORD_A_DROITE;
+	n->blocs[10].type_bloc = EST_VIDE;
+
+	n->blocs[11].texture = 0;
+	n->blocs[11].coord_sprite.x = 0;
+	n->blocs[11].coord_sprite.y = 1;
+	n->blocs[11].phys = PENTE_45_DROITE;
+	n->blocs[11].type_bloc = EST_VIDE;
+
+	n->blocs[12].texture = 0;
+	n->blocs[12].coord_sprite.x = 3;
+	n->blocs[12].coord_sprite.y = 2;
+	n->blocs[12].phys = PENTE_30_GAUCHE_8;
+	n->blocs[12].type_bloc = EST_VIDE;
+
+	n->blocs[13].texture = 0;
+	n->blocs[13].coord_sprite.x = 2;
+	n->blocs[13].coord_sprite.y = 2;
+	n->blocs[13].phys = PENTE_30_GAUCHE_16;	
+	n->blocs[13].type_bloc = EST_VIDE;
+
+	n->blocs[14].texture = 0;
+	n->blocs[14].coord_sprite.x = 0;
+	n->blocs[14].coord_sprite.y = 2;
+	n->blocs[14].phys = PENTE_30_DROITE_0;
+	n->blocs[14].type_bloc = EST_VIDE;
+
+	n->blocs[15].texture = 0;
+	n->blocs[15].coord_sprite.x = 1;
+	n->blocs[15].coord_sprite.y = 2;
+	n->blocs[15].phys = PENTE_30_DROITE_8;
+	n->blocs[15].type_bloc = EST_VIDE;
+
+	n->blocs[16].texture = 0;
+	n->blocs[16].coord_sprite.x = 1;
+	n->blocs[16].coord_sprite.y = 1;
+	n->blocs[16].phys = PENTE_45_GAUCHE;
+	n->blocs[16].type_bloc = EST_VIDE;
+
+	/* BLOC '?' */
+	n->blocs[17].texture = 1;
+	n->blocs[17].coord_sprite.x = 0;
+	n->blocs[17].coord_sprite.y = 3;
+	n->blocs[17].phys = BLOC_SPEC;
+	n->blocs[17].type_bloc = 0;
+
+	/* Bloc cassable */
+	n->blocs[18].texture = 1;
+	n->blocs[18].coord_sprite.x = 0;
+	n->blocs[18].coord_sprite.y = 4;
+	n->blocs[18].phys = BLOC_SPEC;	
+	n->blocs[18].type_bloc = EST_VIDE | CASSABLE;
+	n->blocs[18].tps_piece = 0;
+
+	/* Boc incassable */
+	n->blocs[19].texture = 1;
+	n->blocs[19].coord_sprite.x = 0;
+	n->blocs[19].coord_sprite.y = 2;
+	n->blocs[19].phys = BLOC_SPEC;
+	n->blocs[19].type_bloc = EST_VIDE;
+
+	n->blocs[20].texture = 1;
+	n->blocs[20].coord_sprite.x = 0;
+	n->blocs[20].coord_sprite.y = 4;
+	n->blocs[20].phys = BLOC_SPEC;
+	n->blocs[20].type_bloc = EST_VIDE;
+
+	n->blocs[21].texture = 1;
+	n->blocs[21].coord_sprite.x = 0;
+	n->blocs[21].coord_sprite.y = 4;
+	n->blocs[21].phys = BLOC_SPEC;
+	n->blocs[21].type_bloc = EST_VIDE;
+
+	n->blocs[22].texture = 1;
+	n->blocs[22].coord_sprite.x = 0;
+	n->blocs[22].coord_sprite.y = 4;
+	n->blocs[22].phys = BLOC_SPEC;
+	n->blocs[22].type_bloc = EST_VIDE;
+
+	n->blocs[23].texture = 1;
+	n->blocs[23].coord_sprite.x = 0;
+	n->blocs[23].coord_sprite.y = 1;
+	n->blocs[23].phys = EAU;
+	n->blocs[23].type_bloc = EST_VIDE;
 }
 
 

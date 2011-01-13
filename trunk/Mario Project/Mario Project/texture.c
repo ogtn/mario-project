@@ -60,17 +60,11 @@ void charger_infos_texture(texture *t)
 	FILE *flux = NULL;
 	int i;
 
-    perror("entree charger_infos_texture()");
-    
-
 	strcpy(nom, t->nom);
 	supprime_extension(nom);
 	strcat(nom, "txtr2");
-    printf("nom = %s\n", nom);
 
-    perror("fscanf()");
 	flux = fopen(nom, "r");
-    perror("fscanf()");
     
 	if(flux == NULL || t ==  NULL)
 	{
@@ -80,26 +74,16 @@ void charger_infos_texture(texture *t)
     
 	fscanf(flux, "%d %d %d %d",&(t->taille.x), &(t->taille.y), &(t->taille_sprite.x), &(t->taille_sprite.y));
 	nb_sprites = (t->taille.x / t->taille_sprite.x) * (t->taille.y / t->taille_sprite.y);
-    printf("(%d / %d) * (%d / %d) = %d\n", t->taille.x, t->taille_sprite.x, t->taille.y, t->taille_sprite.y, nb_sprites);
     t->phys = malloc(sizeof(id) * nb_sprites);
-    printf("malloc = %p\n", t->phys);
-    perror("apres malloc()");
 
 	if(t->phys != NULL)
 	{
 		for(i = 0; i < nb_sprites; i++)
         {
-            int dummy;
-            printf("i = %d\n", i);
-            fflush(stdout);
-            //fscanf(flux, "%x", &dummy);
             fscanf(flux, "%x", &t->phys[i]);
         }
 	}
-
-    perror("apres boucle");
 	fclose(flux);
-    perror("sortie charger_infos_texture()");
 }
 
 

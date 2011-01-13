@@ -1022,7 +1022,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 									n->occ_blocs[i][j]->etat = POUSSE_PAR_LE_HAUT;
 									/* Si le bloc ne contient pas un pointeur sur un item,
 									l'item sera en fonction de la transformation actuelle du personnage */
-									if(bloc_actuel.item == NULL)
+									if(n->occ_blocs[i][j]->item < 0)
 									{
 										int index = (p->transformation == FIRE_MARIO)? p->transformation - 1: p->transformation;
 										vitesse.y = VIT_SORTIE_BLOC;
@@ -1032,7 +1032,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 									else
 									{
 										vitesse.y =  VIT_SORTIE_BLOC * 4;
-										item = new_occ_item(n->occ_blocs[i][j]->position.x, n->occ_blocs[i][j]->position.y, bloc_actuel.item, vitesse, SORT_DU_BLOC);
+										item = new_occ_item(n->occ_blocs[i][j]->position.x, n->occ_blocs[i][j]->position.y, n->items[n->occ_blocs[i][j]->item], vitesse, SORT_DU_BLOC);
 										prend_item(p, item->type_item->nom);
 
 										if((bloc_actuel.type_bloc & DISTRIBUTEUR_PIECE)	&& bloc_actuel.tps_piece == 0)
@@ -1821,7 +1821,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 									/* Si le bloc ne contient pas un pointeur sur un item,
 									l'item sera en fonction de la transforùation actuelle 
 									du personnage */
-									if(bloc_actuel.item == NULL) 
+									if(n->occ_blocs[i][j]->item < 0) 
 									{
 										int index = (p->transformation == FIRE_MARIO)? p->transformation - 1: p->transformation;
 										vitesse.y = VIT_SORTIE_BLOC;
@@ -1830,7 +1830,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 									else
 									{
 										vitesse.y =  VIT_SORTIE_BLOC * 5;
-										item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, bloc_actuel.item, vitesse, SORT_DU_BLOC);
+										item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, n->items[n->occ_blocs[i][j]->item], vitesse, SORT_DU_BLOC);
 									}
 
 									item->tps_sortie_bloc = TPS_ITEM_SORT_BLOC;
@@ -1902,7 +1902,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 									/* Si le bloc ne contient pas un pointeur sur un item,
 									l'item sera en fonction de la transforùation actuelle 
 									du personnage */
-									if(bloc_actuel.item == NULL) {
+									if(n->occ_blocs[i][j]->item < 0) {
 										int index = (p->transformation == FIRE_MARIO)? p->transformation - 1: p->transformation;
 										vitesse.y = VIT_SORTIE_BLOC;
 										item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, n->items[index], vitesse, SORT_DU_BLOC);
@@ -1910,7 +1910,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 									else
 									{
 										vitesse.y =  (bloc_actuel.type_bloc & EST_VIDE)? VIT_SORTIE_BLOC * 5 : VIT_SORTIE_BLOC;
-										item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, bloc_actuel.item, vitesse, SORT_DU_BLOC);
+										item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, n->items[n->occ_blocs[i][j]->item], vitesse, SORT_DU_BLOC);
 									}
 
 									item->tps_sortie_bloc = TPS_ITEM_SORT_BLOC;
@@ -1920,12 +1920,12 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_ITEM_BLOCK]);
 
 									/* Devient incassable */
-									n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif; // A rendre plus propre
+									n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif; 
 									n->occ_blocs[i][j]->bloc_alternatif = -1;
 								}
 								else if(bloc_actuel.type_bloc & CASSABLE) {
-									n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif;//  A rendre plus propre
-									n->occ_blocs[i][j]->bloc_alternatif = -1;	// Suppression du bloc, rajouter les débris
+									n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif;
+									n->occ_blocs[i][j]->bloc_alternatif = -1;
 
 									/* Creation et ajout des 4 débris de blocs */
 									n->projectiles[DEBRIS]->occ_projectiles = ajout_projectile(n->projectiles[DEBRIS]->occ_projectiles, 
