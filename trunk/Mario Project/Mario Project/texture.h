@@ -71,8 +71,8 @@ typedef struct texture
 {
 	char nom[TAILLE_NOM_TEXTURE];
 	GLuint id_text;
-	coordi taille_sprite;
 	coordi taille;
+	coordi taille_sprite;
 	id *phys;
 } texture;
 
@@ -101,13 +101,16 @@ correspondant. On peu également lui passer un pointeur sur un coordi dans lequel
 la fonction va stocker la taille de la texture. On fournit NULL si pas besoin */
 GLuint charger_texture_bis(char *nom, coordi *taille);
 
+/* Charge les infos relatives à une texture depuis un fichier .cfg dans la 
+texture pointée par t */
+void charger_cfg_texture(char* nom_cfg, texture *t);
+
 /* Charge les infos relatives à une texture depuis un fichier .txtr dans la 
 texture pointée par t */
 void charger_infos_texture(texture *t);
 
-/* Sauvegarde dans un fichier .txtr les infos relatives à la texture pointée 
-par t*/
-void sauver_infos_texture(texture *t);
+/* Chargement des textures des blocs */
+void charger_texture_bloc(char* nom, texture* t);
 
 /* Remplace les caracteres suivants '.' par '\0' */
 char *supprime_extension(char *nom);

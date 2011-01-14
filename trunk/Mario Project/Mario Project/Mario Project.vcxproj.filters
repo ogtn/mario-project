@@ -186,5 +186,8 @@
     <None Include="to do list.txt">
       <Filter>Fichiers de ressources</Filter>
     </None>
+    <None Include="textures\blocs\classiques\classiques.cfg">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
   </ItemGroup>
 </Project>
