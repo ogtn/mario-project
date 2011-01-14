@@ -52,7 +52,6 @@ GLuint charger_texture_bis(char *nom, coordi *taille)
 	return texture_ogl;
 }
 
-
 void charger_infos_texture(texture *t)
 {
 	NB nb_sprites;
@@ -65,15 +64,46 @@ void charger_infos_texture(texture *t)
 	strcat(nom, "txtr2");
 
 	flux = fopen(nom, "r");
-    
+
 	if(flux == NULL || t ==  NULL)
 	{
 		/* gestion d'erreur? valeurs par defaut? à terminer... */
 	}
 
-    
+
 	fscanf(flux, "%d %d %d %d",&(t->taille.x), &(t->taille.y), &(t->taille_sprite.x), &(t->taille_sprite.y));
 	nb_sprites = (t->taille.x / t->taille_sprite.x) * (t->taille.y / t->taille_sprite.y);
+	t->phys = malloc(sizeof(id) * nb_sprites);
+
+	if(t->phys != NULL)
+	{
+		for(i = 0; i < nb_sprites; i++)
+		{
+			fscanf(flux, "%x", &t->phys[i]);
+		}
+	}
+	fclose(flux);
+}
+
+
+
+void charger_cfg_texture(char* nom_cfg, texture *t)
+{
+	NB nb_sprites;
+	FILE *flux = NULL;
+	int i, nb_blocs_x, nb_blocs_y;
+
+	flux = fopen(nom_cfg, "r");
+    
+	if(flux == NULL || t ==  NULL)
+	{
+		/* gestion d'erreur? valeurs par defaut? à terminer... */
+	}
+    
+	fscanf(flux, "%d %d",&nb_blocs_y, &nb_blocs_x);
+	nb_sprites = nb_blocs_x * nb_blocs_y;
+	t->taille_sprite.x = t->taille.x / nb_blocs_x;
+	t->taille_sprite.y = t->taille.y / nb_blocs_y;
     t->phys = malloc(sizeof(id) * nb_sprites);
 
 	if(t->phys != NULL)
@@ -86,41 +116,28 @@ void charger_infos_texture(texture *t)
 	fclose(flux);
 }
 
-
-void sauver_infos_texture(texture *t)
+void charger_texture_bloc(char* nom, texture* t)
 {
-	NB nb_sprites, i;
-	char nom[TAILLE_NOM_TEXTURE];
-	FILE *flux = NULL;
+	char nom_texture[TAILLE_NOM_TEXTURE];
+	char nom_cfg[TAILLE_NOM_TEXTURE];
+	char* cfg;
 
-	strcpy(nom, t->nom);
-	supprime_extension(nom);
-	strcat(nom, "txtr2");
+	/* Chargement de l'image */
+	strcpy(nom_texture, "textures/blocs/");
+	strcat(nom_texture, nom);
+	strcpy(t->nom, nom);
+	t->id_text = charger_texture_bis(nom_texture, &t->taille);
 
-	flux = fopen(nom, "w");
-
-	if(flux == NULL)
-	{
-		/* gestion d'erreur? valeurs par defaut? à terminer... */
-	}
-
-	fprintf(flux, "%d ", t->taille.x);
-	fprintf(flux, "%d ", t->taille.y);
-	fprintf(flux, "%d ", t->taille_sprite.x);
-	fprintf(flux, "%d ", t->taille_sprite.y);
-
-	nb_sprites = (t->taille.x / t->taille_sprite.x) * (t->taille.y / t->taille_sprite.y);
-
-
-	if(t->phys != NULL)
-	{
-		for(i = 0; i < nb_sprites; i++)
-		fprintf(flux, "%d ",t->phys[i]);
-	}
-
-	fclose(flux);
+	/* Chargement de la config */
+	strcpy(nom_cfg, "textures/blocs/");
+	cfg = strstr(nom, "/");
+	strcpy(cfg,"\0");
+	strcat(nom_cfg, nom);
+	strcat(nom_cfg, "/");
+	strcat(nom_cfg, nom);
+	strcat(nom_cfg, ".cfg");
+	charger_cfg_texture(nom_cfg, t);
 }
-
 
 char *supprime_extension(char *nom)
 {

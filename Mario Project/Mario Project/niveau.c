@@ -277,8 +277,10 @@ void balise_backgrounds(niveau *n, const char **attrs)
 
 void balise_background(niveau *n, const char **attrs)
 {
-    int i = atoi(attrs[1]);                             // remplaçable par un int static, incrémenté à chaque passage
-	strcpy(n->backgrounds[i].nom_text, attrs[3]);
+    static int i = 0;
+	strcpy(n->backgrounds[i].nom_text, attrs[1]);
+	charger_objet_background(&n->backgrounds[i], FAUX);
+	i++;
 }
 
 void balise_background_generators(niveau *n, const char **attrs)
@@ -289,22 +291,25 @@ void balise_background_generators(niveau *n, const char **attrs)
 
 void balise_background_generator(niveau *n, const char **attrs)
 {
-	int i = atoi(attrs[1]);
+	static int i = 0;
 	coordf position = { atoi(attrs[2]),  atoi(strchr(attrs[2], ':') + 1) };
 	coordi taille = { atoi(attrs[3]),   atoi(strchr(attrs[3], ':') + 1) };
 	n->background_generators[i] = new_particule_generator(position, taille, atoi(attrs[4]), atoi(attrs[5]), attrs[6], atoi(attrs[7]), atoi(attrs[8]), atoi(attrs[9]));
+	i++;
 }
 
 void balise_foregrounds(niveau *n, const char **attrs)
 {
 	n->nb_foregrounds = atoi(attrs[1]);
-	n->foregrounds = malloc(sizeof(background) * n->nb_backgrounds);
+	n->foregrounds = malloc(sizeof(foreground) * n->nb_foregrounds);
 }
 
 void balise_foreground(niveau *n, const char **attrs)
 {
-	int i = atoi(attrs[1]);                             // remplaçable par un int static, incrémenté à chaque passage
-	strcpy(n->foregrounds[i].nom_text, attrs[2]);
+	static int i = 0;
+	strcpy(n->foregrounds[i].nom_text, attrs[1]);
+	charger_objet_background(&n->foregrounds[i], FAUX);
+	i++;
 }
 
 void balise_foreground_generators(niveau *n, const char **attrs)
@@ -315,22 +320,27 @@ void balise_foreground_generators(niveau *n, const char **attrs)
 
 void balise_foreground_generator(niveau *n, const char **attrs)
 {
-	int i = atoi(attrs[1]);
-	coordf position = { atoi(attrs[5]),   atoi(strchr(attrs[5], ':') + 1) };
-	coordi taille = { atoi(attrs[7]),   atoi(strchr(attrs[7], ':') + 1) };
-	n->foreground_generators[i] = new_particule_generator(position, taille, atoi(attrs[9]), atoi(attrs[11]), attrs[3], atoi(attrs[13]), atoi(attrs[15]), atoi(attrs[17]));
+	static int i = 0;
+	coordf position = { atoi(attrs[3]),   atoi(strchr(attrs[3], ':') + 1) };
+	coordi taille = { atoi(attrs[5]),   atoi(strchr(attrs[5], ':') + 1) };
+	n->foreground_generators[i] = new_particule_generator(position, taille, atoi(attrs[7]), atoi(attrs[9]), attrs[1], atoi(attrs[11]), atoi(attrs[13]), atoi(attrs[15]));
+	i++;
 }
 
 void balise_objects(niveau *n, const char **attrs)
 {
 	n->nb_objets = atoi(attrs[1]);
-	n->objets = malloc(sizeof(objet) * n->nb_objets);
+	if(n->nb_objets > 0)
+	{
+		n->objets = malloc(sizeof(objet) * n->nb_objets);
+	}
 }
 
 void balise_object(niveau *n, const char **attrs)
 {
-	int i = atoi(attrs[1]);                             // remplaçable par un int static, incrémenté à chaque passage
-	strcpy(n->objets[i].nom_text, attrs[3]);
+	static int i = 0;
+	strcpy(n->objets[i].nom_text, attrs[1]);
+	i++;
 }
 
 void balise_finishes(niveau *n, const char **attrs)
@@ -341,10 +351,11 @@ void balise_finishes(niveau *n, const char **attrs)
 
 void balise_finish(niveau *n, const char **attrs)
 {
-	int i = atoi(attrs[1]);                             // remplaçable par un int static, incrémenté à chaque passage
-	strcpy(n->finishes[i].nom_text, attrs[3]);
-	n->finishes[i].position.x = atoi(attrs[5]);
-	n->finishes[i].position.y = atoi(strchr(attrs[5], ':') + 1);
+	static int i = 0;
+	strcpy(n->finishes[i].nom_text, attrs[1]);
+	n->finishes[i].position.x = atoi(attrs[3]);
+	n->finishes[i].position.y = atoi(strchr(attrs[3], ':') + 1);
+	i++;
 }
 
 void balise_projectiles(niveau *n, const char **attrs)
@@ -355,8 +366,9 @@ void balise_projectiles(niveau *n, const char **attrs)
 
 void balise_projectile(niveau *n, const char **attrs)
 {
-	int i = atoi(attrs[1]);                             // remplaçable par un int static, incrémenté à chaque passage
-	n->projectiles[i] = charger_projectile(attrs[3]);
+	static int i = 0;
+	n->projectiles[i] = charger_projectile(attrs[1]);
+	i++;
 }
 
 void balise_items(niveau *n, const char **attrs)
@@ -367,8 +379,9 @@ void balise_items(niveau *n, const char **attrs)
 
 void balise_item(niveau *n, const char **attrs)
 {
-	int i = atoi(attrs[1]);                             // remplaçable par un int static, incrémenté à chaque passage
-	n->items[i] = charger_item(attrs[3], atoi(attrs[5]));
+	static int i = 0;
+	n->items[i] = charger_item(attrs[1], atoi(attrs[3]));
+	i++;
 }
 
 
@@ -399,16 +412,17 @@ void balise_pipes(niveau *n, const char **attrs)
 
 void balise_pipe(niveau *n, const char **attrs)
 {
-	int i = atoi(attrs[1]);
-	n->tuyaux[i] = charger_tuyau(attrs[3], atoi(attrs[5]), atoi(attrs[7]), attrs[9], atoi(strchr(attrs[9], ':') + 1), atoi(attrs[11]), atoi(attrs[13]), attrs[15], atoi(attrs[17]));
+	static int i = 0;
+	n->tuyaux[i] = charger_tuyau(attrs[1], atoi(attrs[3]), atoi(attrs[5]), attrs[7], atoi(strchr(attrs[7], ':') + 1), atoi(attrs[9]), atoi(attrs[11]), attrs[13], atoi(attrs[15]));
+	i++;
 }
 
 void balise_blocs(niveau *n, const char **attrs)
 {
     int i;
 
-    n->nb_blocs = atoi(attrs[1]);
-    n->blocs = malloc(n->nb_blocs * sizeof(bloc));
+    n->nb_textures = atoi(attrs[1]);
+	n->textures = malloc(n->nb_textures * sizeof(texture));
     n->taille_blocs.x = LARGEUR_BLOC;
 	n->taille_blocs.y = LARGEUR_BLOC;
     n->occ_blocs = malloc(n->taille.x * sizeof(id*));
@@ -422,7 +436,9 @@ void balise_blocs(niveau *n, const char **attrs)
 
 void balise_bloc(niveau *n, const char **attrs)
 {
-    attrs[1];   // img
+    static int i = 0;
+	charger_texture_bloc(attrs[1], &n->textures[i]);
+	i++;
 }
 
 
@@ -439,8 +455,8 @@ void balise_layer(niveau *n, const char **attrs)
 
 void balise_occ_block(niveau *n, const char **attrs)
 {
-    int i = atoi(attrs[1]) , j = atoi(strchr(attrs[1], ':') + 1);
-	//n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, atoi(attrs[2]), atoi(attrs[3]));
+	int i = atoi(attrs[1]) , j = atoi(strchr(attrs[1], ':') + 1);
+	n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, atoi(attrs[3]), atoi(attrs[5]), atoi(attrs[7]));
 }
 
 void debut_element(void *user_data, const xmlChar *name, const xmlChar **attrs) 
@@ -502,7 +518,7 @@ void debut_element(void *user_data, const xmlChar *name, const xmlChar **attrs)
 		balise_pipes,
 		balise_pipe,
         balise_blocs,
-        balise_blocs,
+        balise_bloc,
         balise_layers,
         balise_layer,
 		balise_occ_block
@@ -620,7 +636,6 @@ void sauver_niveau(char *nom, niveau *n)
     for(i = 0; i < n->nb_backgrounds; i++)
     {
         open_element(fic, "background");
-        add_attrib(fic, "index", "%d", i);
         add_attrib(fic, "img", "%s", n->backgrounds[i].nom_text);
         close_element_short(fic);
     }
@@ -635,7 +650,6 @@ void sauver_niveau(char *nom, niveau *n)
 		particule_generator* gen = n->background_generators[i];
 
         open_element(fic, "background_generator");
-        add_attrib(fic, "index", "%d", i);
 		add_attrib(fic, "img", "%s", gen->nom_text);
 		add_attrib(fic, "position", "%d:%d", gen->position.x, gen->position.y);
 		add_attrib(fic, "size", "%d:%d", gen->taille.x, gen->taille.y);
@@ -655,7 +669,6 @@ void sauver_niveau(char *nom, niveau *n)
 	for(i = 0; i < n->nb_foregrounds; i++)
     {
         open_element(fic, "foreground");
-        add_attrib(fic, "index", "%d", i);
 		add_attrib(fic, "img", "%s", n->foregrounds[i].nom_text);
         close_element_short(fic);
     }
@@ -670,7 +683,6 @@ void sauver_niveau(char *nom, niveau *n)
 		particule_generator* gen = n->foreground_generators[i];
 
         open_element(fic, "foreground_generator");
-        add_attrib(fic, "index", "%d", i);
 		add_attrib(fic, "img", "%s", gen->nom_text);
 		add_attrib(fic, "position", "%d:%d", gen->position.x, gen->position.y);
 		add_attrib(fic, "size", "%d:%d", gen->taille.x, gen->taille.y);
@@ -690,7 +702,6 @@ void sauver_niveau(char *nom, niveau *n)
 	for(i = 0; i < n->nb_foregrounds; i++)
     {
         open_element(fic, "object");
-        add_attrib(fic, "index", "%d", i);
 		add_attrib(fic, "img", "%s", n->objets[i].nom_text);
         close_element_short(fic);
     }
@@ -703,7 +714,6 @@ void sauver_niveau(char *nom, niveau *n)
 	for(i = 0; i < n->nb_finish; i++)
     {
         open_element(fic, "finish");
-        add_attrib(fic, "index", "%d", i);
 		add_attrib(fic, "img", "%s", n->finishes[i].nom_text);
 		add_attrib(fic, "position", "%0.f:%0.f", n->finishes[i].position.x, n->finishes[i].position.y);
         close_element_short(fic);
@@ -717,7 +727,6 @@ void sauver_niveau(char *nom, niveau *n)
     for(i = 0; i < n->nb_projectiles; i++)
     {
         open_element(fic, "projectile");
-        add_attrib(fic, "index", "%d", i);
 		add_attrib(fic, "img", "%s", n->projectiles[i]->nom_text);
         close_element_short(fic);
     }
@@ -730,7 +739,6 @@ void sauver_niveau(char *nom, niveau *n)
     for(i = 0; i < n->nb_items; i++)
     {
         open_element(fic, "item");
-        add_attrib(fic, "index", "%d", i);
 		add_attrib(fic, "img", "%s", n->items[i]->nom_text);
 		add_attrib(fic, "type", "%d", n->items[i]->nom);
         close_element_short(fic);
@@ -773,7 +781,6 @@ void sauver_niveau(char *nom, niveau *n)
     {
 		tuyau* t = n->tuyaux[i];
         open_element(fic, "pipe");
-        add_attrib(fic, "index", "%d", i);
 		add_attrib(fic, "img", "%s", t->nom_text);
 		add_attrib(fic, "sens", "%d", t->sens_sortie);
 		add_attrib(fic, "length", "%d", t->longueur);
@@ -816,6 +823,7 @@ void sauver_niveau(char *nom, niveau *n)
 				add_attrib(fic, "indexes", "%d:%d", j, k);
 				add_attrib(fic, "actual", "%d", n->occ_blocs[j][k]->bloc_actuel);
                 add_attrib(fic, "alt", "%d", n->occ_blocs[j][k]->bloc_alternatif);
+				add_attrib(fic, "item", "%d", n->occ_blocs[j][k]->item);
 				close_element_short(fic);
 			}
 		}
@@ -919,7 +927,6 @@ void liberer_textures_niveau(niveau* n)
 void charger_finish(finish* f)
 {
 	char nom_texture[TAILLE_NOM_TEXTURE];
-	int i;
 
 	strcpy(nom_texture, "textures/Objects/");
 	strcat(nom_texture, f->nom_text);
