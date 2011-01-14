@@ -116,7 +116,7 @@ font_2d *lire_font_2d(FILE *flux, font_2d *f)
         {
             debut = chaine_apres_char(buff, '"');
             strcpy(f->nom_texture, debut);
-            f->nom_texture[strlen(f->nom_texture) - 3] = '\0';
+            f->nom_texture[strlen(f->nom_texture) - 2] = '\0';
         }
 
         debut = strstr(buff, "common");

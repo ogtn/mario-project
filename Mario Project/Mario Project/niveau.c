@@ -340,6 +340,7 @@ void balise_object(niveau *n, const char **attrs)
 {
 	static int i = 0;
 	strcpy(n->objets[i].nom_text, attrs[1]);
+	charger_objet_background(&n->objets[i], VRAI);
 	i++;
 }
 
@@ -355,6 +356,7 @@ void balise_finish(niveau *n, const char **attrs)
 	strcpy(n->finishes[i].nom_text, attrs[1]);
 	n->finishes[i].position.x = atoi(attrs[3]);
 	n->finishes[i].position.y = atoi(strchr(attrs[3], ':') + 1);
+	charger_finish(&n->finishes[i]);
 	i++;
 }
 
@@ -423,8 +425,10 @@ void balise_blocs(niveau *n, const char **attrs)
 
     n->nb_textures = atoi(attrs[1]);
 	n->textures = malloc(n->nb_textures * sizeof(texture));
-    n->taille_blocs.x = LARGEUR_BLOC;
-	n->taille_blocs.y = LARGEUR_BLOC;
+	n->nb_blocs = atoi(attrs[3]);
+	n->blocs = malloc(n->nb_blocs * sizeof(bloc));
+    n->taille_blocs.x = atoi(attrs[5]);
+	n->taille_blocs.y = atoi(strchr(attrs[5], ':') + 1);
     n->occ_blocs = malloc(n->taille.x * sizeof(id*));
 
 	for(i = 0; i < n->taille.x; i++)
@@ -434,10 +438,23 @@ void balise_blocs(niveau *n, const char **attrs)
 }
 
 
-void balise_bloc(niveau *n, const char **attrs)
+void balise_textures(niveau *n, const char **attrs)
 {
     static int i = 0;
 	charger_texture_bloc(attrs[1], &n->textures[i]);
+	i++;
+}
+
+void balise_bloc(niveau *n, const char **attrs)
+{
+    static int i = 0;
+	texture texture_bloc;
+	n->blocs[i].texture = atoi(attrs[1]);
+	
+	texture_bloc = n->textures[n->blocs[i].texture];
+	n->blocs[i].coord_sprite.x = atoi(attrs[3]);
+	n->blocs[i].coord_sprite.y = atoi(strchr(attrs[3], ':') + 1);
+	n->blocs[i].phys = texture_bloc.phys[n->blocs[i].coord_sprite.x + n->blocs[i].coord_sprite.y * (texture_bloc.taille.y / texture_bloc.taille_sprite.y) - 1];
 	i++;
 }
 
@@ -455,8 +472,17 @@ void balise_layer(niveau *n, const char **attrs)
 
 void balise_occ_block(niveau *n, const char **attrs)
 {
-	int i = atoi(attrs[1]) , j = atoi(strchr(attrs[1], ':') + 1);
+	static int i = 0, j = 0;
 	n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, atoi(attrs[3]), atoi(attrs[5]), atoi(attrs[7]));
+	if(j == n->taille.y - 1)
+	{
+		j %= n->taille.y - 1;
+		i++;
+	}
+	else
+	{
+		j++;
+	}
 }
 
 void debut_element(void *user_data, const xmlChar *name, const xmlChar **attrs) 
@@ -487,7 +513,8 @@ void debut_element(void *user_data, const xmlChar *name, const xmlChar **attrs)
 		BAD_CAST"pipes",
 		BAD_CAST"pipe",
         BAD_CAST"blocs", 
-        BAD_CAST"bloc", 
+        BAD_CAST"textures", 
+		BAD_CAST"bloc", 
         BAD_CAST"layers", 
         BAD_CAST"layer",
 		BAD_CAST"occ_block"
@@ -518,7 +545,8 @@ void debut_element(void *user_data, const xmlChar *name, const xmlChar **attrs)
 		balise_pipes,
 		balise_pipe,
         balise_blocs,
-        balise_bloc,
+		balise_textures,
+		balise_bloc,
         balise_layers,
         balise_layer,
 		balise_occ_block
@@ -796,17 +824,29 @@ void sauver_niveau(char *nom, niveau *n)
 
     /* Blocs */
     open_element(fic, "blocs");
-    add_attrib(fic, "nb", "%d", n->nb_textures);
+    add_attrib(fic, "nb_textures", "%d", n->nb_textures);
+	add_attrib(fic, "nb_models", "%d", n->nb_blocs);
+	add_attrib(fic, "bloc_size", "%d:%d", n->taille_blocs.x, n->taille_blocs.y);
     end_element(fic);
 
-        /* texture utilisées pour les blocs */
+    /* texture utilisées pour les blocs */
     for(i = 0; i < n->nb_textures; i++)
     {
-        open_element(fic, "bloc");
+        open_element(fic, "textures");
         add_attrib(fic, "img", "%s", n->textures[i].nom);
         close_element_short(fic);
     }
-    open_element(fic, "layers");
+    
+	for(i = 0; i < n->nb_blocs; i++)
+    {
+		open_element(fic, "bloc");
+		add_attrib(fic, "texture", "%d", n->blocs[i].texture);
+		add_attrib(fic, "coord_sprite", "%d:%d", n->blocs[i].coord_sprite.x, n->blocs[i].coord_sprite.y);
+		add_attrib(fic, "type_bloc", "%d", n->blocs[i].type_bloc);
+		close_element_short(fic);
+	}
+	
+	open_element(fic, "layers");
     add_attrib(fic, "nb", "%d", 1);
     end_element(fic);
 
@@ -820,7 +860,6 @@ void sauver_niveau(char *nom, niveau *n)
             for(k = 0; k < n->taille.y; k++)
 			{
 				open_element(fic, "occ_block");
-				add_attrib(fic, "indexes", "%d:%d", j, k);
 				add_attrib(fic, "actual", "%d", n->occ_blocs[j][k]->bloc_actuel);
                 add_attrib(fic, "alt", "%d", n->occ_blocs[j][k]->bloc_alternatif);
 				add_attrib(fic, "item", "%d", n->occ_blocs[j][k]->item);
