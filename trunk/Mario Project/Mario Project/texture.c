@@ -31,6 +31,7 @@ GLuint charger_texture_bis(char *nom, coordi *taille)
 
 	if(texture_sdl == NULL)
 	{
+        printf("Fichier %s introuvable\n", nom);
 		return 1;
 	}
 
