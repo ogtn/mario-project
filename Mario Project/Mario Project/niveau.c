@@ -454,7 +454,7 @@ void balise_bloc(niveau *n, const char **attrs)
 	texture_bloc = n->textures[n->blocs[i].texture];
 	n->blocs[i].coord_sprite.x = atoi(attrs[3]);
 	n->blocs[i].coord_sprite.y = atoi(strchr(attrs[3], ':') + 1);
-	n->blocs[i].phys = texture_bloc.phys[n->blocs[i].coord_sprite.x + n->blocs[i].coord_sprite.y * (texture_bloc.taille.y / texture_bloc.taille_sprite.y) - 1];
+	n->blocs[i].phys = texture_bloc.phys[n->blocs[i].coord_sprite.x + n->blocs[i].coord_sprite.y * (texture_bloc.taille.y / texture_bloc.taille_sprite.y)];
 	i++;
 }
 
@@ -473,7 +473,7 @@ void balise_layer(niveau *n, const char **attrs)
 void balise_occ_block(niveau *n, const char **attrs)
 {
 	static int i = 0, j = 0;
-	n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, atoi(attrs[3]), atoi(attrs[5]), atoi(attrs[7]));
+	n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, atoi(attrs[1]), atoi(attrs[3]), atoi(attrs[5]));
 	if(j == n->taille.y - 1)
 	{
 		j %= n->taille.y - 1;
@@ -553,7 +553,7 @@ void debut_element(void *user_data, const xmlChar *name, const xmlChar **attrs)
     };
     int i;
 
-    for(i = 0; i < 29; i++)
+    for(i = 0; i < 30; i++)
     {
         if(!xmlStrcmp(name, elements[i]))
         {
@@ -1191,8 +1191,8 @@ void charger_niveau_test(niveau *n)
 
 	/* Init Blocs et objets */
 	n->nb_blocs = 24;
-
 	n->nb_objets = 0;
+
 	n->blocs = malloc(n->nb_blocs * sizeof(bloc));
 	n->objets = malloc(n->nb_objets * sizeof(objet));
 	n->taille_blocs.x = (int)LARGEUR_BLOC;
@@ -1312,6 +1312,8 @@ void charger_niveau_test(niveau *n)
 	strcpy(n->textures[0].nom, "floor_rc4.png");
 	strcpy(n->textures[1].nom, "blocs_spec.png");
 
+	//strcpy(n->textures[0].nom, "classiques/Grass.png");
+
 	/* remplissage des blocs du niveau */
 	n->blocs[0].texture = 0;
 	n->blocs[0].coord_sprite.x = 2;
@@ -1362,8 +1364,8 @@ void charger_niveau_test(niveau *n)
 	n->blocs[7].type_bloc = EST_VIDE;
 
 	n->blocs[8].texture = 0;
-	n->blocs[8].coord_sprite.x = 4;
-	n->blocs[8].coord_sprite.y = 1;
+	n->blocs[8].coord_sprite.x = 5;
+	n->blocs[8].coord_sprite.y = 0;
 	n->blocs[8].phys = PLEIN;
 	n->blocs[8].type_bloc = EST_VIDE;
 
@@ -1374,8 +1376,8 @@ void charger_niveau_test(niveau *n)
 	n->blocs[9].type_bloc = EST_VIDE;
 	
 	n->blocs[10].texture = 0;
-	n->blocs[10].coord_sprite.x = 11;
-	n->blocs[10].coord_sprite.y = 0;
+	n->blocs[10].coord_sprite.x = 5;
+	n->blocs[10].coord_sprite.y = 2;
 	n->blocs[10].phys = BORD_A_DROITE;
 	n->blocs[10].type_bloc = EST_VIDE;
 
@@ -1386,31 +1388,31 @@ void charger_niveau_test(niveau *n)
 	n->blocs[11].type_bloc = EST_VIDE;
 
 	n->blocs[12].texture = 0;
-	n->blocs[12].coord_sprite.x = 3;
+	n->blocs[12].coord_sprite.x = 6;
 	n->blocs[12].coord_sprite.y = 2;
 	n->blocs[12].phys = PENTE_30_GAUCHE_8;
 	n->blocs[12].type_bloc = EST_VIDE;
 
 	n->blocs[13].texture = 0;
-	n->blocs[13].coord_sprite.x = 2;
+	n->blocs[13].coord_sprite.x = 6;
 	n->blocs[13].coord_sprite.y = 2;
 	n->blocs[13].phys = PENTE_30_GAUCHE_16;	
 	n->blocs[13].type_bloc = EST_VIDE;
 
 	n->blocs[14].texture = 0;
-	n->blocs[14].coord_sprite.x = 0;
+	n->blocs[14].coord_sprite.x = 6;
 	n->blocs[14].coord_sprite.y = 2;
 	n->blocs[14].phys = PENTE_30_DROITE_0;
 	n->blocs[14].type_bloc = EST_VIDE;
 
 	n->blocs[15].texture = 0;
-	n->blocs[15].coord_sprite.x = 1;
+	n->blocs[15].coord_sprite.x = 6;
 	n->blocs[15].coord_sprite.y = 2;
 	n->blocs[15].phys = PENTE_30_DROITE_8;
 	n->blocs[15].type_bloc = EST_VIDE;
 
 	n->blocs[16].texture = 0;
-	n->blocs[16].coord_sprite.x = 1;
+	n->blocs[16].coord_sprite.x = 6;
 	n->blocs[16].coord_sprite.y = 1;
 	n->blocs[16].phys = PENTE_45_GAUCHE;
 	n->blocs[16].type_bloc = EST_VIDE;
