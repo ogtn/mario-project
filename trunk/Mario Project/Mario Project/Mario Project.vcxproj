@@ -73,7 +73,7 @@
     <Link>
       <AdditionalDependencies>sdl.lib;sdlmain.lib;opengl32.lib;glu32.lib;sdl_image.lib;fmodvc.lib;libxml2.lib;iconv.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>

@@ -148,6 +148,9 @@ void charger_finish(finish* f);
 /* Charge "à la main" un niveau de texte, c'est crade mais c'est comme ça o) */
 void charger_niveau_test(niveau *n);
 
+/* Charge "à la main" un niveau de test pour le chargement du XML */
+void charger_niveau_test_xml(niveau *n);
+
 /* Charge un niveau vide pour l'éditeur */
 void charger_niveau_test_vide(niveau *n);
 
