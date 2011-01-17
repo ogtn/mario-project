@@ -1155,10 +1155,11 @@ void charger_niveau_test(niveau *n)
         n->monstres[0]->occ_monstres = ajout_monstre(n->monstres[0]->occ_monstres, new_occ_monstre(400, 400, n->monstres[0]));
 
         /* Layer projectile */
-        n->nb_projectiles = 2;
+        n->nb_projectiles = 3;
         n->projectiles = malloc(sizeof(projectile*) * n->nb_projectiles);
         n->projectiles[DEBRIS] = charger_projectile("debris");  
         n->projectiles[FIREBALL] = charger_projectile("fireball");
+		n->projectiles[SPECIAL_FIREBALL] = charger_projectile("special_fireball");
 
         /* Layer items */
         n->nb_items = 3;
@@ -1199,9 +1200,9 @@ void charger_niveau_test(niveau *n)
         //n->tuyaux[1] = charger_tuyau("green_pipe", VERS_LE_BAS, 3, 10, 0, OUVERT, 0, NULL, -1);
 
         /* Layer Particules */
-        n->nb_foreground_generators = 1;
-        n->foreground_generators = malloc(sizeof(particule_generator*) * n->nb_foreground_generators);
-        n->foreground_generators[0] = new_particule_generator(pos_gen, taille_gen, 4000, 200, "Snow_back.png", VRAI, 0xFFFFFFFF, 0xFFFFFFFF);
+        //n->nb_foreground_generators = 1;
+        //n->foreground_generators = malloc(sizeof(particule_generator*) * n->nb_foreground_generators);
+        //n->foreground_generators[0] = new_particule_generator(pos_gen, taille_gen, 4000, 200, "Snow_back.png", VRAI, 0xFFFFFFFF, 0xFFFFFFFF);
 
         /* Init Blocs et objets */
         n->nb_blocs = 24;
@@ -1256,7 +1257,7 @@ void charger_niveau_test(niveau *n)
                         else if (i == 0)
                                 n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 2, -1, -1);
                         else if (i == 2 && j == 5)
-                                n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, 19, 0);
+                                n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, 19, -1);
                         else if (i == 1 && j == 5)
                                 n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, 19, -1);
                         else if (i > 10 && i < 15 && j == 5)
@@ -2222,7 +2223,7 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
 					case POUSSE_PAR_LE_HAUT:
 						sprite.position.y =  occ->position.y = occ->position.y + occ->compteur_etat;
 						sprite.position.x = occ->position.x;
-						draw_sprite_layer(&sprite, n->last_texture, 1);
+						draw_sprite_layer(&sprite, n->last_texture, 0);
 						occ->compteur_etat = (occ->compteur_etat + 1) % 5;
 						break;
 					default:
