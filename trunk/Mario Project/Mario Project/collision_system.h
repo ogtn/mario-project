@@ -124,6 +124,9 @@ void MAJ_perso_tuyau(perso* p, niveau* lvl);
 /* Gère le lancer de projectile de mario */
 void throw_projectile_perso(perso* perso, niveau* lvl, occ_projectile *p);
 
+/* Gère le lancer de projectiles spéciaux du perso */
+void throw_special_projectile_perso(perso *perso, niveau* lvl, occ_projectile *p);
+
 /* Detection/resolution de collisions sur le personnage */
 void solve_collisions_perso(perso* p, niveau *n, keystate* keystate);
 

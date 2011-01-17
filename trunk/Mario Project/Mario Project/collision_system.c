@@ -750,13 +750,7 @@ void throw_projectile_perso(perso *perso, niveau* lvl, occ_projectile *p)
 	perso->etat = ATTAQUE;
 	
 	// Le tps d'attaque doit être proportionnel aux nombre de sprites de l'attaque
-	perso->tps_attaque = perso->texture_act->v_anim[ATTAQUE] * perso->texture_act->nb_sprites[ATTAQUE]; 
-
-	/* Condition à remplir pour une attaque spéciale ?? */
-	//perso->etat = ATTAQUE_SPECIALE;
-	//
-	//// Le tps d'attaque doit être proportionnel aux nombre de sprites de l'attaque
-	//perso->tps_attaque_speciale = perso->texture_act->v_anim[ATTAQUE_SPECIALE] * perso->texture_act->nb_sprites[ATTAQUE_SPECIALE]; 
+	perso->tps_attaque = perso->texture_act->v_anim[ATTAQUE] * perso->texture_act->nb_sprites[ATTAQUE];  
 
 	FSOUND_PlaySound(FSOUND_FREE, perso->sons[SND_FIREBALL]);
 
@@ -781,6 +775,48 @@ void throw_projectile_perso(perso *perso, niveau* lvl, occ_projectile *p)
 	{
 		p->vitesse.x = p->type_projectile->vitesse.x;
 		p->position.x = perso->position.x + perso->taille.x - p->type_projectile->taille.x + p->type_projectile->abscisse_bas;
+	}
+
+	p->position_prec.x = p->position.x;
+	p->position_prec.y = p->position.y;
+
+
+	// Ajout du projectile dans l'environnement du niveau
+	p->type_projectile->occ_projectiles = ajout_projectile(p->type_projectile->occ_projectiles, p);
+}
+
+void throw_special_projectile_perso(perso *perso, niveau* lvl, occ_projectile *p)
+{
+
+	/* Condition à remplir pour une attaque spéciale ?? */
+	perso->etat = ATTAQUE_SPECIALE;
+	
+	// Le tps d'attaque doit être proportionnel aux nombre de sprites de l'attaque
+	perso->tps_attaque_speciale = perso->texture_act->v_anim[ATTAQUE_SPECIALE] * perso->texture_act->nb_sprites[ATTAQUE_SPECIALE]; 
+
+	FSOUND_PlaySound(FSOUND_FREE, perso->sons[SND_FIREBALL]);
+
+
+	p = new_occ_projectile(lvl->projectiles[SPECIAL_FIREBALL]->tps_vie, lvl->projectiles[SPECIAL_FIREBALL]->tps_apparition, lvl->projectiles[SPECIAL_FIREBALL]->tps_disparition);
+
+	p->type_projectile = lvl->projectiles[SPECIAL_FIREBALL];
+
+	p->envoyeur = GENTIL;
+
+	p->cote = perso->cote;
+	p->position.y = perso->position.y;
+
+	// Calcul de la position et de la vitesse initiales du projectile
+	// Le projectile se situera derrière la main du perso
+	if(p->cote == COTE_GAUCHE)
+	{
+		p->vitesse.x = -p->type_projectile->vitesse.x;
+		p->position.x = perso->position.x;
+	}
+	else
+	{
+		p->vitesse.x = p->type_projectile->vitesse.x;
+		p->position.x = perso->position.x + perso->taille.x;
 	}
 
 	p->position_prec.x = p->position.x;
@@ -1592,6 +1628,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 				FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_CLEAR]);
 				p->tps_finish = TPS_FINISH;
 				p->etat = FINISH;
+				p->cote = COTE_DROIT;
 			}
 		}
 	}
