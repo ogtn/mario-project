@@ -444,11 +444,11 @@ void balise_blocs(niveau *n, const char **attrs)
 	n->blocs = malloc(n->nb_blocs * sizeof(bloc));
     n->taille_blocs.x = atoi(attrs[5]);
 	n->taille_blocs.y = atoi(strchr(attrs[5], ':') + 1);
-    n->occ_blocs = malloc(n->taille.x * sizeof(id*));
+    n->occ_blocs = malloc(n->taille.x * sizeof(occ_bloc***));
 
 	for(i = 0; i < n->taille.x; i++)
 	{
-		n->occ_blocs[i] = malloc(n->taille.y * sizeof(id));
+		n->occ_blocs[i] = malloc(n->taille.y * sizeof(occ_bloc**));
 	}
 }
 
@@ -575,7 +575,7 @@ void debut_element(void *user_data, const xmlChar *name, const xmlChar **attrs)
             functions[i](user_data, (const char **)attrs);
             break;
         }
-    }
+    }	
 }
 
 
@@ -592,6 +592,8 @@ void charger_niveau(char *nom, niveau *n)
 
     if(xmlSAXUserParseFile(&sh, n, nom))
         puts("Il y a eu une couille");
+
+	printf("fin de charger_niveau : bloc actuel de 0,0 = %d", n->occ_blocs[0][0]->bloc_actuel);
 }
 
 
@@ -1832,16 +1834,12 @@ void affiche_occ_blocs(niveau* n)
 	int i, j;
 	FILE* flux = fopen("test.txt","w");
 
-	for(i = n->taille.x - 1; i >= 0 ; i--){ 
+	for(i = 0; i < n->taille.x ; i++){ 
 		for(j = 0; j < n->taille.y; j++){
 
 			if(n->occ_blocs[i][j]->bloc_actuel >= 0)
 			{
-				fprintf(flux, "%d ", n->occ_blocs[i][j]->bloc_actuel);
-			}
-			else
-			{
-                fprintf(flux, "-1 ");
+				fprintf(flux, "i = %d, j = %d, bloc_actuel = %d\n", i, j, n->occ_blocs[i][j]->bloc_actuel);
 			}
 		}
 		fprintf(flux,"\n");
