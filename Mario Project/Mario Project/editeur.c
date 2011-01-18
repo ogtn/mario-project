@@ -64,19 +64,18 @@ void main_editeur(void)
     {
         glClearColor(0x31 / 256., 0x49 / 256., 0x6A / 256., 0);
         glClear(GL_COLOR_BUFFER_BIT);
-   
+
         /* Mise à jour */
         maj_keystate(e.world->keystate, &continuer); 
         update_taille_fenetre(e.world);
         maj_editeur(&e);
-       
         /* Rendu */
         draw_main_editeur(&e);
 
         /* Impression du texte */
         screen_flush();
         SDL_GL_SwapBuffers();
-        my_sleep(1);
+        //my_sleep(1);
     }
 
     //liberer_textures_niveau(e.world->niveau);
@@ -145,7 +144,7 @@ void init_editeur(editeur *e)
     e->texture_cadre = charger_texture_bis("textures/cadre3.png", NULL);
     e->world = new_world();
     load_world(e->world);
-
+    
     /* Actions: on associe juste une function et un racourci */
     for(i = 0; i < NB_ACTIONS; i++)
         e->actions[i] = new_action(action_master_table[i].func, NULL,
@@ -249,7 +248,7 @@ void init_onglet_bloc(editeur *e)
     add_group_box(main, gb);
 
     // texture browser
-    eb->dossier_texture = new_dossier("./textures/blocs");
+    eb->dossier_texture = new_dossier("./textures/blocs", ".png");
     strcpy(eb->dossier_texture->racine, eb->dossier_texture->path);
 
     gb = new_group_box(0, 0, main->taille.x - 250 - 2 * main->epaisseur, main->taille.y - main->group_boxes[REGION_TOOLBOX_BLOC]->taille.y - 2 * main->epaisseur);
@@ -275,7 +274,7 @@ void init_onglet_bloc(editeur *e)
     }
 
     charge_boutons_browser(e);
-
+    
     /* Outil magique */
     gb = e->onglets[ONGLET_BLOCS]->group_boxes[REGION_OUTIL_MAGIQUE_BLOC];
     b = new_outil_3x3();
@@ -294,7 +293,7 @@ void init_onglet_bloc(editeur *e)
         execute_action(e->actions[AC_ADD_TO_FAVORITES], e->world->keystate);
         maj_bouton(gb->group_boxes[0]->boutons[0], e->world->keystate);
     }
-
+    
     /* C'est moche ce truc non? */
     gb = e->onglets[ONGLET_BLOCS];
     gb = gb->group_boxes[REGION_TOOLBOX_BLOC];
@@ -334,7 +333,7 @@ void init_onglet_ennemi(editeur *e)
     add_group_box(main, gb);
 
     // texture browser
-    en->dossier_texture = new_dossier("./textures/monstres");
+    en->dossier_texture = new_dossier("./textures/monstres", ".png");
     strcpy(en->dossier_texture->racine, en->dossier_texture->path);
 
     gb = new_group_box(0, 0, main->taille.x - 250 - 2 * main->epaisseur, main->taille.y - main->group_boxes[REGION_TOOLBOX_ENNEMI]->taille.y - 2 * main->epaisseur);
@@ -556,7 +555,6 @@ void charge_boutons_browser(editeur *e)
             b->label[10] = '\0';
         }
 
-
         set_pos(b, 3, 23);
         set_help(b, "tu survoles un bloc, clique pour l'ajouter aux favoris");
         b->label_pos.x = 3;
@@ -715,7 +713,7 @@ void maj_editeur_bloc(editeur *e)
     /* On s'occupe des selections si besoin */
     if(e->mode_bloc.mode == MODE_BLOC_EDITOR)
         maj_selection(e);
-
+    
     /* Actions */
     for(i = 0; i < NB_ACTIONS_BLOC; i++)
         execute_action_shortcut(e->mode_bloc.actions[i], e->world->keystate);
@@ -743,7 +741,7 @@ void maj_selection(editeur *e)
     if(e->survole_apercu)
     {
         deplace_ecran(e);
-
+        
         /* Un clic provoque un debut de selection */
         if(debut_clic_g || debut_clic_d)
         {
@@ -775,9 +773,9 @@ void maj_selection(editeur *e)
                     force_execute_action(e->actions[AC_BLOC_REMPLISSAGE], e->world->keystate);
             }
         }
-
         /* Affichage status bar */
         {
+            /*
             coordi pos = e->onglets[REGION_STATUS_BAR]->position;
             pos.x += 6;
             pos.y += 6;
@@ -797,7 +795,7 @@ void maj_selection(editeur *e)
                     screen_printf(pos, NULL, COLOR_WHITE, "[%d;%d] physique: [%d]", e->bloc_survole.x, e->bloc_survole.y, e->world->niveau->blocs[id_bloc].phys);
                 else
                     screen_printf(pos, NULL, COLOR_WHITE, "[%d;%d] physique: VIDE", e->bloc_survole.x, e->bloc_survole.y);
-            }
+            }*/
         }
     }
     else
@@ -1032,9 +1030,18 @@ bouton *set_text_outil_3x3(bouton *b, char *nom)
     if(b == NULL)
         return NULL;
 
-    text = charger_texture_bis(nom, &taille);
-    taille.x /= 3;
-    taille.y /= 3;
+    if(strcmp(nom, ""))
+    {
+        text = charger_texture_bis(nom, &taille);
+        taille.x /= 3;
+        taille.y /= 3;
+    }
+    else
+    {
+        text = 0;
+        taille.x = taille.y = 32;
+    }
+    
     hd.x = hd.y = un_tiers;
 
     /*********************LIGNE DU BAS**********************/

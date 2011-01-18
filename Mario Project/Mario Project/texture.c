@@ -31,7 +31,7 @@ GLuint charger_texture_bis(char *nom, coordi *taille)
 
 	if(texture_sdl == NULL)
 	{
-        printf("Fichier %s introuvable\n", nom);
+        printf("Echec du chargement de texture: %s\n", SDL_GetError());
 		return 1;
 	}
 

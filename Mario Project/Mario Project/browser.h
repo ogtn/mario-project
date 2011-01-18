@@ -49,6 +49,7 @@ struct dossier
 	char **dossiers;
 	char dossier_parent[MAX_PATH];
 	char racine[MAX_PATH];
+    char extension[MAX_PATH];
 
 	size_t nb_dossiers; 
 	size_t nb_fichiers;
@@ -59,7 +60,7 @@ struct dossier
 /*================================[PROTOTYPES]================================*/
 /******************************************************************************/
 
-dossier *new_dossier(char *path);
+dossier *new_dossier(char *path, char *extension);
 
 void free_dossier(dossier **dos);
 

@@ -18,7 +18,7 @@ font_2d *new_font_2d(void)
 font_2d *init_font_2d(font_2d *f)
 {
     int i;
-    caractere car = {0};
+    caractere car = {{0, 0}, {0, 0}, {0, 0}, 0, {0, 0}, {0, 0}};
 
     for(i = 0; i < NB_CARACTERES; i++)
         f->carac[i] = car;
@@ -116,7 +116,11 @@ font_2d *lire_font_2d(FILE *flux, font_2d *f)
         {
             debut = chaine_apres_char(buff, '"');
             strcpy(f->nom_texture, debut);
-            f->nom_texture[strlen(f->nom_texture) - 2] = '\0';
+
+            if(f->nom_texture[strlen(f->nom_texture) - 3] == '"')
+                f->nom_texture[strlen(f->nom_texture) - 3] = '\0';
+            else
+                f->nom_texture[strlen(f->nom_texture) - 2] = '\0';
         }
 
         debut = strstr(buff, "common");

@@ -13,7 +13,7 @@
 #include "browser.h"
 
 
-dossier *new_dossier(char *path)
+dossier *new_dossier(char *path, char *extension)
 {
     dossier *dos = NULL;
     DIR *dir;
@@ -31,16 +31,20 @@ dossier *new_dossier(char *path)
         strcpy(dos->path, path);
         dos->dossier_parent[0] = '\0';
         dos->racine[0] = '\0';
+        strcpy(dos->extension, extension);
 
         while((entity = readdir(dir)) != NULL)
         {
+            /* On ignore les fichiers/dossiers cachés, et les fichiers n'ayants pas la bonne extension */
+            if(entity->d_name[0] == '.' || strstr(entity->d_name, extension) == NULL)
+                continue;
+                
             /* Si c'est un fichier */
             if(strchr(entity->d_name, '.'))
                 dos->nb_fichiers++;
             else
                 dos->nb_dossiers++;
         }
-        dos->nb_fichiers -= 2; // pour ne pas compter . et ..
 
         dos->dossiers = malloc(sizeof(char *) * dos->nb_dossiers);
         for(i = 0; i < dos->nb_dossiers; i++)
@@ -57,26 +61,19 @@ dossier *new_dossier(char *path)
 
         while((entity = readdir(dir)) != NULL)
         {
-            /* On zappe . et .., qui commencent à faire chier */
-            int est_point;
-            int est_point_point;
-
-            est_point = strcmp(entity->d_name, ".") == 0;
-            est_point_point = strcmp(entity->d_name, "..") == 0;
-
-            if(!est_point && !est_point_point)
+            if(entity->d_name[0] == '.' || strstr(entity->d_name, extension) == NULL)
+                continue;
+                
+             /* Si c'est un fichier */
+            if(strchr(entity->d_name, '.'))
             {
-                /* Si c'est un fichier */
-                if(strchr(entity->d_name, '.'))
-                {
-                    strcpy(dos->fichiers[i], entity->d_name);
-                    i++;
-                }
-                else
-                {
-                    strcpy(dos->dossiers[j], entity->d_name);
-                    j++;
-                }
+                strcpy(dos->fichiers[i], entity->d_name);
+                i++;
+            }
+            else
+            {
+                strcpy(dos->dossiers[j], entity->d_name);
+                j++;
             }
         }
 
@@ -127,7 +124,7 @@ void ouvre_sous_dossier(dossier **dos, size_t n)
         strcat(path_enfant, "/");
         strcat(path_enfant, (*dos)->dossiers[n]);
 
-        sous_dossier = new_dossier(path_enfant);
+        sous_dossier = new_dossier(path_enfant, (*dos)->extension);
 
         if(sous_dossier != NULL)
         {
@@ -147,7 +144,7 @@ void ouvre_dossier_parent(dossier **dos)
         strcmp((*dos)->dossier_parent, ""))
     {
         char *end_path;
-        dossier *dossier_parent = new_dossier((*dos)->dossier_parent);
+        dossier *dossier_parent = new_dossier((*dos)->dossier_parent, (*dos)->extension);
 
         if(dossier_parent != NULL)
         {
@@ -177,7 +174,7 @@ void ouvre_racine(dossier **dos)
     if(dos != NULL && *dos != NULL && strcmp((*dos)->racine, ""))
     {
         char *end_path;
-        dossier *racine = new_dossier((*dos)->racine);
+        dossier *racine = new_dossier((*dos)->racine, (*dos)->extension);
 
         if(racine != NULL)
         {
