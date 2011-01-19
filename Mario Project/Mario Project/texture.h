@@ -103,14 +103,14 @@ GLuint charger_texture_bis(char *nom, coordi *taille);
 
 /* Charge les infos relatives à une texture depuis un fichier .cfg dans la 
 texture pointée par t */
-void charger_cfg_texture(char* nom_cfg, texture *t);
+void charger_cfg_texture(char* nom_cfg, texture *t, coordi taille_blocs);
 
 /* Charge les infos relatives à une texture depuis un fichier .txtr dans la 
 texture pointée par t */
 void charger_infos_texture(texture *t);
 
 /* Chargement des textures des blocs */
-void charger_texture_bloc(char* nom, texture* t);
+void charger_texture_bloc(char* nom, texture* t, coordi taille_blocs);
 
 /* Remplace les caracteres suivants '.' par '\0' */
 char *supprime_extension(char *nom);

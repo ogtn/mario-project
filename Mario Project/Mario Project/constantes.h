@@ -40,7 +40,7 @@ typedef unsigned char id, nb;
 #define TAILLE_NOM_NIVEAU			40
 #define TAILLE_TITRE_MENUS			40
 #define TAILLE_TITRE_MUSIQUE		40
-#define TAILLE_NOM_TEXTURE          50
+#define TAILLE_NOM_TEXTURE          70
 #define BLOC_VIDE					255
 #define OBJET_VIDE					255
 #define TPS_PROTEC_COLLISIONS		500
