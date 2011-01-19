@@ -481,7 +481,7 @@ void MAJ_collision_perso(perso *perso, niveau* lvl, keystate* keystate, Uint32 d
 		if(keystate->actuel[RUN] && !keystate->actuel[BAS] && !keystate->precedent[RUN]
 		&& perso->transformation >= FIRE_MARIO && perso->etat != DERAPE 
 			&& perso->etat != REGARDE_HAUT && !perso->tps_attaque)
-			throw_projectile_perso(perso, lvl, p);
+			throw_special_projectile_perso(perso, lvl, p);
 
 		/* Sauter */
 		if(keystate->actuel[SAUTER] && !keystate->precedent[SAUTER] && !keystate->actuel[HAUT]
@@ -813,7 +813,7 @@ void throw_special_projectile_perso(perso *perso, niveau* lvl, occ_projectile *p
 	if(p->cote == COTE_GAUCHE)
 	{
 		p->vitesse.x = -p->type_projectile->vitesse.x;
-		p->position.x = perso->position.x;
+		p->position.x = perso->position.x - p->type_projectile->taille.x;
 	}
 	else
 	{
