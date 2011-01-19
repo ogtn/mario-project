@@ -42,14 +42,14 @@ item* init_item(item* i, char* nom)
 	return i;
 }
 
-occ_item* new_occ_item(float position_x, float position_y,item* type_item, coordf vitesse, ETAT_ITEM etat)
+occ_item* new_occ_item(float position_x, float position_y, int type_item, coordf vitesse, ETAT_ITEM etat)
 {
 	occ_item* i = malloc(sizeof(occ_item));
 
-	return init_occ_item(position_x, position_y,type_item, i, vitesse, etat);
+	return init_occ_item(position_x, position_y, type_item, i, vitesse, etat);
 }
 
-occ_item* init_occ_item(float position_x, float position_y, item* type_item, occ_item* i, coordf vitesse, ETAT_ITEM etat)
+occ_item* init_occ_item(float position_x, float position_y, int type_item, occ_item* i, coordf vitesse, ETAT_ITEM etat)
 {
 	if(i != NULL)
 	{

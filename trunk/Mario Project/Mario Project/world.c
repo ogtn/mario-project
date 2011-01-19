@@ -126,7 +126,7 @@ void load_world(world *w)
 	
 	//sauver_niveau("test_xml.xml", w->niveau);
 	charger_niveau("test_xml.xml", w->niveau);
-	//affiche_occ_blocs(w->niveau);
+	affiche_occ_blocs(w->niveau);
 	//charger_textures_niveau(w->niveau);
 	
 	/* Initialisation du nom et du temps dans le HUD pour chaque niveau chargé */

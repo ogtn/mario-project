@@ -195,5 +195,8 @@
     <None Include="textures\blocs\speciaux\incassables\[Q]\[Q].cfg">
       <Filter>Fichiers de ressources</Filter>
     </None>
+    <None Include="test_xml.xml">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
   </ItemGroup>
 </Project>

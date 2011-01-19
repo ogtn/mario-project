@@ -62,7 +62,7 @@ typedef struct occ_item {
 	ETAT_ITEM etat;							/* etat de l'item */
 	int	tps_sortie_bloc;					/* temps qu'il reste avant que l'item sorte d'un élément du décor */
 	int actif;								/* indique si l'item est actif (dans l'écran) */
-	struct item* type_item;					/* pointeur sur l'item général de l'occurence */
+	int type_item;							/* pointeur sur l'item général de l'occurence */
 }occ_item;
 
 /* Structure elem_item */
@@ -103,10 +103,10 @@ item* new_item(char* nom);
 item* init_item(item* i, char* nom);
 
 /* Allocation d'une occurence d'un item */
-occ_item* new_occ_item(float position_x, float position_y,item* type_item, coordf vitesse, ETAT_ITEM etat);
+occ_item* new_occ_item(float position_x, float position_y, int type_item, coordf vitesse, ETAT_ITEM etat);
 
 /* Initialisation d'une occurence d'un item */
-occ_item* init_occ_item(float position_x, float position_y, item* type_item, occ_item* i, coordf vitesse, ETAT_ITEM etat);
+occ_item* init_occ_item(float position_x, float position_y, int type_item, occ_item* i, coordf vitesse, ETAT_ITEM etat);
 
 /* Allocation d'une liste d'items */
 liste_item* new_liste_item();

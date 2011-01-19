@@ -544,24 +544,24 @@ void draw_HUD(perso* p) {
 	screen_printf_dbg("Temps restant : %d\n", p->hud->time);
 }
 
-void draw_item(occ_item* item, Uint32 duree)
+void draw_item(item* model, occ_item* item, Uint32 duree)
 {
 	int phase;
-	float gauche = 0, droite = (float) 1 / item->type_item->nb_sprites;
+	float gauche = 0, droite = (float) 1 / model->nb_sprites;
 	
-	if(item->type_item->nb_sprites > 1)
+	if(model->nb_sprites > 1)
 	{
-		phase = (duree % 500) / (500 / (item->type_item->nb_sprites));
+		phase = (duree % 500) / (500 / (model->nb_sprites));
 
-		gauche += phase * (float)1 / item->type_item->nb_sprites;
-		droite += phase * (float)1 / item->type_item->nb_sprites;
+		gauche += phase * (float)1 / model->nb_sprites;
+		droite += phase * (float)1 / model->nb_sprites;
 
 		draw_sprite(
 			(int)item->position.x, 
 			(int)item->position.y,
-			item->type_item->taille.x, 
-			item->type_item->taille.y, 
-			item->type_item->texture, 
+			model->taille.x, 
+			model->taille.y, 
+			model->texture, 
 			gauche,
 			droite,
 			0, 
@@ -572,9 +572,9 @@ void draw_item(occ_item* item, Uint32 duree)
 		draw_sprite(
 			(int)item->position.x, 
 			(int)item->position.y, 
-			item->type_item->taille.x, 
-			item->type_item->taille.y, 
-			item->type_item->texture, 
+			model->taille.x, 
+			model->taille.y, 
+			model->texture, 
 			0, 
 			1, 
 			0, 

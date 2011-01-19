@@ -406,6 +406,11 @@ void balise_item(niveau *n, const char **attrs)
 	i++;
 }
 
+void balise_occ_item(niveau *n, const char **attrs)
+{
+	n->items[atoi(attrs[1])]->occ_items = ajout_item(n->items[atoi(attrs[1])]->occ_items, new_occ_item(atoi(attrs[3]), atoi(strchr(attrs[3], ':') + 1), atoi(attrs[1]), n->items[atoi(attrs[1])]->vitesse, NORMAL));
+}
+
 
 void balise_monsters(niveau *n, const char **attrs)
 {
@@ -528,6 +533,7 @@ void debut_element(void *user_data, const xmlChar *name, const xmlChar **attrs)
 		BAD_CAST"projectile",
 		BAD_CAST"items",
 		BAD_CAST"item",
+		BAD_CAST"occ_item",
         BAD_CAST"monsters", 
         BAD_CAST"monster", 
         BAD_CAST"occ",
@@ -560,6 +566,7 @@ void debut_element(void *user_data, const xmlChar *name, const xmlChar **attrs)
 		balise_projectile,
 		balise_items,
 		balise_item,
+		balise_occ_item,
         balise_monsters,
         balise_monster,
         balise_occ,
@@ -574,7 +581,7 @@ void debut_element(void *user_data, const xmlChar *name, const xmlChar **attrs)
     };
     int i;
 
-    for(i = 0; i < 30; i++)
+    for(i = 0; i < 31; i++)
     {
         if(!xmlStrcmp(name, elements[i]))
         {
@@ -598,8 +605,6 @@ void charger_niveau(char *nom, niveau *n)
 
     if(xmlSAXUserParseFile(&sh, n, nom))
         puts("Il y a eu une couille");
-
-	printf("fin de charger_niveau : bloc actuel de 0,0 = %d", n->occ_blocs[0][0]->bloc_actuel);
 }
 
 
@@ -683,167 +688,266 @@ void sauver_niveau(char *nom, niveau *n)
     /* Backgrounds */
     open_element(fic, "backgrounds");
     add_attrib(fic, "nb", "%d", n->nb_backgrounds);
-    end_element(fic);
-    for(i = 0; i < n->nb_backgrounds; i++)
-    {
-        open_element(fic, "background");
-        add_attrib(fic, "img", "%s", n->backgrounds[i].nom_text);
-        close_element_short(fic);
-    }
-    close_element(fic, "backgrounds");
+	if(n->nb_backgrounds > 0)
+	{
+		end_element(fic);
+		for(i = 0; i < n->nb_backgrounds; i++)
+		{
+			open_element(fic, "background");
+			add_attrib(fic, "img", "%s", n->backgrounds[i].nom_text);
+			close_element_short(fic);
+		}
+		close_element(fic, "backgrounds");
+	}
+	else
+	{
+		close_element_short(fic);
+	}
 
 	/* Backgrounds Generators */
     open_element(fic, "background_generators");
 	add_attrib(fic, "nb", "%d", n->nb_background_generators);
-    end_element(fic);
-    for(i = 0; i < n->nb_background_generators; i++)
-    {
-		particule_generator* gen = n->background_generators[i];
+	
+	if(n->nb_background_generators > 0)
+	{
+		end_element(fic);
+		for(i = 0; i < n->nb_background_generators; i++)
+		{
+			particule_generator* gen = n->background_generators[i];
 
-        open_element(fic, "background_generator");
-		add_attrib(fic, "img", "%s", gen->nom_text);
-		add_attrib(fic, "position", "%d:%d", gen->position.x, gen->position.y);
-		add_attrib(fic, "size", "%d:%d", gen->taille.x, gen->taille.y);
-		add_attrib(fic, "particles_life", "%d", gen->vie_particules);
-		add_attrib(fic, "flow", "%d", gen->debit);
-		add_attrib(fic, "gravity", "%d", gen->gravity);
-		add_attrib(fic, "beginning_color", "%d", gen->couleur_debut);
-		add_attrib(fic, "end_color", "%d", gen->couleur_fin);
-        close_element_short(fic);
-    }
-    close_element(fic, "background_generators");
+			open_element(fic, "background_generator");
+			add_attrib(fic, "img", "%s", gen->nom_text);
+			add_attrib(fic, "position", "%d:%d", gen->position.x, gen->position.y);
+			add_attrib(fic, "size", "%d:%d", gen->taille.x, gen->taille.y);
+			add_attrib(fic, "particles_life", "%d", gen->vie_particules);
+			add_attrib(fic, "flow", "%d", gen->debit);
+			add_attrib(fic, "gravity", "%d", gen->gravity);
+			add_attrib(fic, "beginning_color", "%d", gen->couleur_debut);
+			add_attrib(fic, "end_color", "%d", gen->couleur_fin);
+			close_element_short(fic);
+		}
+		close_element(fic, "background_generators");
+	}
+	else
+	{
+		close_element_short(fic);
+	}
 
 	/* Foregrounds */
     open_element(fic, "foregrounds");
 	add_attrib(fic, "nb", "%d", n->nb_foregrounds);
-    end_element(fic);
-	for(i = 0; i < n->nb_foregrounds; i++)
-    {
-        open_element(fic, "foreground");
-		add_attrib(fic, "img", "%s", n->foregrounds[i].nom_text);
-        close_element_short(fic);
-    }
-    close_element(fic, "foregrounds");
+
+	if(n->nb_foregrounds > 0)
+	{
+		end_element(fic);
+		for(i = 0; i < n->nb_foregrounds; i++)
+		{
+			open_element(fic, "foreground");
+			add_attrib(fic, "img", "%s", n->foregrounds[i].nom_text);
+			close_element_short(fic);
+		}
+		close_element(fic, "foregrounds");
+	}
+	else
+	{
+		close_element_short(fic);
+	}
 
 	/* Foreground Generators */
     open_element(fic, "foreground_generators");
 	add_attrib(fic, "nb", "%d", n->nb_foreground_generators);
-    end_element(fic);
-    for(i = 0; i < n->nb_foreground_generators; i++)
-    {
-		particule_generator* gen = n->foreground_generators[i];
+    
+	if(n->foreground_generators > 0)
+	{
+		end_element(fic);
+		for(i = 0; i < n->nb_foreground_generators; i++)
+		{
+			particule_generator* gen = n->foreground_generators[i];
 
-        open_element(fic, "foreground_generator");
-		add_attrib(fic, "img", "%s", gen->nom_text);
-		add_attrib(fic, "position", "%0.f:%0.f", gen->position.x, gen->position.y);
-		add_attrib(fic, "size", "%d:%d", gen->taille.x, gen->taille.y);
-		add_attrib(fic, "particles_life", "%d", gen->vie_particules);
-		add_attrib(fic, "flow", "%d", gen->debit);
-		add_attrib(fic, "gravity", "%d", gen->gravity);
-		add_attrib(fic, "beginning_color", "%d", gen->couleur_debut);
-		add_attrib(fic, "end_color", "%d", gen->couleur_fin);
-        close_element_short(fic);
-    }
-    close_element(fic, "foreground_generators");
+			open_element(fic, "foreground_generator");
+			add_attrib(fic, "img", "%s", gen->nom_text);
+			add_attrib(fic, "position", "%0.f:%0.f", gen->position.x, gen->position.y);
+			add_attrib(fic, "size", "%d:%d", gen->taille.x, gen->taille.y);
+			add_attrib(fic, "particles_life", "%d", gen->vie_particules);
+			add_attrib(fic, "flow", "%d", gen->debit);
+			add_attrib(fic, "gravity", "%d", gen->gravity);
+			add_attrib(fic, "beginning_color", "%d", gen->couleur_debut);
+			add_attrib(fic, "end_color", "%d", gen->couleur_fin);
+			close_element_short(fic);
+		}
+		close_element(fic, "foreground_generators");
+	}
+	else
+	{
+		close_element_short(fic);
+	}
 
 	/* Objets */
     open_element(fic, "objects");
 	add_attrib(fic, "nb", "%d", n->nb_foregrounds);
-    end_element(fic);
-	for(i = 0; i < n->nb_foregrounds; i++)
-    {
-        open_element(fic, "object");
-		add_attrib(fic, "img", "%s", n->objets[i].nom_text);
-        close_element_short(fic);
-    }
-    close_element(fic, "objects");
+	if(n->nb_foregrounds > 0)
+	{
+		end_element(fic);
+		for(i = 0; i < n->nb_foregrounds; i++)
+		{
+			open_element(fic, "object");
+			add_attrib(fic, "img", "%s", n->objets[i].nom_text);
+			close_element_short(fic);
+		}
+		close_element(fic, "objects");
+	}
+	else
+	{
+		close_element_short(fic);
+	}
 
 	/* Finish */
     open_element(fic, "finishes");
     add_attrib(fic, "nb", "%d", n->nb_finish);
-    end_element(fic);
-	for(i = 0; i < n->nb_finish; i++)
-    {
-        open_element(fic, "finish");
-		add_attrib(fic, "img", "%s", n->finishes[i].nom_text);
-		add_attrib(fic, "position", "%0.f:%0.f", n->finishes[i].position.x, n->finishes[i].position.y);
-        close_element_short(fic);
-    }
-	close_element(fic, "finishes");
+    
+	if(n->nb_finish > 0)
+	{
+		end_element(fic);
+		for(i = 0; i < n->nb_finish; i++)
+		{
+			open_element(fic, "finish");
+			add_attrib(fic, "img", "%s", n->finishes[i].nom_text);
+			add_attrib(fic, "position", "%0.f:%0.f", n->finishes[i].position.x, n->finishes[i].position.y);
+			close_element_short(fic);
+		}
+		close_element(fic, "finishes");
+	}
+	else
+	{
+		close_element_short(fic);
+	}
 
 	/* Projectiles */
     open_element(fic, "projectiles");
     add_attrib(fic, "nb", "%d", n->nb_projectiles);
-    end_element(fic);
-    for(i = 0; i < n->nb_projectiles; i++)
-    {
-        open_element(fic, "projectile");
-		add_attrib(fic, "img", "%s", n->projectiles[i]->nom_text);
-        close_element_short(fic);
-    }
-    close_element(fic, "projectiles");
+    
+	if(n->nb_projectiles > 0)
+	{
+		end_element(fic);
+		for(i = 0; i < n->nb_projectiles; i++)
+		{
+			open_element(fic, "projectile");
+			add_attrib(fic, "img", "%s", n->projectiles[i]->nom_text);
+			close_element_short(fic);
+		}
+		close_element(fic, "projectiles");
+	}
+	else
+	{
+		close_element_short(fic);
+	}
 
 	/* Items */
     open_element(fic, "items");
     add_attrib(fic, "nb", "%d", n->nb_items);
-    end_element(fic);
-    for(i = 0; i < n->nb_items; i++)
-    {
-        open_element(fic, "item");
-		add_attrib(fic, "img", "%s", n->items[i]->nom_text);
-		add_attrib(fic, "type", "%d", n->items[i]->nom);
-        close_element_short(fic);
-    }
-    close_element(fic, "items");
+
+	if(n->nb_items > 0)
+	{
+		end_element(fic);
+		for(i = 0; i < n->nb_items; i++)
+		{
+			item *it = n->items[i];
+			elem_item *occ_i = it->occ_items->item;
+
+			open_element(fic, "item");
+			add_attrib(fic, "img", "%s", it->nom_text);
+			add_attrib(fic, "type", "%d", it->nom);
+			add_attrib(fic, "nb", "%d", it->occ_items->nb_elements);
+
+			if(it->occ_items->nb_elements > 0)
+			{
+				end_element(fic);
+				while(occ_i != NULL)
+				{
+					open_element(fic, "occ_item");
+					add_attrib(fic, "actual", "%d", i);
+					add_attrib(fic, "pos", "%d:%d", (int)occ_i->occ_item->position.x, (int)occ_i->occ_item->position.y);
+					close_element_short(fic);
+					occ_i = occ_i->suivant;
+				}
+				close_element(fic, "item");
+			}
+			else
+			{
+				close_element_short(fic);
+			}
+		}
+		close_element(fic, "items");
+	}
+	else
+	{
+		close_element_short(fic);
+	}
 
     /* Monstres */
     open_element(fic, "monsters");
     add_attrib(fic, "nb", "%d", n->nb_monstres);
-    end_element(fic);
-    for(i = 0; i < n->nb_monstres; i++)
-    {
-        monstre *m = n->monstres[i];
-        elem_monstre *occ_m = m->occ_monstres->monstre;
 
-        open_element(fic, "monster");
-        add_attrib(fic, "name", "%s", m->nom);
-		add_attrib(fic, "nb", "%d", m->occ_monstres->nb_elements);
-        end_element(fic);
+	if(n->nb_monstres > 0)
+	{
+		end_element(fic);
+		for(i = 0; i < n->nb_monstres; i++)
+		{
+			monstre *m = n->monstres[i];
+			elem_monstre *occ_m = m->occ_monstres->monstre;
 
-        while(occ_m != NULL)
-        {
-            open_element(fic, "occ");
-			add_attrib(fic, "actual", "%d", i);
-            add_attrib(fic, "pos", "%d:%d",
-                (int)occ_m->occ_monstre->position.x,
-                (int)occ_m->occ_monstre->position.y);
-            close_element_short(fic);
-            occ_m = occ_m->suivant;
-        }
-        close_element(fic, "monster");
-    }
-    close_element(fic, "monsters");
+			open_element(fic, "monster");
+			add_attrib(fic, "name", "%s", m->nom);
+			add_attrib(fic, "nb", "%d", m->occ_monstres->nb_elements);
+			end_element(fic);
+
+			while(occ_m != NULL)
+			{
+				open_element(fic, "occ");
+				add_attrib(fic, "actual", "%d", i);
+				add_attrib(fic, "pos", "%d:%d",
+					(int)occ_m->occ_monstre->position.x,
+					(int)occ_m->occ_monstre->position.y);
+				close_element_short(fic);
+				occ_m = occ_m->suivant;
+			}
+			close_element(fic, "monster");
+		}
+		close_element(fic, "monsters");
+	}
+	else
+	{
+		close_element_short(fic);
+	}
 
 	/* Tuyaux */
     open_element(fic, "pipes");
     add_attrib(fic, "nb", "%d", n->nb_tuyaux);
-    end_element(fic);
-    for(i = 0; i < n->nb_tuyaux; i++)
-    {
-		tuyau* t = n->tuyaux[i];
-        open_element(fic, "pipe");
-		add_attrib(fic, "img", "%s", t->nom_text);
-		add_attrib(fic, "sens", "%d", t->sens_sortie);
-		add_attrib(fic, "length", "%d", t->longueur);
-		add_attrib(fic, "pos", "%d:%d", t->position.x, t->position.y);
-		add_attrib(fic, "state", "%d", t->etat);
-		add_attrib(fic, "destination_pipe", "%d", t->pipe_dest);
-		add_attrib(fic, "level_destination", "%s", t->level_dest);
-		add_attrib(fic, "monster", "%d", t->index_monstre);
 
-        close_element_short(fic);
-    }
-    close_element(fic, "pipes");
+	if(n->nb_tuyaux > 0)
+	{
+		end_element(fic);
+		for(i = 0; i < n->nb_tuyaux; i++)
+		{
+			tuyau* t = n->tuyaux[i];
+			open_element(fic, "pipe");
+			add_attrib(fic, "img", "%s", t->nom_text);
+			add_attrib(fic, "sens", "%d", t->sens_sortie);
+			add_attrib(fic, "length", "%d", t->longueur);
+			add_attrib(fic, "pos", "%d:%d", t->position.x, t->position.y);
+			add_attrib(fic, "state", "%d", t->etat);
+			add_attrib(fic, "destination_pipe", "%d", t->pipe_dest);
+			add_attrib(fic, "level_destination", "%s", t->level_dest);
+			add_attrib(fic, "monster", "%d", t->index_monstre);
+
+			close_element_short(fic);
+		}
+		close_element(fic, "pipes");
+	}
+	else
+	{
+		close_element_short(fic);
+	}
 
     /* Blocs */
     open_element(fic, "blocs");
@@ -1177,9 +1281,9 @@ void charger_niveau_test(niveau *n)
         n->items[2] = charger_fleur();
         
         // Pièces
-        n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(11 * LARGEUR_BLOC, 6 * LARGEUR_BLOC, n->items[0], n->items[0]->vitesse, NORMAL));
-        n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(12 * LARGEUR_BLOC, 6 * LARGEUR_BLOC, n->items[0], n->items[0]->vitesse, NORMAL));
-        n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(13 * LARGEUR_BLOC, 6 * LARGEUR_BLOC, n->items[0], n->items[0]->vitesse, NORMAL));
+        n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(11 * LARGEUR_BLOC, 6 * LARGEUR_BLOC, 0, n->items[0]->vitesse, NORMAL));
+        n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(12 * LARGEUR_BLOC, 6 * LARGEUR_BLOC, 0, n->items[0]->vitesse, NORMAL));
+        n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(13 * LARGEUR_BLOC, 6 * LARGEUR_BLOC, 0, n->items[0]->vitesse, NORMAL));
 
         /* Finish */
         n->nb_finish = 1;
@@ -1525,9 +1629,9 @@ void charger_niveau_test_xml(niveau *n)
 	n->items[2] = charger_fleur();
 	
 	// Pièces
-	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(11 * LARGEUR_BLOC, 6 * LARGEUR_BLOC, n->items[0], n->items[0]->vitesse, NORMAL));
-	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(12 * LARGEUR_BLOC, 6 * LARGEUR_BLOC, n->items[0], n->items[0]->vitesse, NORMAL));
-	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(13 * LARGEUR_BLOC, 6 * LARGEUR_BLOC, n->items[0], n->items[0]->vitesse, NORMAL));
+	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(11 * LARGEUR_BLOC, 6 * LARGEUR_BLOC, 0, n->items[0]->vitesse, NORMAL));
+	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(12 * LARGEUR_BLOC, 6 * LARGEUR_BLOC, 0, n->items[0]->vitesse, NORMAL));
+	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(13 * LARGEUR_BLOC, 6 * LARGEUR_BLOC, 0, n->items[0]->vitesse, NORMAL));
 
 	/* Finish */
 	n->nb_finish = 1;
@@ -1876,7 +1980,7 @@ void draw_main(niveau *lvl, perso **persos, ecran e, Uint32 duree)
 		while(tmp_item != NULL)
 		{
 			if(tmp_item->occ_item->actif)
-				draw_item(tmp_item->occ_item, duree);
+				draw_item(lvl->items[i], tmp_item->occ_item, duree);
 
 			tmp_item = tmp_item->suivant;
 		}
@@ -1978,7 +2082,7 @@ void draw_main_options(niveau *lvl, ecran e, Uint32 duree, int bck, int blocs, i
 		elem_item *tmp_item = lvl->items[i]->occ_items->item;
 		while(tmp_item != NULL)
 		{
-			draw_item(tmp_item->occ_item, duree);
+			draw_item(lvl->items[i], tmp_item->occ_item, duree);
 			tmp_item = tmp_item->suivant;
 		}
 	}
