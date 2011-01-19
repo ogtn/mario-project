@@ -236,7 +236,12 @@ niveau *free_niveau(niveau *n)
 
 	/* Libération textures */
 	if(n->textures != NULL)
+	{
+		for(i = 0; i < n->nb_textures; i++)
+				free(n->textures[i].phys);
+
 		free(n->textures);
+	}
 
 	/* Libération du reste du niveau */
 	free(n);
@@ -456,7 +461,7 @@ void balise_blocs(niveau *n, const char **attrs)
 void balise_textures(niveau *n, const char **attrs)
 {
     static int i = 0;
-	charger_texture_bloc(attrs[1], &n->textures[i]);
+	charger_texture_bloc(attrs[1], &n->textures[i], n->taille_blocs);
 	i++;
 }
 
@@ -469,6 +474,7 @@ void balise_bloc(niveau *n, const char **attrs)
 	texture_bloc = n->textures[n->blocs[i].texture];
 	n->blocs[i].coord_sprite.x = atoi(attrs[3]);
 	n->blocs[i].coord_sprite.y = atoi(strchr(attrs[3], ':') + 1);
+	n->blocs[i].type_bloc = atoi(attrs[5]);
 	n->blocs[i].phys = texture_bloc.phys[n->blocs[i].coord_sprite.x + n->blocs[i].coord_sprite.y * (texture_bloc.taille.x / texture_bloc.taille_sprite.x)];
 	i++;
 }
@@ -977,7 +983,7 @@ void liberer_textures_niveau(niveau* n)
 
 	/* Liberation des textures des blocs */
 	for(i = 0; i < n->nb_textures; i++)
-		glDeleteTextures(1, &n->textures[i].id_text);	
+		glDeleteTextures(1, &n->textures[i].id_text);
 }
 
 void charger_finish(finish* f)
@@ -1505,10 +1511,11 @@ void charger_niveau_test_xml(niveau *n)
 	n->monstres[0]->occ_monstres = ajout_monstre(n->monstres[0]->occ_monstres, new_occ_monstre(400, 400, n->monstres[0]));
 
 	/* Layer projectile */
-	n->nb_projectiles = 2;
+	n->nb_projectiles = 3;
 	n->projectiles = malloc(sizeof(projectile*) * n->nb_projectiles);
 	n->projectiles[DEBRIS] = charger_projectile("debris");	
 	n->projectiles[FIREBALL] = charger_projectile("fireball");
+	n->projectiles[SPECIAL_FIREBALL] = charger_projectile("special_fireball");
 
 	/* Layer items */
 	n->nb_items = 3;
@@ -1549,12 +1556,12 @@ void charger_niveau_test_xml(niveau *n)
 	//n->tuyaux[1] = charger_tuyau("green_pipe", VERS_LE_BAS, 3, 10, 0, OUVERT, 0, NULL, -1);
 
 	/* Layer Particules */
-	n->nb_foreground_generators = 1;
-	n->foreground_generators = malloc(sizeof(particule_generator*) * n->nb_foreground_generators);
-	n->foreground_generators[0] = new_particule_generator(pos_gen, taille_gen, 4000, 200, "Snow_back.png", VRAI, 0xFFFFFFFF, 0xFFFFFFFF);
+	//n->nb_foreground_generators = 1;
+	//n->foreground_generators = malloc(sizeof(particule_generator*) * n->nb_foreground_generators);
+	//n->foreground_generators[0] = new_particule_generator(pos_gen, taille_gen, 4000, 200, "Snow_back.png", VRAI, 0xFFFFFFFF, 0xFFFFFFFF);
 
 	/* Init Blocs et objets */
-	n->nb_blocs = 17;
+	n->nb_blocs = 20;
 	n->nb_objets = 0;
 
 	n->blocs = malloc(n->nb_blocs * sizeof(bloc));
@@ -1606,12 +1613,12 @@ void charger_niveau_test_xml(niveau *n)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 0, -1, -1);
 			else if (i == 0)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 2, -1, -1);
-			/*else if (i == 2 && j == 5)
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, 19, 0);
+			else if (i == 2 && j == 5)
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, 19, -1);
 			else if (i == 1 && j == 5)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, 19, -1);
 			else if (i > 10 && i < 15 && j == 5)
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 18, -1, -1);*/
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 18, -1, -1);
 			//// pente 30° en bas à gauche
 			//else if(j == 1 && i <= 1)
 			//	n->occ_blocs[i][j] = 0;
@@ -1670,13 +1677,16 @@ void charger_niveau_test_xml(niveau *n)
 	// Flag correspondant à la physique du bloc : n->blocs[n->occ_blocs[i][j]].phys
 	// Ajout d'informations supplémentaires : n->blocs[n->occ_blocs[i][j]].est_vide & n->blocs[n->occ_blocs[i][j]].est_cassable
 	
-	n->nb_textures = 1;
+	n->nb_textures = 4;
 	n->textures = malloc(sizeof(texture) * n->nb_textures);
 
 	/*strcpy(n->textures[0].nom, "floor_rc4.png");
 	strcpy(n->textures[1].nom, "blocs_spec.png");*/
 
 	strcpy(n->textures[0].nom, "classiques/Grass.png");
+	strcpy(n->textures[1].nom, "speciaux/cassables/Overworld.png");
+	strcpy(n->textures[2].nom, "speciaux/incassables/[Q]/Overworld.png");
+	strcpy(n->textures[3].nom, "speciaux/incassables/[Q]/Overworld2.png");
 
 	/* remplissage des blocs du niveau */
 	n->blocs[0].texture = 0;
@@ -1782,50 +1792,32 @@ void charger_niveau_test_xml(niveau *n)
 	n->blocs[16].type_bloc = EST_VIDE;
 
 	/* BLOC '?' */
-	//n->blocs[17].texture = 1;
-	//n->blocs[17].coord_sprite.x = 0;
-	//n->blocs[17].coord_sprite.y = 3;
-	//n->blocs[17].phys = BLOC_SPEC;
-	//n->blocs[17].type_bloc = 0;
+	n->blocs[17].texture = 2;
+	n->blocs[17].coord_sprite.x = 0;
+	n->blocs[17].coord_sprite.y = 0;
+	n->blocs[17].phys = BLOC_SPEC;
+	n->blocs[17].type_bloc = 0;
 
-	///* Bloc cassable */
-	//n->blocs[18].texture = 1;
-	//n->blocs[18].coord_sprite.x = 0;
-	//n->blocs[18].coord_sprite.y = 4;
-	//n->blocs[18].phys = BLOC_SPEC;	
-	//n->blocs[18].type_bloc = EST_VIDE | CASSABLE;
-	//n->blocs[18].tps_piece = 0;
+	/* Bloc cassable */
+	n->blocs[18].texture = 1;
+	n->blocs[18].coord_sprite.x = 0;
+	n->blocs[18].coord_sprite.y = 0;
+	n->blocs[18].phys = BLOC_SPEC;	
+	n->blocs[18].type_bloc = EST_VIDE | CASSABLE;
+	n->blocs[18].tps_piece = 0;
 
-	///* Boc incassable */
-	//n->blocs[19].texture = 1;
-	//n->blocs[19].coord_sprite.x = 0;
-	//n->blocs[19].coord_sprite.y = 2;
-	//n->blocs[19].phys = BLOC_SPEC;
-	//n->blocs[19].type_bloc = EST_VIDE;
+	/* Boc incassable */
+	n->blocs[19].texture = 3;
+	n->blocs[19].coord_sprite.x = 0;
+	n->blocs[19].coord_sprite.y = 0;
+	n->blocs[19].phys = BLOC_SPEC;
+	n->blocs[19].type_bloc = EST_VIDE;
 
-	//n->blocs[20].texture = 1;
+	//n->blocs[20].texture = 3;
 	//n->blocs[20].coord_sprite.x = 0;
-	//n->blocs[20].coord_sprite.y = 4;
-	//n->blocs[20].phys = BLOC_SPEC;
+	//n->blocs[20].coord_sprite.y = 0;
+	//n->blocs[20].phys = EAU;
 	//n->blocs[20].type_bloc = EST_VIDE;
-
-	//n->blocs[21].texture = 1;
-	//n->blocs[21].coord_sprite.x = 0;
-	//n->blocs[21].coord_sprite.y = 4;
-	//n->blocs[21].phys = BLOC_SPEC;
-	//n->blocs[21].type_bloc = EST_VIDE;
-
-	//n->blocs[22].texture = 1;
-	//n->blocs[22].coord_sprite.x = 0;
-	//n->blocs[22].coord_sprite.y = 4;
-	//n->blocs[22].phys = BLOC_SPEC;
-	//n->blocs[22].type_bloc = EST_VIDE;
-
-	//n->blocs[23].texture = 1;
-	//n->blocs[23].coord_sprite.x = 0;
-	//n->blocs[23].coord_sprite.y = 1;
-	//n->blocs[23].phys = EAU;
-	//n->blocs[23].type_bloc = EST_VIDE;
 }
 
 
@@ -2187,7 +2179,7 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
                     nb_sprites.x = n->textures[text_id].taille.x / sprite.taille.x;
                     nb_sprites.y = n->textures[text_id].taille.y / sprite.taille.y;
 
-					if(text_id == 1)
+					if(nb_sprites.x > 1 && nb_sprites.y == 1)
 					{
 						phase = (duree % V_ANIM_BLOC_SPEC) / (V_ANIM_BLOC_SPEC / nb_sprites.x);
 						

@@ -189,5 +189,11 @@
     <None Include="textures\blocs\classiques\classiques.cfg">
       <Filter>Fichiers de ressources</Filter>
     </None>
+    <None Include="textures\blocs\speciaux\cassables\cassables.cfg">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="textures\blocs\speciaux\incassables\[Q]\[Q].cfg">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
   </ItemGroup>
 </Project>

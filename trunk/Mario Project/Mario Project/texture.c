@@ -55,7 +55,7 @@ GLuint charger_texture_bis(char *nom, coordi *taille)
 
 void charger_infos_texture(texture *t)
 {
-	NB nb_sprites;
+	int nb_sprites;
 	char nom[TAILLE_NOM_TEXTURE];
 	FILE *flux = NULL;
 	int i;
@@ -74,7 +74,7 @@ void charger_infos_texture(texture *t)
 
 	fscanf(flux, "%d %d %d %d",&(t->taille.x), &(t->taille.y), &(t->taille_sprite.x), &(t->taille_sprite.y));
 	nb_sprites = (t->taille.x / t->taille_sprite.x) * (t->taille.y / t->taille_sprite.y);
-	t->phys = malloc(sizeof(id) * nb_sprites);
+	t->phys = malloc(sizeof(int) * nb_sprites);
 
 	if(t->phys != NULL)
 	{
@@ -88,9 +88,9 @@ void charger_infos_texture(texture *t)
 
 
 
-void charger_cfg_texture(char* nom_cfg, texture *t)
+void charger_cfg_texture(char* nom_cfg, texture *t, coordi taille_blocs)
 {
-	NB nb_sprites;
+	int nb_sprites;
 	FILE *flux = NULL;
 	int i, nb_blocs_x, nb_blocs_y;
 
@@ -103,9 +103,17 @@ void charger_cfg_texture(char* nom_cfg, texture *t)
     
 	fscanf(flux, "%d %d",&nb_blocs_y, &nb_blocs_x);
 	nb_sprites = nb_blocs_x * nb_blocs_y;
-	t->taille_sprite.x = t->taille.x / nb_blocs_x;
-	t->taille_sprite.y = t->taille.y / nb_blocs_y;
-    t->phys = malloc(sizeof(id) * nb_sprites);
+
+	if(nb_sprites == 1 && t->taille.x > taille_blocs.x)
+	{
+		t->taille_sprite = taille_blocs;
+	}
+	else
+	{
+		t->taille_sprite.x = t->taille.x / nb_blocs_x;
+		t->taille_sprite.y = t->taille.y / nb_blocs_y;
+	}
+    t->phys = malloc(sizeof(int) * nb_sprites);
 
 	if(t->phys != NULL)
 	{
@@ -117,7 +125,7 @@ void charger_cfg_texture(char* nom_cfg, texture *t)
 	fclose(flux);
 }
 
-void charger_texture_bloc(char* nom, texture* t)
+void charger_texture_bloc(char* nom, texture* t, coordi taille_blocs)
 {
 	char nom_texture[TAILLE_NOM_TEXTURE];
 	char nom_cfg[TAILLE_NOM_TEXTURE];
@@ -131,13 +139,34 @@ void charger_texture_bloc(char* nom, texture* t)
 
 	/* Chargement de la config */
 	strcpy(nom_cfg, "textures/blocs/");
-	cfg = strstr(nom, "/");
-	strcpy(cfg,"\0");
+	cfg = strstr(nom, "/") + 1;
+
+	while(strstr(cfg, "/"))
+	{
+		cfg = strstr(cfg, "/") + 1;
+	}
+
+	strcpy(cfg - 1,"\0");
 	strcat(nom_cfg, nom);
 	strcat(nom_cfg, "/");
-	strcat(nom_cfg, nom);
+	cfg = strstr(nom, "/");
+
+	if(cfg != NULL)
+	{
+		cfg += 1;
+		while(strstr(cfg, "/"))
+		{
+			cfg = strstr(cfg, "/") + 1;
+		}
+		strcat(nom_cfg, cfg);
+	}
+	else
+	{
+		strcat(nom_cfg, nom);
+	}
+
 	strcat(nom_cfg, ".cfg");
-	charger_cfg_texture(nom_cfg, t);
+	charger_cfg_texture(nom_cfg, t, taille_blocs);
 }
 
 char *supprime_extension(char *nom)
