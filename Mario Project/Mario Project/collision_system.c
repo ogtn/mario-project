@@ -202,7 +202,7 @@ void main_collisions(world *w)
 			int item_suppr;
 			i_bis = item_actuel->occ_item;
 
-			item_suppr = MAJ_collision_item(i_bis, w->ecran, w->temps_ecoule);
+			item_suppr = MAJ_collision_item(w->niveau, i_bis, w->ecran, w->temps_ecoule);
 
 			/* Si l'item a été supprimé, on revient au précédent dans la liste */
 			if(item_suppr)
@@ -232,7 +232,7 @@ void main_collisions(world *w)
 					/* Pour chaque image intermédiaire de chaque perso, on teste si il n'y a pas eu de collision entre temps */
 					for(j = 0; j <= nb_images_inter; j++)
 					{
-						MAJ_collision_item(item_actuel->occ_item, w->ecran, w->temps_ecoule / (nb_images_inter + 1));
+						MAJ_collision_item(w->niveau, item_actuel->occ_item, w->ecran, w->temps_ecoule / (nb_images_inter + 1));
 
 						/* Fonction résolvant les collisions */
 						solve_collisions_item(item_actuel->occ_item, w->persos, w->niveau, w->temps_ecoule);
@@ -416,9 +416,9 @@ void MAJ_collision_monstre(occ_monstre* monstre, ecran e, Uint32 duree) {
 	}
 }
 
-int MAJ_collision_item(occ_item* item, ecran e, Uint32 duree) {
-
-	pause_item(item, e);
+int MAJ_collision_item(niveau* n, occ_item* item, ecran e, Uint32 duree)
+{
+	pause_item(n, item, e);
 
 	if(item->actif)
 	{
@@ -426,23 +426,23 @@ int MAJ_collision_item(occ_item* item, ecran e, Uint32 duree) {
 		if(item->etat == NORMAL)
 		{
 			/* Gravité */
-			if(item->type_item->soumission & SOUMIS_GRAVITE)
+			if(n->items[item->type_item]->soumission & SOUMIS_GRAVITE)
 				gravity(&item->vitesse, duree);
 		}
 		else
 		{
 			if(item->tps_sortie_bloc <= 0)
 			{
-				if(item->type_item->nom == PIECE)
+				if(n->items[item->type_item]->nom == PIECE)
 				{
-					supprime_item(item->type_item->occ_items, item);
+					supprime_item(n->items[item->type_item]->occ_items, item);
 					return 1;
 				}
 				else
 				{
 					item->etat = NORMAL;
-					item->vitesse.x = item->type_item->vitesse.x;
-					item->vitesse.y = item->type_item->vitesse.y;
+					item->vitesse.x = n->items[item->type_item]->vitesse.x;
+					item->vitesse.y = n->items[item->type_item]->vitesse.y;
 				}
 			}
 			else
@@ -467,7 +467,8 @@ void MAJ_collision_perso(perso *perso, niveau* lvl, keystate* keystate, Uint32 d
 	occ_projectile *p = NULL;
 
 	if(perso->etat != MORT && perso->etat != RENTRE_TUYAU_HORIZONTAL && perso->etat != SORT_TUYAU_HORIZONTAL
-		&& perso->etat != RENTRE_TUYAU_VERTICAL && perso->etat != SORT_TUYAU_VERTICAL)
+		&& perso->etat != RENTRE_TUYAU_VERTICAL && perso->etat != SORT_TUYAU_VERTICAL
+		&& perso->etat != FINISH && perso->etat != FINISH_CHATEAU)
 	{
 		/* Determination de l'acceleration en fonction de l'environement */
 		solve_acc(perso, keystate);
@@ -475,9 +476,6 @@ void MAJ_collision_perso(perso *perso, niveau* lvl, keystate* keystate, Uint32 d
 		/* Deplacements lateraux, determination de la vitesse */
 		if(perso->etat != POUSSE_CARAPACE)
 			lateral_move(perso, keystate, duree);
-
-		/* Limitation de la vitesse */
-		limit_speed(perso, keystate);
 
 		/* Attaquer => ajout du nouveau projectile */
 		if(keystate->actuel[RUN] && !keystate->actuel[BAS] && !keystate->precedent[RUN]
@@ -599,13 +597,6 @@ void MAJ_collision_perso(perso *perso, niveau* lvl, keystate* keystate, Uint32 d
 				perso->tps_pousse_carapace = 0;
 			}
 		}
-
-		/* Lorsque Mario termine el niveau */
-		if(perso->tps_finish > 0){
-			perso->tps_finish -= duree;
-			if(perso->tps_finish > pow(2, 31) || perso->tps_finish == 0)
-				perso->tps_finish = 0;
-		}
 	}
 
 
@@ -694,6 +685,17 @@ void MAJ_collision_perso(perso *perso, niveau* lvl, keystate* keystate, Uint32 d
 				break;
 			}			
 		}
+	}
+
+	/* Limitation de la vitesse */
+	limit_speed(perso, keystate);
+
+	/* Lorsque Mario termine le niveau */
+	if(perso->tps_finish > 0)
+	{
+		perso->tps_finish -= duree;
+		if(perso->tps_finish > pow(2, 31) || perso->tps_finish == 0)
+			perso->tps_finish = 0;
 	}
 
 	/* Sauvegarde de la position precedente */
@@ -1062,14 +1064,14 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 									{
 										int index = (p->transformation == FIRE_MARIO)? p->transformation - 1: p->transformation;
 										vitesse.y = VIT_SORTIE_BLOC;
-										item = new_occ_item(n->occ_blocs[i][j]->position.x, n->occ_blocs[i][j]->position.y, n->items[index], vitesse, SORT_DU_BLOC);
+										item = new_occ_item(n->occ_blocs[i][j]->position.x, n->occ_blocs[i][j]->position.y, index, vitesse, SORT_DU_BLOC);
 										FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_ITEM_BLOCK]);
 									}
 									else
 									{
 										vitesse.y =  VIT_SORTIE_BLOC * 4;
-										item = new_occ_item(n->occ_blocs[i][j]->position.x, n->occ_blocs[i][j]->position.y, n->items[n->occ_blocs[i][j]->item], vitesse, SORT_DU_BLOC);
-										prend_item(p, item->type_item->nom);
+										item = new_occ_item(n->occ_blocs[i][j]->position.x, n->occ_blocs[i][j]->position.y, n->occ_blocs[i][j]->item, vitesse, SORT_DU_BLOC);
+										prend_item(p, n->items[item->type_item]->nom);
 
 										if((bloc_actuel.type_bloc & DISTRIBUTEUR_PIECE)	&& bloc_actuel.tps_piece == 0)
 										{
@@ -1078,7 +1080,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 									}
 
 									item->tps_sortie_bloc = TPS_ITEM_SORT_BLOC;
-									item->type_item->occ_items = ajout_item(item->type_item->occ_items, item);
+									n->items[item->type_item]->occ_items = ajout_item(n->items[item->type_item]->occ_items, item);
 
 									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_UNBREAKABLE_BLOCK]);
 
@@ -1574,8 +1576,8 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 				item.position_prec.x = item_actuel->occ_item->position_prec.x;
 				item.position_prec.y = item_actuel->occ_item->position_prec.y;
 
-				item.taille.x = item_actuel->occ_item->type_item->taille.x;
-				item.taille.y = item_actuel->occ_item->type_item->taille.y;
+				item.taille.x = n->items[item_actuel->occ_item->type_item]->taille.x;
+				item.taille.y = n->items[item_actuel->occ_item->type_item]->taille.y;
 
 				item.est_bloc_pente = 0;
 
@@ -1585,7 +1587,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 				if(collision.carre1_est_touche || collision.carre2_est_touche)
 				{
 					/* Il prend l'item et on le supprime de la liste */
-					prend_item(p, item_actuel->occ_item->type_item->nom);
+					prend_item(p, n->items[item_actuel->occ_item->type_item]->nom);
 					supprime_item(n->items[i]->occ_items, item_actuel->occ_item);
 					item_actuel = precedent;
 				}
@@ -1692,7 +1694,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 		{
 			for(j = bloc_bg.y; j <= bloc_hd.y; j++)
 			{
-				if (i < n->taille.x && i >= 0)
+				if (i >= 0 && j >= 0)
 				{
 					if(n->occ_blocs[i][j]->bloc_actuel < -1 && n->occ_blocs[i][j]->etat == POUSSE_PAR_LE_HAUT)
 					{
@@ -1862,17 +1864,17 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 									{
 										int index = (p->transformation == FIRE_MARIO)? p->transformation - 1: p->transformation;
 										vitesse.y = VIT_SORTIE_BLOC;
-										item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, n->items[index], vitesse, SORT_DU_BLOC);
+										item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, index, vitesse, SORT_DU_BLOC);
 									}
 									else
 									{
 										vitesse.y =  VIT_SORTIE_BLOC * 5;
-										item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, n->items[n->occ_blocs[i][j]->item], vitesse, SORT_DU_BLOC);
+										item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, n->occ_blocs[i][j]->item, vitesse, SORT_DU_BLOC);
 									}
 
 									item->tps_sortie_bloc = TPS_ITEM_SORT_BLOC;
 
-									item->type_item->occ_items = ajout_item(item->type_item->occ_items, item);
+									n->items[item->type_item]->occ_items = ajout_item(n->items[item->type_item]->occ_items, item);
 									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_UNBREAKABLE_BLOCK]);
 									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_ITEM_BLOCK]);
 
@@ -1952,7 +1954,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 
 									item->tps_sortie_bloc = TPS_ITEM_SORT_BLOC;
 
-									item->type_item->occ_items = ajout_item(item->type_item->occ_items, item);
+									n->items[item->type_item]->occ_items = ajout_item(n->items[item->type_item]->occ_items, item);
 									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_UNBREAKABLE_BLOCK]);
 									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_ITEM_BLOCK]);
 
@@ -2500,11 +2502,11 @@ void solve_collisions_item(occ_item* it, perso** persos, niveau* n, Uint32 duree
 	bloc_bg.y = (int) (it->position.y) / n->taille_blocs.y;
 
 	/* SI c'est une pièce on étend le champ des blocs testables d'un cran vers le bas */
-	if(it->type_item->nom == PIECE)
+	if(n->items[it->type_item]->nom == PIECE)
 		bloc_bg.y -= 1;
 
-	bloc_hd.x = (int) (it->position.x + it->type_item->taille.x) / n->taille_blocs.x;
-	bloc_hd.y = (int) (it->position.y + it->type_item->taille.y) / n->taille_blocs.y;
+	bloc_hd.x = (int) (it->position.x + n->items[it->type_item]->taille.x) / n->taille_blocs.x;
+	bloc_hd.y = (int) (it->position.y + n->items[it->type_item]->taille.y) / n->taille_blocs.y;
 
 	/************************************************ DETECTIONS ET RESOLUTIONS DE COLLISIONS *******************************************/
 
@@ -2518,8 +2520,8 @@ void solve_collisions_item(occ_item* it, perso** persos, niveau* n, Uint32 duree
 			item.position_prec.x = it->position_prec.x;
 			item.position_prec.y = it->position_prec.y;
 
-			item.taille.x = it->type_item->taille.x;
-			item.taille.y = it->type_item->taille.y;
+			item.taille.x = n->items[it->type_item]->taille.x;
+			item.taille.y = n->items[it->type_item]->taille.y;
 
 			/************ COLLISIONS ITEM <=> NIVEAU ***************/
 			for(i = bloc_bg.x; i <= bloc_hd.x; i++)
@@ -2529,13 +2531,13 @@ void solve_collisions_item(occ_item* it, perso** persos, niveau* n, Uint32 duree
 
 					if(i >= 0 && i < n->taille.x && j >= 0)
 					{
-						if(n->occ_blocs[i][j]->bloc_actuel < 0 && n->occ_blocs[i][j]->etat == POUSSE_PAR_LE_HAUT && it->type_item->nom == PIECE)
+						if(n->occ_blocs[i][j]->bloc_actuel < 0 && n->occ_blocs[i][j]->etat == POUSSE_PAR_LE_HAUT && n->items[it->type_item]->nom == PIECE)
 						{
 							n->occ_blocs[i][j]->etat = IMMOBILE;
 							it->etat = SORT_DU_BLOC;
 							it->vitesse.y = VIT_SORTIE_BLOC * 3;
 							it->tps_sortie_bloc = TPS_ITEM_SORT_BLOC;
-							prend_item(persos[n->occ_blocs[i][j]->id_perso], it->type_item->nom);
+							prend_item(persos[n->occ_blocs[i][j]->id_perso], n->items[it->type_item]->nom);
 						}
 						else if(n->occ_blocs[i][j]->bloc_actuel >= 0)
 						{
@@ -2572,7 +2574,7 @@ void solve_collisions_item(occ_item* it, perso** persos, niveau* n, Uint32 duree
 								
 								/* Si une collision a déjà eu lieu avec un bloc relevé, on ne remodifie pas la vitesse verticale */
 								if(!collision_bloc_releve)
-									it->vitesse.y = it->type_item->vitesse.y;
+									it->vitesse.y = n->items[it->type_item]->vitesse.y;
 
 								/* Cas où l'item entre en collision avec un bloc tappé par Mario */
  								if(n->occ_blocs[i][j]->etat == POUSSE_PAR_LE_HAUT)
@@ -2601,7 +2603,7 @@ void solve_collisions_item(occ_item* it, perso** persos, niveau* n, Uint32 duree
 										it->etat = SORT_DU_BLOC;
 										it->tps_sortie_bloc = TPS_ITEM_SORT_BLOC;
 										it->vitesse.y = VIT_SORTIE_BLOC * 3;
-										prend_item(persos[n->occ_blocs[i][j]->id_perso], it->type_item->nom);
+										prend_item(persos[n->occ_blocs[i][j]->id_perso], n->items[it->type_item]->nom);
 									}
 
 									collision_bloc_releve = 1;
@@ -2679,7 +2681,7 @@ void solve_collisions_item(occ_item* it, perso** persos, niveau* n, Uint32 duree
 								&& collision.type_collision == PAR_LE_HAUT)
 							{
 								it->vitesse.y = 0;
-								it->position.y = (float)block.position.y - block.taille.y - it->type_item->taille.y;
+								it->position.y = (float)block.position.y - block.taille.y - n->items[it->type_item]->taille.y;
 
 								// MAJ du carré item
 								item.position.y = it->position.y;
@@ -2748,7 +2750,7 @@ void solve_collisions_item(occ_item* it, perso** persos, niveau* n, Uint32 duree
 				switch(collision.type_collision)
 				{
 				case PAR_LE_BAS :
-					it->vitesse.y = it->type_item->vitesse.y;
+					it->vitesse.y = n->items[it->type_item]->vitesse.y;
 					it->position.y = (float)tuyau.position.y + tuyau.taille.y;
 
 					// MAJ du carré item
@@ -2756,7 +2758,7 @@ void solve_collisions_item(occ_item* it, perso** persos, niveau* n, Uint32 duree
 					break;
 				case PAR_LE_HAUT:
 					it->vitesse.y = 0;
-					it->position.y = (float)tuyau.position.y - tuyau.taille.y - it->type_item->taille.y;
+					it->position.y = (float)tuyau.position.y - tuyau.taille.y - n->items[it->type_item]->taille.y;
 
 					// MAJ du carré item
 					item.position.y = it->position.y;
@@ -3350,13 +3352,13 @@ void pause_projectile(occ_projectile* projectile, ecran e)
 		projectile->actif = 1;
 }
 
-void pause_item(occ_item* item, ecran e)
+void pause_item(niveau* n, occ_item* item, ecran e)
 {
 	/* Teste si l'item est hors écran */
 	if(item->position.x > e.origine.x + e.scroll.x + e.taille.x
-		|| item->position.x + item->type_item->taille.x < e.origine.x + e.scroll.x
+		|| item->position.x + n->items[item->type_item]->taille.x < e.origine.x + e.scroll.x
 		|| item->position.y > e.origine.y + e.scroll.y + e.taille.y
-		|| item->position.y + item->type_item->taille.y < e.origine.y + e.scroll.y)
+		|| item->position.y + n->items[item->type_item]->taille.y < e.origine.y + e.scroll.y)
 		item->actif = 0;
 	else
 		item->actif = 1;
