@@ -678,7 +678,7 @@ void draw_pipe(tuyau* t)
 void draw_particules(particule_generator* generator)
 {
 	int i;
-    sprite s = {0};
+    sprite s = {{0, 0}, {0, 0}, 0, {0, 0}, {0, 0}};
 
     s.point_hd.x = s.point_hd.y = 1;
 	s.taille = generator->taille_particule;
