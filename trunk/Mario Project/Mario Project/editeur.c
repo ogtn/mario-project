@@ -775,6 +775,7 @@ void maj_selection(editeur *e)
         }
         /* Affichage status bar */
         {
+            /*
             coordi pos = e->onglets[REGION_STATUS_BAR]->position;
             pos.x += 6;
             pos.y += 6;
@@ -794,7 +795,7 @@ void maj_selection(editeur *e)
                     screen_printf(pos, NULL, COLOR_WHITE, "[%d;%d] physique: [%d]", e->bloc_survole.x, e->bloc_survole.y, e->world->niveau->blocs[id_bloc].phys);
                 else
                     screen_printf(pos, NULL, COLOR_WHITE, "[%d;%d] physique: VIDE", e->bloc_survole.x, e->bloc_survole.y);
-            }
+            }*/
         }
     }
     else

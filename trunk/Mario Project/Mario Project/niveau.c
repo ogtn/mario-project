@@ -1094,7 +1094,7 @@ void charger_finish(finish* f)
 {
 	char nom_texture[TAILLE_NOM_TEXTURE];
 
-	strcpy(nom_texture, "textures/Objects/");
+	strcpy(nom_texture, "textures/objects/");
 	strcat(nom_texture, f->nom_text);
 	strcat(nom_texture, ".png");
 
@@ -1109,9 +1109,9 @@ void charger_objet_background(background* b, int is_object)
 
 	/* Chargement de la texture */
 	if(is_object)
-		strcpy(nom_texture, "textures/Objects/");
+		strcpy(nom_texture, "textures/objects/");
 	else
-		strcpy(nom_texture, "textures/Backgrounds/");
+		strcpy(nom_texture, "textures/backgrounds/");
 
 	strcat(nom_texture, b->nom_text);
 	strcat(nom_texture, ".obj");
@@ -1139,9 +1139,9 @@ void charger_objet_background(background* b, int is_object)
 		for(i = 0; i < b->nb_sprites; i ++)
 		{
 			if(is_object)
-				strcpy(nom_texture, "textures/Objects/");
+				strcpy(nom_texture, "textures/bbjects/");
 			else
-				strcpy(nom_texture, "textures/Backgrounds/");
+				strcpy(nom_texture, "textures/backgrounds/");
 
 			strcat(nom_texture, b->nom_text);
 			strcat(nom_texture, itoa(i, test, 10));
@@ -1153,9 +1153,9 @@ void charger_objet_background(background* b, int is_object)
 	else
 	{
 		if(is_object)
-			strcpy(nom_texture, "textures/Objects/");
+			strcpy(nom_texture, "textures/objects/");
 		else
-			strcpy(nom_texture, "textures/Backgrounds/");
+			strcpy(nom_texture, "textures/backgrounds/");
 
 		strcat(nom_texture, b->nom_text);
 		strcat(nom_texture, ".png");
