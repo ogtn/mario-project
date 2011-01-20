@@ -172,7 +172,7 @@ bouton *set_size(bouton *b, int x, int y)
 
 bouton *set_text_enfonce(bouton *b, char *name)
 {
-    coordi taille = {0};
+    coordi taille = {0, 0};
 
     if(b == NULL)
         return NULL;
@@ -187,7 +187,7 @@ bouton *set_text_enfonce(bouton *b, char *name)
 
 bouton *set_text_releve(bouton *b, char *name)
 {
-    coordi taille = {0};
+    coordi taille = {0, 0};
 
     if(b == NULL)
         return NULL;
@@ -204,7 +204,7 @@ bouton *set_text_unique(bouton *b, char *name)
 {
     if(b != NULL)
     {
-        coordi taille = {0};
+        coordi taille = {0, 0};
         coordf bg = {0, 0};
         coordf hd = {1, 1};
         int text = charger_texture_bis(name, &taille);
@@ -234,7 +234,7 @@ bouton *set_text_unique(bouton *b, char *name)
 
 bouton *set_text_globale(bouton *b, char *name)
 {
-    coordi taille = {0};
+    coordi taille = {0, 0};
     int i;
     GLuint text;
 
@@ -420,8 +420,8 @@ void maj_bouton(bouton *b, keystate *k)
     }
 
     /* Si la souris est dessus ou que le bouton est de type radio */
-    if((mx > b->pos.x && mx < (b->pos.x + b->taille.x)) && 
-        (my > b->pos.y && my < (b->pos.y + b->taille.y)) || 
+    if(((mx > b->pos.x && mx < (b->pos.x + b->taille.x)) && 
+        (my > b->pos.y && my < (b->pos.y + b->taille.y))) || 
         b->type == RADIO)
     {
         if(b->type != RADIO)
