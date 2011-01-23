@@ -454,24 +454,34 @@ void draw_monstre(occ_monstre *monstre, Uint32 duree)
 			haut = 0;								//
 			bas = 1 - (float) 2 / nb_etats_presents;// inversement du haut et bas pour renverser le sprite
 			break;
-		case M_MORT_PAR_SAUT: case M_RETRACTED: case M_RETRACTED_PORTED:
+		case M_MORT_PAR_SAUT: case M_RETRACTE: case M_RETRACTE_PORTED:
 			gauche = 0;
 			droite = (float)1 / nb_sprites_max;
 			haut = 1 - (float) 1 / nb_etats_presents;
 			bas = haut - (float) 1 / nb_etats_presents;
 			break;
+		case M_RETRACTE_RETOURNE:
+			gauche = 0;
+			droite = (float)1 / nb_sprites_max;
+			haut = 1 - (float) 1 / nb_etats_presents;
+			bas = haut - (float) 1 / nb_etats_presents;
+			// Réduction de moitié de la taille du sprite et inversement du sprite
+			temp = (float)(haut + bas) / 2;
+			haut = bas;
+			bas = temp;
+			break;
 	}
 
-	if(monstre->cote == COTE_GAUCHE && monstre->etat != M_RETRACTED)
+	if(monstre->cote == COTE_GAUCHE && monstre->etat != M_RETRACTE && monstre->etat != M_RETRACTE_RETOURNE)
 	{
 		temp = gauche;
 		gauche = droite;
 		droite = temp;
 	}
 
-	if(monstre->etat == M_MARCHE || monstre->etat == M_SORT_DU_TUYAU || (monstre->etat == M_RETRACTED && monstre->vitesse.x != 0))
+	if(monstre->etat == M_MARCHE || monstre->etat == M_SORT_DU_TUYAU || ((monstre->etat == M_RETRACTE || monstre->etat == M_RETRACTE_RETOURNE) && monstre->vitesse.x != 0))
 	{
-		if(monstre->etat == M_RETRACTED)
+		if(monstre->etat == M_RETRACTE || monstre->etat == M_RETRACTE_RETOURNE)
 			phase = (duree % v_anim) / (v_anim / (monstre->type_monstre->nb_sprites_carapace - 1));
 		else
 			phase = (duree % v_anim) / (v_anim / (monstre->type_monstre->nb_sprites_marche));
@@ -480,7 +490,11 @@ void draw_monstre(occ_monstre *monstre, Uint32 duree)
 		droite += phase * (float)1 / nb_sprites_max;
 	}
 	
-	draw_sprite((int)monstre->position.x, (int)monstre->position.y, monstre->type_monstre->taille.x, monstre->type_monstre->taille.y, monstre->type_monstre->texture, gauche, droite, bas, haut);
+	if(monstre->etat == M_RETRACTE_RETOURNE)
+		draw_sprite((int)monstre->position.x, (int)monstre->position.y, monstre->type_monstre->taille.x, monstre->type_monstre->taille.y / 2, monstre->type_monstre->texture, gauche, droite, bas, haut);
+	else
+		draw_sprite((int)monstre->position.x, (int)monstre->position.y, monstre->type_monstre->taille.x, monstre->type_monstre->taille.y, monstre->type_monstre->texture, gauche, droite, bas, haut);
+
 
 }
 

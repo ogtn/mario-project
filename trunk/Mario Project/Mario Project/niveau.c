@@ -1634,11 +1634,11 @@ void charger_niveau_test_xml(niveau *n)
 	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(13 * LARGEUR_BLOC, 6 * LARGEUR_BLOC, 0, n->items[0]->vitesse, NORMAL));
 
 	/* Finish */
-	n->nb_finish = 1;
+	/*n->nb_finish = 1;
 	n->finishes = malloc(sizeof(finish) * n->nb_finish);
 	strcpy(n->finishes[0].nom_text, "big_castle");
 	n->finishes[0].position.x = 20 * LARGEUR_BLOC;
-	n->finishes[0].position.y = 2 * LARGEUR_BLOC;
+	n->finishes[0].position.y = 2 * LARGEUR_BLOC;*/
 	
 	/* Premiers plans */
 	/*n->nb_foregrounds = 1;
@@ -1721,7 +1721,7 @@ void charger_niveau_test_xml(niveau *n)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, 19, -1);
 			else if (i == 1 && j == 5)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, 19, -1);
-			else if (i > 10 && i < 15 && j == 5)
+			else if (i > 10 && j == 5)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 18, -1, -1);
 			//// pente 30° en bas à gauche
 			//else if(j == 1 && i <= 1)

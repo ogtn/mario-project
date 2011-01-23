@@ -39,6 +39,87 @@ _sauvegarde et chargement des parties
 _scene de cul avec Peach
 
 _"vrais sauts à la mario": quand, on presse la touche de saut plus longtemps, le saut est plus haut
+Code de Lerolol :
+
+//definition des varabales
+#include <math.h>
+
+time[3] == temps réel du jeu(au moment meme(SDL_GetTicks()))
+time[2] == hauteur du saut en temps
+time[1] == l'instant quand le joueur saute.
+atterrit == position du bloc que le jouteur touchera.(en y)
+
+if(!air)// si le joueur est sur un bloc
+{
+    time[1] = w->temps_actuel;
+    if(!in.key[SDLK_SPACE] && w->temps_actuel >= time[2])// remise a zero dès que le joueur est au sol
+    {
+         sauter_nb = 0;
+    }
+    if(sauter_nb == 0 && in.key[SDLK_SPACE])// si le joueur presse sur espace on ajoute 500 ms
+    {
+        time[2] = w->temps_actuel + 500; //hauteur du saut en temps
+    }
+    if(w->temps_actuel <= time[2])//si time[2] est plus grand == le joueur monte(saut)
+    {
+        if(in.key[SDLK_SPACE])//si on continue de presser on sautera plus haut
+        {
+            sauter_nb++;
+            if(sauter_nb < 20 && sauter_nb >= 10)//petit marge de temps au centieme de seconde
+                time[2] += 20;
+        }
+        sauter(&player, time[2], &air,w->temps_actuel);//function sauter
+    }
+}
+if(air)//si le joueur est dans l'air (descente du joueur après le saut)
+{
+    time[2] = time[3];
+    if(time[3] >= time[2])
+    in_air(&player,time[1], atterri, &air,time[3]);
+}
+
+void sauter(SDL_Rect *player,int time2,int *air,int time3)
+{
+    int difference = time2 - time3;
+    if(difference > 300)
+        player->y-= round((13 * difference)/1000);
+    if(difference <= 300)
+    {
+        *air = 1;
+    }
+    if(player->y <= 0)
+    {
+        *air = 1;
+        player->y = 0;
+    }
+}
+
+void in_air(SDL_Rect *player,int time1,int atterri,int *air,int time3)
+{
+    int difference = time3 - time1, continuer = 0, faire_if = 1;
+    if(player->y < atterri)
+    {
+        continuer = 1;
+    }
+    else if(player->y == atterri)
+    {
+        *air = 0;
+        faire_if = 0;
+    }
+    if(faire_if)
+    {
+        player->y += round((40 * difference)/1000);
+    }
+    if(continuer)
+    {
+        if(player->y >= atterri)
+        {
+            player->y = atterri;
+            *air = 0;
+        }
+    }
+}
+
 
 _trouver l'origine du bug qui oblige à utiliser le mode de compatibilité XP
 
@@ -54,7 +135,7 @@ _editeur de niveau de base:
 _reglages de bugs à faire :
 	* On ne peut pas sauter quand on descend une pente
 	
-_sauvegarde/chargement des niveau au format xml, avec verification de la validité du document en prime
+_Verification de la validité du XML
 
 /*============================================================================*/
 						Trucs bonus
@@ -88,11 +169,6 @@ _possiblité de changer les touches utilisées pour jouer
 _menu pour changer les parametres graphiques(reso, V-sync...)
 
 _"distributeurs" de pieces (bloc qui donne 10s de pieces à partir du premier coup dedans)
-
--les blocs [?] et les blocs cassables doivent l'etre aussi par le coté, en recevant une carapace de koopa
-
-_les blocs cassables et les blocs [?] doivent remonter quand on tape dedans, ça permet d'ailleur de faire sauter les champignons qui sont au dessus, de tuer un enemi, ou de prendre une piece.
-
 	
 _possibilité de mettre le jeu en pause (ou se trouverait le menu de sauvegarde?)
 
@@ -136,11 +212,17 @@ _tuyaux fonctionnels, ajout des enemis qui sortent des tuyaux
 
 _ajout d'un foreground, pour les effets de pluie ou de neige
 
+_sauvegarde/chargement des niveau au format XML
+
+-les blocs [?] et les blocs cassables doivent l'etre aussi par le coté, en recevant une carapace de koopa
+
+_les blocs cassables et les blocs [?] doivent remonter quand on tape dedans, ça permet d'ailleur de faire sauter les champignons qui sont au dessus, de tuer un enemi, ou de prendre une piece.
+
 _bugs réglés :
 	* traverse le plafond -> OK
 	* quand on marche (pas quand on cours), on ne se fait pas toucher par la carapace
 	* Si on va vers elle, elle rebondit sur nous, sinon elle nous traverse (enfin techniquement elle doit rebondir vers l'autre coté, vu qu'il y a un son) -> OK
-	* Si mario dérape (en marchant), peut se faire toucher par la carapace en M_RETRACTED -> OK
+	* Si mario dérape (en marchant), peut se faire toucher par la carapace en M_RETRACTE -> OK
 	* Si, après être redevenu normal après la période d'invincibilité, on reste sur le monstre, on est pas touché -> OK
 	* Detection de collision entre un monstre et ... sa copie -> OK
 	* Si Mario court et que la touche bas est appuyée, il court sur place
