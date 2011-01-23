@@ -38,6 +38,7 @@
 #define V_REBOND_SAUT		    	0.8F
 #define V_REBOND_PROJECTILE	    	0.3F
 #define VITESSE_Y_EJECTION		    0.2F
+#define VITESSE_X_EJECTION		    VITESSE_Y_EJECTION
 #define V_CARAPACE				    0.5F
 #define V_SORTIE_MONSTRE			0.05F
 

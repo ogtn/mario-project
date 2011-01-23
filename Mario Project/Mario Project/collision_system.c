@@ -156,7 +156,7 @@ void main_collisions(world *w)
 
 				m_bis = copy_monstre(mstr_actuel->occ_monstre);
 
-				if(m_bis->etat != M_RETRACTED_PORTED)
+				if(m_bis->etat != M_RETRACTE_PORTED)
 					MAJ_collision_monstre(m_bis, w->ecran, w->temps_ecoule);
 
 				/* Fonction résolvant les collisions sur la copie du monstre */
@@ -391,7 +391,7 @@ void MAJ_collision_monstre(occ_monstre* monstre, ecran e, Uint32 duree) {
 			/* Gravité */
 			gravity(&monstre->vitesse, duree);
 
-			if(monstre->etat != M_RETRACTED)
+			if(monstre->etat != M_RETRACTE && monstre->etat != M_RETRACTE_RETOURNE)
 			{
 				if(monstre->vitesse.x > M_V_MARCHE)
 					monstre->vitesse.x = M_V_MARCHE;
@@ -481,11 +481,11 @@ void MAJ_collision_perso(perso *perso, niveau* lvl, keystate* keystate, Uint32 d
 		if(keystate->actuel[RUN] && !keystate->actuel[BAS] && !keystate->precedent[RUN]
 		&& perso->transformation >= FIRE_MARIO && perso->etat != DERAPE 
 			&& perso->etat != REGARDE_HAUT && !perso->tps_attaque)
-			throw_special_projectile_perso(perso, lvl, p);
+			throw_projectile_perso(perso, lvl, p);
 
 		/* Sauter */
 		if(keystate->actuel[SAUTER] && !keystate->precedent[SAUTER] && !keystate->actuel[HAUT]
-		&& perso->environnement == SOL_DUR && perso->etat != FINISH && perso->etat != FINISH_CHATEAU)
+		&& perso->environnement == SOL_DUR)
 			jump_perso(perso);
 
 		if(perso->vitesse.y != 0)
@@ -1341,7 +1341,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 					monstre.est_bloc_pente = 0;
 
 					/* Si le monstre est retracté, il est plus petit */
-					if(mstr_actuel->occ_monstre->etat == M_RETRACTED)
+					if(mstr_actuel->occ_monstre->etat == M_RETRACTE || mstr_actuel->occ_monstre->etat == M_RETRACTE_RETOURNE)
 						monstre.taille.y = mstr_actuel->occ_monstre->type_monstre->taille.y / 2;
 					else
 						monstre.taille.y = mstr_actuel->occ_monstre->type_monstre->taille.y;
@@ -1362,7 +1362,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 
 							mstr_actuel->occ_monstre->position.y = p->position.y;
 
-							p->monstre_porte->etat = M_RETRACTED;
+							p->monstre_porte->etat = M_RETRACTE;
 							p->etat = POUSSE_CARAPACE;
 							mstr_actuel->occ_monstre->vitesse.x = (p->cote == COTE_DROIT)? V_CARAPACE : -V_CARAPACE;
 
@@ -1385,7 +1385,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 							}
 							else if(!mstr_actuel->occ_monstre->type_monstre->est_tuable_par_saut) {
 								// Si le monstre est retracté
-								if(mstr_actuel->occ_monstre->etat == M_RETRACTED)
+								if(mstr_actuel->occ_monstre->etat == M_RETRACTE || mstr_actuel->occ_monstre->etat == M_RETRACTE_RETOURNE)
 								{
 									if(keystate->actuel[RUN] && p->environnement == SOL_DUR && mstr_actuel->occ_monstre->vitesse.x == 0)
 									{
@@ -1393,7 +1393,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 										mstr_actuel->occ_monstre->position.x = p->position.x + p->taille.x / 2;
 										mstr_actuel->occ_monstre->position.y = p->position.y + p->taille.x / 2;
 										p->monstre_porte = mstr_actuel->occ_monstre;
-										p->monstre_porte->etat = M_RETRACTED_PORTED;
+										p->monstre_porte->etat = M_RETRACTE_PORTED;
 										p->hud->nb_monstres_tues_carapace = 0;
 
 									}
@@ -1452,7 +1452,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 								else if(collision.carre2_est_touche)
 								{
 									// Il devient retracté
-									mstr_actuel->occ_monstre->etat = M_RETRACTED;
+									mstr_actuel->occ_monstre->etat = M_RETRACTE;
 									mstr_actuel->occ_monstre->vitesse.x = 0;
 
 									/* Si la touche de saut est active, le personnage saute plus haut */
@@ -1498,19 +1498,14 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 					else 
 					{
 						/* Cas où Mario a pris l'étoile */
-						if(collision.carre1_est_touche || collision.carre2_est_touche) {
-							coordi text_points;
-
+						if(collision.carre1_est_touche || collision.carre2_est_touche) 
+						{
 							mstr_actuel->occ_monstre->etat = M_MORT_PAR_PROJ;
 							mstr_actuel->occ_monstre->vitesse.x = (p->vitesse.x < 0)? -mstr_actuel->occ_monstre->vitesse.x : mstr_actuel->occ_monstre->vitesse.x;
 							mstr_actuel->occ_monstre->vitesse.y = VITESSE_Y_EJECTION;
 
 							/* Comptage des points */
-							text_points.x = (int) (mstr_actuel->occ_monstre->position.x);
-							text_points.y = (int) (mstr_actuel->occ_monstre->position.y + mstr_actuel->occ_monstre->type_monstre->taille.y);
-							p->hud->file_points = add_file_pts(p->hud->file_points, mstr_actuel->occ_monstre->type_monstre->points, text_points);
-
-							p->hud->score += mstr_actuel->occ_monstre->type_monstre->points;
+							compte_points(p, mstr_actuel->occ_monstre);
 
 							FSOUND_PlaySound(FSOUND_FREE, mstr_actuel->occ_monstre->type_monstre->sons[SND_PROJ_ON]);
 						}
@@ -1644,8 +1639,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 
 	/* Variables pour la detection et la résolution de collisions */
 	elem_monstre* mstr_actuel = m->type_monstre->occ_monstres->monstre;
-	int phys_bloc_actuel;
-	static int prec_collision_sol;
+	int phys_bloc_actuel, prec_collision_bloc = 0;
 	float hauteur;
 	carre block = {0}, monstre = {0}, monstre_2 = {0}, projectile = {0}, tuyau = {0};
 	collision collision;
@@ -1657,7 +1651,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 	/* Collision de base avec les bords du niveau */
 	if(m->position.x + m->type_monstre->taille.x < 0
 		|| m->position.y + m->type_monstre->taille.y < 0
-		|| (m->position.x  > n->taille.x * n->taille_blocs.x && (m->etat != M_RETRACTED_PORTED || m->etat != M_MARCHE))) {
+		|| (m->position.x  > n->taille.x * n->taille_blocs.x && (m->etat != M_RETRACTE_PORTED || m->etat != M_MARCHE))) {
 			m->etat = M_MORT;
 			p->hud->nb_monstres_tues_carapace = 0;
 	}
@@ -1679,14 +1673,14 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 	monstre.taille.x = m->type_monstre->taille.x - 2 *  m->type_monstre->abscisse_bas;
 
 	/* Si le monstre est retracté, il est plus petit */
-	if(m->etat == M_RETRACTED || m->etat == M_RETRACTED_PORTED)
+	if(m->etat == M_RETRACTE || m->etat == M_RETRACTE_PORTED || m->etat == M_RETRACTE_RETOURNE)
 		monstre.taille.y = mstr_actuel->occ_monstre->type_monstre->taille.y / 2;
 	else
 		monstre.taille.y = mstr_actuel->occ_monstre->type_monstre->taille.y;
 
 	monstre.est_bloc_pente = 0;
 
-	if( m->etat != M_RETRACTED_PORTED && m->etat != M_MORT)
+	if( m->etat != M_RETRACTE_PORTED && m->etat != M_MORT)
 	{
 
 		/************* Collisions MONSTRES <=> NIVEAU *************/
@@ -1698,10 +1692,17 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 				{
 					if(n->occ_blocs[i][j]->bloc_actuel < -1 && n->occ_blocs[i][j]->etat == POUSSE_PAR_LE_HAUT)
 					{
-						/* Le monstre touché meurt */
-						m->etat = M_MORT_PAR_PROJ;
-						m->vitesse.y = VITESSE_Y_EJECTION * 2;
+						if(m->type_monstre->est_tuable_par_saut)
+						{
+							m->etat = M_MORT_PAR_PROJ;
+						}
+						else
+						{
+							m->etat = M_RETRACTE_RETOURNE;
+						}
 
+						m->vitesse.y = VITESSE_Y_EJECTION * 2;
+						m->vitesse.x = 0;
 						FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_PROJ_ON]);
 
 						compte_points(p, mstr_actuel->occ_monstre);
@@ -1739,21 +1740,37 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 							|| phys_bloc_actuel == BLOC_SPEC)
 							&& collision.type_collision == PAR_LE_BAS)
 						{
-							
-							if(n->occ_blocs[i][j]->etat == POUSSE_PAR_LE_HAUT)
-							{
-								/* Le monstre touché meurt */
-								m->etat = M_MORT_PAR_PROJ;
-								m->vitesse.y = VITESSE_Y_EJECTION * 2;
 
+							if(n->occ_blocs[i][j]->etat == POUSSE_PAR_LE_HAUT && !prec_collision_bloc)
+							{
+								if(m->type_monstre->est_tuable_par_saut)
+								{
+									m->etat = M_MORT_PAR_PROJ;
+								}
+								else
+								{
+									m->etat = M_RETRACTE_RETOURNE;
+									if(m->position.x > n->occ_blocs[i][j]->position.x)
+										m->vitesse.x = VITESSE_X_EJECTION;
+									else
+										m->vitesse.x = -VITESSE_X_EJECTION;
+								}
+
+								prec_collision_bloc = 1;
+								m->vitesse.y = VITESSE_Y_EJECTION * 2;
 								FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_PROJ_ON]);
 
 								compte_points(p, mstr_actuel->occ_monstre);
 							}
 							else
 							{
-								m->vitesse.y = 0;
-								m->position.y = (float)block.position.y + block.taille.y;
+								if(!prec_collision_bloc)
+								{
+									if(m->vitesse.x == -VITESSE_X_EJECTION || m->vitesse.x == VITESSE_X_EJECTION)
+										m->vitesse.x = 0;
+									m->vitesse.y = 0;
+									m->position.y = (float)block.position.y + block.taille.y;
+								}
 							}
 
 							// MAJ du carré monstre
@@ -1846,7 +1863,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 							m->cote = COTE_DROIT;
 							m->position.x += m->vitesse.x * duree + 2 * m->type_monstre->abscisse_bas;
 
-							if(m->etat == M_RETRACTED)
+							if(m->etat == M_RETRACTE || m->etat == M_RETRACTE_RETOURNE)
 							{
 								if(!(bloc_actuel.type_bloc & EST_VIDE))
 								{
@@ -1926,7 +1943,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 							m->cote = COTE_GAUCHE;
 							m->position.x += m->vitesse.x * duree;
 
-							if(m->etat == M_RETRACTED)
+							if(m->etat == M_RETRACTE || m->etat == M_RETRACTE_RETOURNE)
 							{
 								if(!(bloc_actuel.type_bloc & EST_VIDE))
 								{
@@ -1944,12 +1961,12 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 									if(n->occ_blocs[i][j]->item < 0) {
 										int index = (p->transformation == FIRE_MARIO)? p->transformation - 1: p->transformation;
 										vitesse.y = VIT_SORTIE_BLOC;
-										item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, n->items[index], vitesse, SORT_DU_BLOC);
+										item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, index, vitesse, SORT_DU_BLOC);
 									}
 									else
 									{
 										vitesse.y =  (bloc_actuel.type_bloc & EST_VIDE)? VIT_SORTIE_BLOC * 5 : VIT_SORTIE_BLOC;
-										item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, n->items[n->occ_blocs[i][j]->item], vitesse, SORT_DU_BLOC);
+										item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, n->occ_blocs[i][j]->item, vitesse, SORT_DU_BLOC);
 									}
 
 									item->tps_sortie_bloc = TPS_ITEM_SORT_BLOC;
@@ -2046,7 +2063,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 			m->cote = COTE_DROIT;
 			m->position.x = (float) tuyau.position.x + tuyau.taille.x;
 
-			if(m->etat == M_RETRACTED)
+			if(m->etat == M_RETRACTE)
 				FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_LEVEL_ON]);
 
 			// MAJ du carré monstre
@@ -2057,7 +2074,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 			m->cote = COTE_GAUCHE;
 			m->position.x = (float) tuyau.position.x - LARGEUR_BLOC;
 
-			if(m->etat == M_RETRACTED)
+			if(m->etat == M_RETRACTE)
 				FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_LEVEL_ON]);
 
 			// MAJ du carré monstre
@@ -2069,11 +2086,11 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 	}
 
 	/************* Collisions MONSTRES <=> MONSTRES *************/
-	while(mstr_actuel != NULL && ((m->vitesse.x != 0) || m->etat == M_RETRACTED_PORTED))
+	while(mstr_actuel != NULL && ((m->vitesse.x != 0) || m->etat == M_RETRACTE_PORTED))
 	{
 
 		if(mstr_actuel->occ_monstre->etat != M_MORT_PAR_PROJ && mstr_actuel->occ_monstre->etat != M_MORT_PAR_SAUT 
-			&& mstr_actuel->occ_monstre->etat != M_RETRACTED_PORTED
+			&& mstr_actuel->occ_monstre->etat != M_RETRACTE_PORTED
 			&& m != mstr_copie)
 		{
 			/* Initialisation du carre monstre_2 */
@@ -2086,7 +2103,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 			monstre_2.taille.x = mstr_actuel->occ_monstre->type_monstre->taille.x - 2 *  mstr_actuel->occ_monstre->type_monstre->abscisse_bas;
 
 			/* Si le monstre est retracté, il est plus petit */
-			if(mstr_actuel->occ_monstre->etat == M_RETRACTED)
+			if(mstr_actuel->occ_monstre->etat == M_RETRACTE)
 				monstre_2.taille.y = mstr_actuel->occ_monstre->type_monstre->taille.y / 2;
 			else
 				monstre_2.taille.y = mstr_actuel->occ_monstre->type_monstre->taille.y;
@@ -2098,13 +2115,15 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 			if((collision.carre1_est_touche || collision.carre2_est_touche) && collision.type_collision != SUPERPOSITION)
 			{
 				/* Cas où l'autre monstre est retracté mais qu'il ne bouge pas ou qu'il marche */
-				if(mstr_actuel->occ_monstre->etat == M_RETRACTED 
-					|| mstr_actuel->occ_monstre->etat == M_MARCHE)
+				if(mstr_actuel->occ_monstre->etat == M_RETRACTE 
+					|| mstr_actuel->occ_monstre->etat == M_MARCHE
+					|| mstr_actuel->occ_monstre->etat == M_RETRACTE_RETOURNE)
 				{
-					if(m->etat == M_RETRACTED && m->vitesse.x != 0)
+					if(m->etat == M_RETRACTE && m->vitesse.x != 0)
 					{
 
-						if(mstr_actuel->occ_monstre->etat == M_RETRACTED && mstr_actuel->occ_monstre->vitesse.x != 0)
+						if((mstr_actuel->occ_monstre->etat == M_RETRACTE || mstr_actuel->occ_monstre->etat == M_RETRACTE_RETOURNE)
+							&& mstr_actuel->occ_monstre->vitesse.x != 0)
 						{							
 							/* Le monstre touché meurt */
 							m->etat = M_MORT_PAR_PROJ;
@@ -2143,7 +2162,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 
 
 					/* Si l'un deux est porté, les deux meurent */
-					if(m->etat == M_RETRACTED_PORTED)
+					if(m->etat == M_RETRACTE_PORTED)
 					{
 						mstr_actuel->occ_monstre->etat = M_MORT_PAR_PROJ;
 						mstr_actuel->occ_monstre->vitesse.y = VITESSE_Y_EJECTION;
@@ -2170,7 +2189,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 				}
 
 				/* Cas où deux monstres se touchent */
-				if(m->etat != M_RETRACTED)
+				if(m->etat != M_RETRACTE || m->etat != M_RETRACTE_RETOURNE)
 				{ 
 					if(m->cote == COTE_DROIT)
 						m->cote = COTE_GAUCHE;
@@ -3047,7 +3066,7 @@ vectf *jump(vectf *v)
 void jump_perso(perso* p)
 {
 	jump(&p->vitesse);
-	p->vitesse.y += p->accel;
+	
 	FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_SAUT]);
 
 
