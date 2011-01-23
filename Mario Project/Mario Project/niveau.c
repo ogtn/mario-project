@@ -1721,7 +1721,7 @@ void charger_niveau_test_xml(niveau *n)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, 19, -1);
 			else if (i == 1 && j == 5)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, 19, -1);
-			else if (i > 10 && j == 5)
+			else if (i > 10 && i < 15 && j == 5)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 18, -1, -1);
 			//// pente 30° en bas à gauche
 			//else if(j == 1 && i <= 1)

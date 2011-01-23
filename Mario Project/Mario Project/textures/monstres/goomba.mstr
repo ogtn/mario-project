@@ -4,5 +4,6 @@ nb_sprites_carapace : 0
 est_tuable_par_saut : 1
 est_tuable_par_boule_feu : 1
 peut_sauter_dessus : 1
+reste_sur_plateforme : 0
 v_anim : 650
 points : 100

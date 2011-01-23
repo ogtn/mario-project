@@ -16,8 +16,6 @@
 _gestion de tout ce qui concerne le perso (etat, nombre de points, de vies
 etc..)
 
-_gestion et affichage du HUD
-
 _gestion des collisions:
 	*collisions objets/ennemis et objets/perso (boules de feu, marteau...)
 	*ajout de l'eau
@@ -28,9 +26,6 @@ _IA des enemis. Très basique vu que c'est un simple jeu de plateforme:
 	*enemis volants
 	*enemis aquatiques
 	*autres (boss?)
-
-_gestion des parties animées dans les niveaux (surface de l'eau, blocs [?],
-pieces qui tournent sur elles memes...
 
 _gestion des differents etats du perso (normal, super, mini, feu etc..)
 
@@ -193,6 +188,8 @@ _gestion des collisions:
 	*collisions ennemis/ennemis
 	*collisions ennemis/projectiles
 
+_gestion et affichage du HUD
+
 _gestion de n'importe quelle resolution, pour que l'affichage soit toujours le
 meilleur possible quel que soit l'ecran/ la resolution
 
@@ -217,6 +214,9 @@ _sauvegarde/chargement des niveau au format XML
 -les blocs [?] et les blocs cassables doivent l'etre aussi par le coté, en recevant une carapace de koopa
 
 _les blocs cassables et les blocs [?] doivent remonter quand on tape dedans, ça permet d'ailleur de faire sauter les champignons qui sont au dessus, de tuer un enemi, ou de prendre une piece.
+
+_gestion des parties animées dans les niveaux (surface de l'eau, blocs [?],
+pieces qui tournent sur elles memes...
 
 _bugs réglés :
 	* traverse le plafond -> OK
