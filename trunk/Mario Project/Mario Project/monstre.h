@@ -83,6 +83,7 @@ typedef struct monstre {
 	int est_tuable_par_boule_feu;			/* indique si le monstre peut etre tué par une boule de feu */
 	int est_tuable_par_saut;				/* indique si le monstre peut etre tué par un saut */
 	int peut_sauter_dessus;					/* indique si le personnage peut sauter sur le monstre, sinon il est touché */
+	int reste_sur_plateforme;				/* indique si le personnage doit rester sur la plateforme sur laquelle il est */
 	GLuint texture;							/* l'identificateur OpenGL de la texture du monstre */
 	int v_anim;								/* vitesse d'animation du monstre */
 	FSOUND_SAMPLE* sons[NB_SONS];			/* tableau des sons correspondant au monstre */

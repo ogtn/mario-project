@@ -913,13 +913,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 							determinate_collision(perso, block, &collision);
 
 							/* Collision avec le sol */
-							if((phys_bloc_actuel == SOL 
-								|| phys_bloc_actuel == BORD_A_GAUCHE
-								|| phys_bloc_actuel == BORD_A_DROITE
-								|| phys_bloc_actuel == COIN_HAUT_A_GAUCHE
-								|| phys_bloc_actuel == COIN_HAUT_A_DROITE
-								|| phys_bloc_actuel == BLOC_SPEC)
-								&& collision.type_collision == PAR_LE_BAS)
+							if((phys_bloc_actuel & SOL) && collision.type_collision == PAR_LE_BAS)
 							{
 
 								// Si le perso est en train d'attaquer, on ne change pas son etat 
@@ -1039,11 +1033,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 							}
 
 							/* Collision avec le plafond */
-							if((phys_bloc_actuel == PLAFOND
-								|| phys_bloc_actuel == COIN_BAS_A_GAUCHE
-								|| phys_bloc_actuel == COIN_BAS_A_DROITE
-								|| phys_bloc_actuel == BLOC_SPEC)
-								&& collision.type_collision == PAR_LE_HAUT)
+							if((phys_bloc_actuel & PLAFOND) && collision.type_collision == PAR_LE_HAUT)
 							{
 
 								p->vitesse.y = 0;
@@ -1132,11 +1122,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 							}
 
 							/* Collision avec le mur à gauche du personnage */
-							if((phys_bloc_actuel == MUR_A_GAUCHE 
-								|| phys_bloc_actuel == COIN_HAUT_A_GAUCHE
-								|| phys_bloc_actuel == COIN_BAS_A_GAUCHE
-								|| phys_bloc_actuel == BLOC_SPEC) 
-								&& collision.type_collision == PAR_LA_GAUCHE)
+							if((phys_bloc_actuel & MUR_A_GAUCHE) && collision.type_collision == PAR_LA_GAUCHE)
 							{
 								p->vitesse.x = 0;
 								p->position.x = (float) block.position.x + block.taille.x - p->texture_act->abscisse_bas;
@@ -1147,11 +1133,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 							}
 
 							/* Collision avec le mur à droite du personnage */
-							if((phys_bloc_actuel == MUR_A_DROITE
-								|| phys_bloc_actuel == COIN_HAUT_A_DROITE
-								|| phys_bloc_actuel == COIN_BAS_A_DROITE
-								|| phys_bloc_actuel == BLOC_SPEC) 
-								&& collision.type_collision == PAR_LA_DROITE)
+							if((phys_bloc_actuel == MUR_A_DROITE) && collision.type_collision == PAR_LA_DROITE)
 							{
 								p->vitesse.x = 0;
 								p->position.x = (float) block.position.x - p->taille.x + p->texture_act->abscisse_bas;
@@ -1707,6 +1689,30 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 
 						compte_points(p, mstr_actuel->occ_monstre);
 					}
+
+					/* Cas où le monstre doit rester sur la plateforme */
+					if(m->type_monstre->reste_sur_plateforme)
+					{
+						if(m->vitesse.x < 0 && i == bloc_bg.x && j == bloc_bg.y)
+						{
+							if((n->occ_blocs[i][j]->bloc_actuel < 0 || !(n->blocs[n->occ_blocs[i][j]->bloc_actuel].phys && SOL))
+								&& (n->occ_blocs[i + 1][j]->bloc_actuel > 0 && n->blocs[n->occ_blocs[i + 1][j]->bloc_actuel].phys && SOL))
+							{
+								m->cote = COTE_DROIT;
+								m->vitesse.x *= -1;
+							}
+						}
+						else if(m->vitesse.x > 0 && i == bloc_hd.x && j == bloc_bg.y)
+						{
+							if((n->occ_blocs[i][j]->bloc_actuel < 0 || !(n->blocs[n->occ_blocs[i][j]->bloc_actuel].phys && SOL))
+								&& (n->occ_blocs[i - 1][j]->bloc_actuel > 0 && n->blocs[n->occ_blocs[i +- 1][j]->bloc_actuel].phys && SOL))
+							{
+								m->cote = COTE_GAUCHE;
+								m->vitesse.x *= -1;
+							}
+						}
+					}
+
 					if(n->occ_blocs[i][j]->bloc_actuel >= 0)
 					{
 
@@ -1732,13 +1738,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 						determinate_collision(monstre, block, &collision);
 
 						/* Collision avec le sol */
-						if((phys_bloc_actuel == SOL 
-							|| phys_bloc_actuel == BORD_A_GAUCHE
-							|| phys_bloc_actuel == BORD_A_DROITE
-							|| phys_bloc_actuel == COIN_HAUT_A_GAUCHE
-							|| phys_bloc_actuel == COIN_HAUT_A_DROITE
-							|| phys_bloc_actuel == BLOC_SPEC)
-							&& collision.type_collision == PAR_LE_BAS)
+						if((phys_bloc_actuel & SOL)	&& collision.type_collision == PAR_LE_BAS)
 						{
 
 							if(n->occ_blocs[i][j]->etat == POUSSE_PAR_LE_HAUT && !prec_collision_bloc)
@@ -1772,6 +1772,22 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 									m->position.y = (float)block.position.y + block.taille.y;
 								}
 							}
+
+							
+
+							/*if(m->vitesse.x > 0 && n->occ_blocs[i + 1][j]->bloc_actuel > 0
+								&& !(n->blocs[n->occ_blocs[i + 1][j]->bloc_actuel].phys & SOL))
+							{
+								m->vitesse.x *= -1;
+								m->cote = COTE_GAUCHE;
+							}
+							if(m->vitesse.x < 0 
+								&& ((n->occ_blocs[i - 1][j]->bloc_actuel > 0 && !(n->blocs[n->occ_blocs[i - 1][j]->bloc_actuel].phys & SOL))
+								|| n->occ_blocs[i - 1][j]->bloc_actuel < 0))
+							{
+								m->vitesse.x *= -1;
+								m->cote = COTE_DROIT;
+							}*/
 
 							// MAJ du carré monstre
 							monstre.position.y = m->position.y;
@@ -1838,11 +1854,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 						}
 
 						/* Collision avec le plafond */
-						if((phys_bloc_actuel == PLAFOND
-							|| phys_bloc_actuel == COIN_BAS_A_GAUCHE
-							|| phys_bloc_actuel == COIN_BAS_A_DROITE
-							|| phys_bloc_actuel == BLOC_SPEC)
-							&& collision.type_collision == PAR_LE_HAUT)
+						if((phys_bloc_actuel & PLAFOND)	&& collision.type_collision == PAR_LE_HAUT)
 						{
 							m->vitesse.y = 0;
 							m->position.y = (float)block.position.y - block.taille.y - m->type_monstre->taille.y;
@@ -1853,11 +1865,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 						}
 
 						/* Collision avec le mur à gauche du monstre */
-						if((phys_bloc_actuel == MUR_A_GAUCHE
-							|| phys_bloc_actuel == COIN_HAUT_A_GAUCHE
-							|| phys_bloc_actuel == COIN_BAS_A_GAUCHE
-							|| phys_bloc_actuel == BLOC_SPEC)
-							&& collision.type_collision == PAR_LA_GAUCHE)
+						if((phys_bloc_actuel & MUR_A_GAUCHE) && collision.type_collision == PAR_LA_GAUCHE)
 						{
 							m->vitesse.x = -m->vitesse.x;
 							m->cote = COTE_DROIT;
@@ -1932,11 +1940,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 						}
 
 						/* Collision avec le mur à droite du monstre */
-						if((phys_bloc_actuel == MUR_A_DROITE
-							|| phys_bloc_actuel == COIN_HAUT_A_DROITE
-							|| phys_bloc_actuel == COIN_BAS_A_DROITE
-							|| phys_bloc_actuel == BLOC_SPEC)
-							&& collision.type_collision == PAR_LA_DROITE)
+						if((phys_bloc_actuel & MUR_A_DROITE) && collision.type_collision == PAR_LA_DROITE)
 						{
 
 							m->vitesse.x = -m->vitesse.x;
@@ -2338,13 +2342,7 @@ void solve_collisions_projectile(occ_projectile* p, niveau *n)
 						determinate_collision(projectile, block, &collision);
 
 						/* Collision avec le sol */
-						if((phys_bloc_actuel == SOL 
-							|| phys_bloc_actuel == BORD_A_GAUCHE
-							|| phys_bloc_actuel == BORD_A_DROITE
-							|| phys_bloc_actuel == COIN_HAUT_A_GAUCHE
-							|| phys_bloc_actuel == COIN_HAUT_A_DROITE
-							|| phys_bloc_actuel == BLOC_SPEC)
-							&& collision.type_collision == PAR_LE_BAS)
+						if((phys_bloc_actuel & SOL) && collision.type_collision == PAR_LE_BAS)
 						{
 							p->vitesse.y = V_REBOND_PROJECTILE;
 							p->position.y = (float)block.position.y + block.taille.y - p->type_projectile->taille.y + p->type_projectile->ordonnee_haut;
@@ -2412,11 +2410,7 @@ void solve_collisions_projectile(occ_projectile* p, niveau *n)
 						}
 
 						/* Collision avec le plafond */
-						if((phys_bloc_actuel == PLAFOND
-							|| phys_bloc_actuel == COIN_BAS_A_GAUCHE
-							|| phys_bloc_actuel == COIN_BAS_A_DROITE
-							|| phys_bloc_actuel == BLOC_SPEC )
-							&& collision.type_collision == PAR_LE_HAUT)
+						if((phys_bloc_actuel & PLAFOND) && collision.type_collision == PAR_LE_HAUT)
 						{
 							p->vitesse.y = 0;
 							p->position.y = (float)block.position.y - block.taille.y - p->type_projectile->taille.y;
@@ -2426,22 +2420,14 @@ void solve_collisions_projectile(occ_projectile* p, niveau *n)
 							determinate_collision(projectile, block, &collision);
 						}
 
-						/* Collision avec le mur à gauche du monstre */
-						if((phys_bloc_actuel == MUR_A_GAUCHE
-							|| phys_bloc_actuel == COIN_HAUT_A_GAUCHE
-							|| phys_bloc_actuel == COIN_BAS_A_GAUCHE
-							|| phys_bloc_actuel == BLOC_SPEC)
-							&& collision.type_collision == PAR_LA_GAUCHE)
+						/* Collision avec le mur à gauche du projectile */
+						if((phys_bloc_actuel & MUR_A_GAUCHE) && collision.type_collision == PAR_LA_GAUCHE)
 						{
 							p->tps_vie = 0;
 						}
 
-						/* Collision avec le mur à droite du monstre */
-						if((phys_bloc_actuel == MUR_A_DROITE
-							|| phys_bloc_actuel == COIN_HAUT_A_DROITE
-							|| phys_bloc_actuel == COIN_BAS_A_DROITE
-							|| phys_bloc_actuel == BLOC_SPEC) 
-							&& collision.type_collision == PAR_LA_DROITE)
+						/* Collision avec le mur à droite du projectile */
+						if((phys_bloc_actuel & MUR_A_DROITE) && collision.type_collision == PAR_LA_DROITE)
 						{
 							p->tps_vie = 0;
 						}
@@ -2580,13 +2566,7 @@ void solve_collisions_item(occ_item* it, perso** persos, niveau* n, Uint32 duree
 							determinate_collision(item, block, &collision);
 
 							/* Collision avec le sol */
-							if((phys_bloc_actuel == SOL 
-								|| phys_bloc_actuel == BORD_A_GAUCHE
-								|| phys_bloc_actuel == BORD_A_DROITE
-								|| phys_bloc_actuel == COIN_HAUT_A_GAUCHE
-								|| phys_bloc_actuel == COIN_HAUT_A_DROITE
-								|| phys_bloc_actuel == BLOC_SPEC)
-								&& collision.type_collision == PAR_LE_BAS)
+							if((phys_bloc_actuel & SOL) && collision.type_collision == PAR_LE_BAS)
 							{
 
 								it->position.y = (float)block.position.y + block.taille.y;
@@ -2693,11 +2673,7 @@ void solve_collisions_item(occ_item* it, perso** persos, niveau* n, Uint32 duree
 							}
 
 							/* Collision avec le plafond */
-							if((phys_bloc_actuel == PLAFOND
-								|| phys_bloc_actuel == COIN_BAS_A_GAUCHE
-								|| phys_bloc_actuel == COIN_BAS_A_DROITE
-								|| phys_bloc_actuel == BLOC_SPEC )
-								&& collision.type_collision == PAR_LE_HAUT)
+							if((phys_bloc_actuel & PLAFOND) && collision.type_collision == PAR_LE_HAUT)
 							{
 								it->vitesse.y = 0;
 								it->position.y = (float)block.position.y - block.taille.y - n->items[it->type_item]->taille.y;
@@ -2707,12 +2683,8 @@ void solve_collisions_item(occ_item* it, perso** persos, niveau* n, Uint32 duree
 								determinate_collision(item, block, &collision);
 							}
 
-							/* Collision avec le mur à gauche du monstre */
-							if((phys_bloc_actuel == MUR_A_GAUCHE
-								|| phys_bloc_actuel == COIN_HAUT_A_GAUCHE
-								|| phys_bloc_actuel == COIN_BAS_A_GAUCHE
-								|| phys_bloc_actuel == BLOC_SPEC)
-								&& collision.type_collision == PAR_LA_GAUCHE)
+							/* Collision avec le mur à gauche de l'item */
+							if((phys_bloc_actuel & MUR_A_GAUCHE) && collision.type_collision == PAR_LA_GAUCHE)
 							{
 								it->vitesse.x = -it->vitesse.x;
 								it->position.x = (float)it->position.x + it->vitesse.x * duree;
@@ -2722,12 +2694,8 @@ void solve_collisions_item(occ_item* it, perso** persos, niveau* n, Uint32 duree
 								determinate_collision(item, block, &collision);
 							}
 
-							/* Collision avec le mur à droite du monstre */
-							if((phys_bloc_actuel == MUR_A_DROITE
-								|| phys_bloc_actuel == COIN_HAUT_A_DROITE
-								|| phys_bloc_actuel == COIN_BAS_A_DROITE
-								|| phys_bloc_actuel == BLOC_SPEC) 
-								&& collision.type_collision == PAR_LA_DROITE)
+							/* Collision avec le mur à droite de l'item */
+							if((phys_bloc_actuel & MUR_A_DROITE) && collision.type_collision == PAR_LA_DROITE)
 							{
 								it->vitesse.x = -it->vitesse.x;
 								it->position.x = (float)it->position.x + it->vitesse.x * duree;								

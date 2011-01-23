@@ -81,11 +81,11 @@ occ_monstre*  init_occ_monstre(occ_monstre *m, float position_x, float position_
 		m->position_ini = m->position;
 		m->position_prec = m->position;
 
-		m->vitesse.x = (float)M_V_MARCHE;
+		m->vitesse.x = -(float)M_V_MARCHE;
 		m->vitesse.y = 0;
 	
 		m->etat = M_MARCHE;
-		m->cote = COTE_DROIT;
+		m->cote = COTE_GAUCHE;
 		m->actif = 1;
 
 		m->type_monstre = type_monstre;
@@ -247,6 +247,9 @@ monstre *charger_monstre(char* nom){
 
 	fscanf(mstr_file, "peut_sauter_dessus : %d\n", &nb);
 	m->peut_sauter_dessus = nb;
+
+	fscanf(mstr_file, "reste_sur_plateforme : %d\n", &nb);
+	m->reste_sur_plateforme = nb;
 
 	fscanf(mstr_file, "v_anim : %d\n", &nb);
 	m->v_anim = nb;
