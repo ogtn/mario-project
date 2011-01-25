@@ -1949,8 +1949,10 @@ void draw_main(niveau *lvl, perso **persos, ecran e, Uint32 duree)
     id i;
 
     /* decallage de la "camera" pour commencer au point d'origine choisit */
+    glEnd();
     glPushMatrix();
 	glTranslated(e.origine.x, e.origine.y, 0);
+    glBegin(GL_QUADS);
 
     /* Dessin du ou des arrieres-plans */
     draw_background(lvl, e, duree);
@@ -1961,8 +1963,10 @@ void draw_main(niveau *lvl, perso **persos, ecran e, Uint32 duree)
 	}
 
     /* decallage de la "camera" pour gerer le scrolling */
+    glEnd();
     glTranslated(-e.scroll.x, -e.scroll.y, 0);
-
+    glBegin(GL_QUADS);
+    
     /* Dessin des objets en arriere plan */
 	//draw_objects(lvl, duree);
 
@@ -2063,7 +2067,9 @@ void draw_main(niveau *lvl, perso **persos, ecran e, Uint32 duree)
 	/* Dessin du ou des avants-plans */
     draw_foreground(lvl, e, duree);
 
+    glEnd();
     glPopMatrix();
+    glBegin(GL_QUADS);
 }
 
 
@@ -2071,18 +2077,21 @@ void draw_main_options(niveau *lvl, ecran e, Uint32 duree, int bck, int blocs, i
 {
     int i;
 
+    /* decallage de la "camera" pour commencer au point d'origine choisit */
+    glEnd();
     glScissor(e.origine.x, e.origine.y, e.taille.x, e.taille.y);
     glEnable(GL_SCISSOR_TEST);
-
-    /* decallage de la "camera" pour commencer au point d'origine choisit */
     glPushMatrix();
     glTranslated(e.origine.x, e.origine.y, 0);
-
+    glBegin(GL_QUADS);
+    
     if(bck)
         draw_background(lvl, e, duree);
 
+    glEnd();
     glTranslated(-e.scroll.x, -e.scroll.y, 0);
-
+    glBegin(GL_QUADS);
+    
     if(objets)
         draw_objects(lvl, duree);
 
@@ -2120,8 +2129,10 @@ void draw_main_options(niveau *lvl, ecran e, Uint32 duree, int bck, int blocs, i
     /* Dessin du ou des avants-plans */
     draw_foreground(lvl, e, duree);
 
+    glEnd();
     glPopMatrix();
     glDisable(GL_SCISSOR_TEST);
+    glBegin(GL_QUADS);
 }
 
 // A METTRE DANS SPRITE.C
