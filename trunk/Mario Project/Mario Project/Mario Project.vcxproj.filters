@@ -198,17 +198,5 @@
     <None Include="test_xml.xml">
       <Filter>Fichiers de ressources</Filter>
     </None>
-    <None Include="textures\monstres\koopa.mstr">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="textures\monstres\red_koopa.mstr">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="textures\monstres\red_koopa.png">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="textures\monstres\goomba.mstr">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
   </ItemGroup>
 </Project>
