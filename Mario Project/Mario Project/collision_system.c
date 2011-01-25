@@ -1691,7 +1691,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 					}
 
 					/* Cas où le monstre doit rester sur la plateforme */
-					if(m->type_monstre->reste_sur_plateforme)
+					if(m->type_monstre->reste_sur_plateforme && m->etat != M_RETRACTE && m->etat != M_RETRACTE_RETOURNE)
 					{
 						if(m->vitesse.x < 0 && i == bloc_bg.x && j == bloc_bg.y)
 						{
@@ -1705,7 +1705,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 						else if(m->vitesse.x > 0 && i == bloc_hd.x && j == bloc_bg.y)
 						{
 							if((n->occ_blocs[i][j]->bloc_actuel < 0 || !(n->blocs[n->occ_blocs[i][j]->bloc_actuel].phys && SOL))
-								&& (n->occ_blocs[i - 1][j]->bloc_actuel > 0 && n->blocs[n->occ_blocs[i +- 1][j]->bloc_actuel].phys && SOL))
+								&& (n->occ_blocs[i - 1][j]->bloc_actuel > 0 && n->blocs[n->occ_blocs[i - 1][j]->bloc_actuel].phys && SOL))
 							{
 								m->cote = COTE_GAUCHE;
 								m->vitesse.x *= -1;
@@ -1773,21 +1773,6 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 								}
 							}
 
-							
-
-							/*if(m->vitesse.x > 0 && n->occ_blocs[i + 1][j]->bloc_actuel > 0
-								&& !(n->blocs[n->occ_blocs[i + 1][j]->bloc_actuel].phys & SOL))
-							{
-								m->vitesse.x *= -1;
-								m->cote = COTE_GAUCHE;
-							}
-							if(m->vitesse.x < 0 
-								&& ((n->occ_blocs[i - 1][j]->bloc_actuel > 0 && !(n->blocs[n->occ_blocs[i - 1][j]->bloc_actuel].phys & SOL))
-								|| n->occ_blocs[i - 1][j]->bloc_actuel < 0))
-							{
-								m->vitesse.x *= -1;
-								m->cote = COTE_DROIT;
-							}*/
 
 							// MAJ du carré monstre
 							monstre.position.y = m->position.y;
@@ -3317,6 +3302,7 @@ void pause_monstre(occ_monstre* monstre, ecran e)
 		{
 			monstre->position = monstre->position_ini;
 			monstre->position_prec = monstre->position_ini;
+			monstre->etat = M_MARCHE;
 			monstre->cote = COTE_DROIT;
 		}
 		monstre->actif = 0;
