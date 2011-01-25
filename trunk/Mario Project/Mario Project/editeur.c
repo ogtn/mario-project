@@ -62,7 +62,6 @@ void main_editeur(void)
     la boucle en quittant le menu (sauf si on decide d'arreter de jouer) */
     while(continuer)
     {
-        glClearColor(0x31 / 256., 0x49 / 256., 0x6A / 256., 0);
         glClear(GL_COLOR_BUFFER_BIT);
 
         /* Mise à jour */
@@ -91,7 +90,7 @@ void draw_main_editeur(editeur *e)
     for(i = 0; i < NB_REGIONS_EDITEUR; i++)
         draw_group_box(e->onglets[i]);
 
-    draw_bouton(e->bouton_onglet, 0, pos);
+    draw_bouton(e->bouton_onglet, pos);
 
     /* Regions dépendantes du mode */
     switch(e->mode)
@@ -154,6 +153,8 @@ void init_editeur(editeur *e)
 
     hide(e->onglets[ONGLET_BLOCS]->group_boxes[REGION_TEXTURE_BROWSER_BLOC]);
     show(e->onglets[ONGLET_BLOCS]->group_boxes[REGION_PREVIEW_BLOC]);
+
+    glClearColor(0x31 / 256., 0x49 / 256., 0x6A / 256., 0);
 }
 
 
@@ -775,7 +776,6 @@ void maj_selection(editeur *e)
         }
         /* Affichage status bar */
         {
-            /*
             coordi pos = e->onglets[REGION_STATUS_BAR]->position;
             pos.x += 6;
             pos.y += 6;
@@ -789,13 +789,12 @@ void maj_selection(editeur *e)
             }
             else
             {
-                int id_bloc = e->world->niveau->occ_blocs[e->bloc_survole.x][e->bloc_survole.y];
-
+                /*int id_bloc = e->world->niveau->occ_blocs[e->bloc_survole.x][e->bloc_survole.y];
                 if(id_bloc != BLOC_VIDE)
                     screen_printf(pos, NULL, COLOR_WHITE, "[%d;%d] physique: [%d]", e->bloc_survole.x, e->bloc_survole.y, e->world->niveau->blocs[id_bloc].phys);
                 else
                     screen_printf(pos, NULL, COLOR_WHITE, "[%d;%d] physique: VIDE", e->bloc_survole.x, e->bloc_survole.y);
-            }*/
+            */}
         }
     }
     else
@@ -873,8 +872,9 @@ int find_bloc_survole(editeur *e)
 void dessine_viseur(editeur *e)
 {
     int mx, my;
-
+    
     /* On empeche le viseur de depasser de la zone d'aperçu */
+    glEnd();
     glScissor(e->world->ecran.origine.x, e->world->ecran.origine.y,
         e->world->ecran.taille.x, e->world->ecran.taille.y);
     glEnable(GL_SCISSOR_TEST);
@@ -903,8 +903,8 @@ void dessine_viseur(editeur *e)
     glEnd();
     glEnable(GL_TEXTURE_2D);
     glColor3f(1, 1, 1);	
-
     glDisable(GL_SCISSOR_TEST);
+    glBegin(GL_QUADS);
 }
 
 
@@ -919,6 +919,7 @@ void dessine_selection(editeur *e)
     blue =  (e->mode_bloc.select_type & 0xFF) / 255.0f;
 
     /* On empeche le viseur de depasser de la zone d'aperçu */
+    glEnd();
     glScissor(e->world->ecran.origine.x, e->world->ecran.origine.y,
         e->world->ecran.taille.x, e->world->ecran.taille.y);
     glEnable(GL_SCISSOR_TEST);
@@ -968,8 +969,8 @@ void dessine_selection(editeur *e)
 
     glEnable(GL_TEXTURE_2D);
     glColor3f(1, 1, 1);
-
     glDisable(GL_SCISSOR_TEST);
+    glBegin(GL_QUADS);
 }
 
 
@@ -1153,11 +1154,11 @@ bouton *set_text_outil_3x3(bouton *b, char *nom)
 
 void draw_rectangle(coordi pos, coordi taille, GLfloat r, GLfloat g, GLfloat b)
 {
+    glEnd();
     glDisable(GL_TEXTURE_2D);
     glLineWidth(2.0);
 
     glColor3f(r, g, b);
-
     /* Contour du rectangle */
     glBegin(GL_LINE_LOOP);
     {
@@ -1170,7 +1171,7 @@ void draw_rectangle(coordi pos, coordi taille, GLfloat r, GLfloat g, GLfloat b)
 
     /* Interieur du rectangle */
     glColor4f(r, g, b, (float)(sin((float)SDL_GetTicks() / 200)/10 + 0.3));
-
+    
     glBegin(GL_QUADS);
     {
         glVertex2i(pos.x, pos.y);
@@ -1182,6 +1183,7 @@ void draw_rectangle(coordi pos, coordi taille, GLfloat r, GLfloat g, GLfloat b)
 
     glEnable(GL_TEXTURE_2D);
     glColor3f(1, 1, 1);
+    glBegin(GL_QUADS);
 }
 
 

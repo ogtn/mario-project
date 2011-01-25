@@ -9,12 +9,12 @@
 ####### Compiler, tools and options
 
 CC            = gcc
-DEFINES       = -D_DEBUG
-CFLAGS        = -pipe -O2 -Wall -W $(shell sdl-config --cflags) $(shell xml2-config --cflags) $(DEFINES)
+DEFINES       = 
+CFLAGS        = -pipe -O3 -Wall -W -pg $(shell sdl-config --cflags) $(shell xml2-config --cflags) $(DEFINES)
 INCPATH       = -I.
 LINK          = gcc
-LFLAGS        = -Wl,-O1
-LIBS          = -L/usr/lib $(shell sdl-config --libs) $(shell xml2-config --libs) -lSDL_image -lGL -lfmod-3.75
+LFLAGS        = -O3 -pg
+LIBS          = -L/usr/lib $(shell sdl-config --libs) $(shell xml2-config --libs) -lSDL_image -lGL -lGLU -lfmod-3.75
 DEL_FILE      = rm -f
 DEL_DIR       = rmdir
 CHK_DIR_EXISTS= test -d

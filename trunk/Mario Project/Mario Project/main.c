@@ -94,14 +94,6 @@ int main(int argc, char *argv[])
     FSOUND_Init(44100, 32, 0);
     init_text("fonts/consolas.fnt", 100, COLOR_RED);
 
-    // chargement de textures de base à faire plus proprement plus tard
-    charger_texture_bis("textures/rien.PNG", NULL);
-    charger_texture_bis("textures/ascii_2.png", NULL);
-    charger_texture_bis("textures/title_screen.jpg", NULL);
-    charger_texture_bis("textures/button_blu.png", NULL);
-    charger_texture_bis("textures/button_red.png", NULL);
-    charger_texture_bis("textures/button_blk.png", NULL);
-
     //musique = charger_musique("musics/Ice Mario.mp3", 255, 1);
 
     // Menu Principal 
@@ -269,8 +261,16 @@ void jouer(world *w_)
 		//}
 
 		//if(temps_rendu < 17)
-		//	my_sleep(17 - temps_rendu);
+        //    my_sleep(17 - temps_rendu);
 
+        {
+            GLenum err = glGetError();
+
+            if(err != GL_NO_ERROR)
+                printf("Erreur OpenGL:%s\n", gluErrorString(glGetError()));
+        }
+        
+        screen_printf_dbg("FPS: %d\n", w->fps);
         screen_flush();
 	    SDL_GL_SwapBuffers();
     }

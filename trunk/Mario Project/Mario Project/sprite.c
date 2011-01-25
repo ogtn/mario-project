@@ -12,187 +12,101 @@
 
 #include "sprite.h"
 
-/* ancienne version, va virer sous peu */
-void draw_sprite(int x, int y, int largeur, int hauteur, GLuint texture,
-				 float coordx1,	 float coordx2, float coordy1, float coordy2)
+void draw_sprite_dr(sprite *s, layer depth, angle a)
 {
-	glBindTexture(GL_TEXTURE_2D, texture);
+    static GLuint last;
 
-	glBegin(GL_QUADS);
-	{
-		glTexCoord2f(coordx1, -coordy1);		glVertex2i(x, y);
-		glTexCoord2f(coordx2, -coordy1);		glVertex2i(x + largeur, y);
-		glTexCoord2f(coordx2, -coordy2);		glVertex2i(x + largeur, y + hauteur);
-		glTexCoord2f(coordx1, -coordy2);		glVertex2i(x, y + hauteur);
-	}
-	glEnd();
-}
-
-void draw_sprite_90(int x, int y, int largeur, int hauteur, GLuint texture,
-				 float coordx1,	 float coordx2, float coordy1, float coordy2)
-{
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	glBegin(GL_QUADS);
-	{
-		glTexCoord2f(coordx1, -coordy1);		glVertex2i(x, y);
-		glTexCoord2f(coordx1, -coordy2);		glVertex2i(x + largeur, y);
-		glTexCoord2f(coordx2, -coordy2);		glVertex2i(x + largeur, y + hauteur);
-		glTexCoord2f(coordx2, -coordy1);		glVertex2i(x, y + hauteur);
-
-	}
-	glEnd();
-}
-
-
-/* version optimisée */
-void draw_sprite_(sprite *s, GLuint last)
-{
 	/* Si c'est une texture differente de l'actuelle on change */
 	if(s->text_id != last)
 	{
+        last = s->text_id;
 		glEnd();
 		glBindTexture(GL_TEXTURE_2D, s->text_id);
 		glBegin(GL_QUADS);
 	}
 
-	glTexCoord2f(s->point_bg.x, -s->point_bg.y);
-	glVertex2i(s->position.x, s->position.y);
-
-	glTexCoord2f(s->point_hd.x, -s->point_bg.y);
-	glVertex2i(s->position.x + s->taille.x, s->position.y);
-
-	glTexCoord2f(s->point_hd.x, -s->point_hd.y);
-	glVertex2i(s->position.x + s->taille.x, s->position.y + s->taille.y);
-
-	glTexCoord2f(s->point_bg.x, -s->point_hd.y);
-	glVertex2i(s->position.x, s->position.y + s->taille.y);
-}
-
-
-void draw_sprite_layer(sprite *s, GLuint last, int depth)
-{
-    if(depth == 0)
+    switch(a)
     {
-        draw_sprite_(s, last);
-        return;
+        case ANGLE_0:
+        glTexCoord2f(s->point_bg.x, -s->point_bg.y);
+        glVertex3i(s->position.x, s->position.y, depth);
+        glTexCoord2f(s->point_hd.x, -s->point_bg.y);
+        glVertex3i(s->position.x + s->taille.x, s->position.y, depth);
+        glTexCoord2f(s->point_hd.x, -s->point_hd.y);
+        glVertex3i(s->position.x + s->taille.x, s->position.y + s->taille.y, depth);
+        glTexCoord2f(s->point_bg.x, -s->point_hd.y);
+        glVertex3i(s->position.x, s->position.y + s->taille.y, depth);
+        break;
+
+        case ANGLE_90:
+        glTexCoord2f(s->point_bg.x, -s->point_bg.y);
+        glVertex3i(s->position.x, s->position.y, depth);
+        glTexCoord2f(s->point_bg.x, -s->point_hd.y);
+        glVertex3i(s->position.x + s->taille.x, s->position.y, depth);
+        glTexCoord2f(s->point_hd.x, -s->point_hd.y);
+        glVertex3i(s->position.x + s->taille.x, s->position.y + s->taille.y, depth);
+        glTexCoord2f(s->point_hd.x, -s->point_bg.y);
+        glVertex3i(s->position.x, s->position.y + s->taille.y, depth);
+        break;
+
+        case ANGLE_180:
+        glTexCoord2f(s->point_hd.x, -s->point_hd.y);
+        glVertex3i(s->position.x, s->position.y, depth);
+        glTexCoord2f(s->point_bg.x, -s->point_hd.y);
+        glVertex3i(s->position.x + s->taille.x, s->position.y, depth);
+        glTexCoord2f(s->point_bg.x, -s->point_bg.y);
+        glVertex3i(s->position.x + s->taille.x, s->position.y + s->taille.y, depth);
+        glTexCoord2f(s->point_hd.x, -s->point_bg.y);
+        glVertex3i(s->position.x, s->position.y + s->taille.y, depth);
+        break;
+
+        case ANGLE_270:
+        glTexCoord2f(s->point_hd.x, -s->point_hd.y);
+        glVertex3i(s->position.x, s->position.y, depth);
+        glTexCoord2f(s->point_hd.x, -s->point_bg.y);
+        glVertex3i(s->position.x + s->taille.x, s->position.y, depth);
+        glTexCoord2f(s->point_bg.x, -s->point_bg.y);
+        glVertex3i(s->position.x + s->taille.x, s->position.y + s->taille.y, depth);
+        glTexCoord2f(s->point_bg.x, -s->point_hd.y);
+        glVertex3i(s->position.x, s->position.y + s->taille.y, depth);
+        break;
     }
-
-    glEnd();
-    glEnable(GL_DEPTH_TEST);
-    glBindTexture(GL_TEXTURE_2D, s->text_id);
-    glBegin(GL_QUADS);
-
-	glTexCoord2f(s->point_bg.x, -s->point_bg.y);
-	glVertex3i(s->position.x, s->position.y, depth);
-
-	glTexCoord2f(s->point_hd.x, -s->point_bg.y);
-	glVertex3i(s->position.x + s->taille.x, s->position.y, depth);
-
-	glTexCoord2f(s->point_hd.x, -s->point_hd.y);
-	glVertex3i(s->position.x + s->taille.x, s->position.y + s->taille.y, depth);
-
-	glTexCoord2f(s->point_bg.x, -s->point_hd.y);
-	glVertex3i(s->position.x, s->position.y + s->taille.y, depth);
-
-    glDisable(GL_DEPTH_TEST);
 }
 
 
-void draw_sprite_90_(sprite *s, GLuint last)
+void draw_sprite_d(sprite *s, layer depth)
 {
-	/* Si c'est une texture differente de l'actuelle on change */
-	if(s->text_id != last)
-	{
-		glEnd();
-		glBindTexture(GL_TEXTURE_2D, s->text_id);
-		glBegin(GL_QUADS);
-	}
-
-	glTexCoord2f(s->point_bg.x, -s->point_bg.y);
-	glVertex2i(s->position.x, s->position.y);
-
-	glTexCoord2f(s->point_bg.x, -s->point_hd.y);
-	glVertex2i(s->position.x + s->taille.x, s->position.y);
-
-	glTexCoord2f(s->point_hd.x, -s->point_hd.y);
-	glVertex2i(s->position.x + s->taille.x, s->position.y + s->taille.y);
-
-	glTexCoord2f(s->point_hd.x, -s->point_bg.y);
-	glVertex2i(s->position.x, s->position.y + s->taille.y);
+    draw_sprite_dr(s, depth, ANGLE_0);
 }
 
 
-void draw_triangle_illum(int x1, int y1, int x2, int y2, int x3, int y3, GLuint texture,
-						 float coordx1,	 float coordy1,
-						 float coordx2, float coordy2,
-						 float coordx3,	 float coordy3)
+void draw_sprite_r(sprite *s, angle a)
 {
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	glBegin(GL_TRIANGLES);
-	{
-		glTexCoord2f(coordx1, coordy1);		glVertex2i(x1, y1);
-		glTexCoord2f(coordx2, coordy2);		glVertex2i(x2, y2);
-		glTexCoord2f(coordx3, coordy3);		glVertex2i(x3, y3);
-	}
-	glEnd();
+    draw_sprite_dr(s, 0, a);
 }
 
 
-void draw_text(char *msg, coordi pos, float r, float g, float b)
+void draw_sprite(sprite *s)
 {
-	unsigned int i, px, py;
-	float x1, x2, y1, y2;
-	size_t length =  strlen(msg);
-	int largeur = 16, hauteur = 16, x, y;
-
-	glColor3f(r, g, b);
-	glBindTexture(GL_TEXTURE_2D, 2);
-	glBegin(GL_QUADS);
-
-	for(i = 0; i < length; i++)
-	{
-		px = 15 - msg[i]/16;
-		py = msg[i]%16;
-		y1 = px/16.0f;
-		y2 = (px+1)/16.0f;
-		x1 = py/16.0f;
-		x2 = (py+1)/16.0f;
-		x = i * 8 + pos.x;
-		y = pos.y;
-
-		glTexCoord2f(x1, -y1);	glVertex2i(x, y);
-		glTexCoord2f(x2, -y1);	glVertex2i(x + largeur, y);
-		glTexCoord2f(x2, -y2);	glVertex2i(x + largeur, y + hauteur);
-		glTexCoord2f(x1, -y2);	glVertex2i(x, y + hauteur);
-	}
-
-	glEnd();
-	glColor3f(1.0, 1.0, 1.0);
+    draw_sprite_dr(s, 0, ANGLE_0);
 }
 
 
 void draw_position_souris(void)
 {
-	int mx = 0, my = 0;
-	char msg[TAILLE_NOM_TEXTURE];
-	coordi pos;
-
-	pos.x = 0;
-	pos.y = HAUTEUR_FENETRE - 32;
+	int mx, my;
 
 	SDL_GetMouseState(&mx, &my);
 	my = HAUTEUR_FENETRE - my;
 
-	sprintf(msg,"Souris_x: %3d   Souris_y: %3d", mx, my);
-	draw_text(msg, pos, 1, 1, 1);
+	screen_printf_dbg("Souris_x: %3d   Souris_y: %3d", mx, my);
 }
 
 
 void draw_perso(perso *perso, Uint32 duree)
 {
 	data_texture *data;
+    sprite s;
 
 	/* Coordonnées de texture pour la texture actuelle */
 	float gauche = 0, droite;
@@ -428,17 +342,27 @@ void draw_perso(perso *perso, Uint32 duree)
 			glColor4f(0, 0, 1, 1);
 	}
 
-	draw_sprite((int)perso->position.x, (int)perso->position.y, perso->taille.x, perso->taille.y, data->texture, gauche, droite, bas, haut);
+    s.position.x = (int)perso->position.x;
+    s.position.y = (int)perso->position.y;
+    s.taille = perso->taille;
+    s.text_id = data->texture;
+    s.point_bg.x = gauche;
+    s.point_bg.y = bas;
+    s.point_hd.x = droite;
+    s.point_hd.y = haut;
+	draw_sprite(&s);
 
 	glColor4f(1, 1, 1, 1);
 
 }
+
 
 void draw_monstre(occ_monstre *monstre, Uint32 duree)
 {
 	float gauche = 0, droite = 0, haut = 0, bas = 0, temp;
 	int v_anim = monstre->type_monstre->v_anim, phase, nb_etats_presents = M_NB_ETATS - m_nb_etats_absents(monstre->type_monstre);
 	int nb_sprites_max = (monstre->type_monstre->nb_sprites_marche > monstre->type_monstre->nb_sprites_carapace) ? monstre->type_monstre->nb_sprites_marche : monstre->type_monstre->nb_sprites_carapace;
+    sprite s;
 
 	switch(monstre->etat) {
 		case M_MARCHE : case M_SORT_DU_TUYAU:
@@ -489,20 +413,29 @@ void draw_monstre(occ_monstre *monstre, Uint32 duree)
 		gauche += phase * (float)1 / nb_sprites_max;
 		droite += phase * (float)1 / nb_sprites_max;
 	}
-	
+
+    s.position.x = (int)monstre->position.x;
+    s.position.y = (int)monstre->position.y;
+    s.taille = monstre->type_monstre->taille;
+    s.text_id = monstre->type_monstre->texture;
+    s.point_bg.x = gauche;
+    s.point_bg.y = bas;
+    s.point_hd.x = droite;
+    s.point_hd.y = haut;
+    
 	if(monstre->etat == M_RETRACTE_RETOURNE)
-		draw_sprite((int)monstre->position.x, (int)monstre->position.y, monstre->type_monstre->taille.x, monstre->type_monstre->taille.y / 2, monstre->type_monstre->texture, gauche, droite, bas, haut);
-	else
-		draw_sprite((int)monstre->position.x, (int)monstre->position.y, monstre->type_monstre->taille.x, monstre->type_monstre->taille.y, monstre->type_monstre->texture, gauche, droite, bas, haut);
-
-
+        s.taille.y = monstre->type_monstre->taille.y / 2;
+		
+    /* Dessin */
+    draw_sprite(&s);
 }
+
 
 void draw_projectile(occ_projectile* proj, Uint32 duree)
 {
-
 	float gauche = 0, droite = (float) 1 / proj->type_projectile->nb_sprites_marche, haut = 0, bas = 0, temp;
 	int phase = 0, i, v_anim;
+    sprite s;
 
 	if(!proj->tps_apparition && proj->tps_vie)
 	{
@@ -522,8 +455,6 @@ void draw_projectile(occ_projectile* proj, Uint32 duree)
 			gauche = droite;
 			droite = temp;
 		}
-		draw_sprite((int)proj->position.x, (int)proj->position.y, proj->type_projectile->taille.x, proj->type_projectile->taille.y, proj->type_projectile->texture, gauche, droite, bas, haut);
-
 	}
 	else if(proj->tps_disparition && !proj->tps_vie)
 	{
@@ -541,11 +472,22 @@ void draw_projectile(occ_projectile* proj, Uint32 duree)
 				break;
 			}
 		}
-		draw_sprite((int)proj->position.x, (int)proj->position.y, proj->type_projectile->taille.x, proj->type_projectile->taille.y, proj->type_projectile->texture, gauche, droite, bas, haut);
 	}
+
+    s.position.x = (int)proj->position.x;
+    s.position.y = (int)proj->position.y;
+    s.taille = proj->type_projectile->taille;
+    s.text_id = proj->type_projectile->texture;
+    s.point_bg.x = gauche;
+    s.point_bg.y = bas;
+    s.point_hd.x = droite;
+    s.point_hd.y = haut;
+    draw_sprite(&s);
 }
 
-void draw_HUD(perso* p) {
+
+void draw_HUD(perso* p)
+{
 
 	if(p->hud->personnage == MARIO)
 		screen_printf_dbg("Mario x%d\n", p->hud->nb_vies);
@@ -558,42 +500,32 @@ void draw_HUD(perso* p) {
 	screen_printf_dbg("Temps restant : %d\n", p->hud->time);
 }
 
+
 void draw_item(item* model, occ_item* item, Uint32 duree)
 {
 	int phase;
-	float gauche = 0, droite = (float) 1 / model->nb_sprites;
+    sprite s;
+	float gauche = 0, droite = 1.F / model->nb_sprites;
+
+    s.position.x = (int)item->position.x;
+    s.position.y = (int)item->position.y;
+    s.taille = model->taille;
+    s.text_id = model->texture;
+    s.point_bg.x = s.point_bg.y = 0;
+    s.point_hd.x = s.point_hd.y = 1;
 	
 	if(model->nb_sprites > 1)
 	{
 		phase = (duree % 500) / (500 / (model->nb_sprites));
 
-		gauche += phase * (float)1 / model->nb_sprites;
-		droite += phase * (float)1 / model->nb_sprites;
+		gauche += phase * 1.F / model->nb_sprites;
+		droite += phase * 1.F / model->nb_sprites;
 
-		draw_sprite(
-			(int)item->position.x, 
-			(int)item->position.y,
-			model->taille.x, 
-			model->taille.y, 
-			model->texture, 
-			gauche,
-			droite,
-			0, 
-			1);
+        s.point_bg.x = gauche;
+        s.point_hd.x = droite;
 	}
-	else
-	{
-		draw_sprite(
-			(int)item->position.x, 
-			(int)item->position.y, 
-			model->taille.x, 
-			model->taille.y, 
-			model->texture, 
-			0, 
-			1, 
-			0, 
-			1);
-	}
+
+    draw_sprite(&s);
 }
 
 void draw_pipe(tuyau* t)
@@ -615,7 +547,7 @@ void draw_pipe(tuyau* t)
 		s.point_hd.y = 0.5F;
 		s.taille.x = (int)(t->longueur * LARGEUR_BLOC);
 		s.taille.y = (int)(2 * LARGEUR_BLOC);
-		draw_sprite_90(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y);
+        draw_sprite_r(&s, ANGLE_90);
 
 		// Haut du tuyau
 		s.position.x = (int)((t->position.x + t->longueur) * LARGEUR_BLOC);
@@ -624,7 +556,7 @@ void draw_pipe(tuyau* t)
 		s.point_hd.x = 0;
 		s.point_hd.y = 1;
 		s.taille.x = (int)(LARGEUR_BLOC);
-		draw_sprite_90(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y);
+		draw_sprite_r(&s, ANGLE_90);
 		break;
 
 	case VERS_LA_GAUCHE:
@@ -635,7 +567,7 @@ void draw_pipe(tuyau* t)
 		s.point_hd.y = 0.5F;
 		s.taille.x = (int)(LARGEUR_BLOC);
 		s.taille.y = (int)(2 * LARGEUR_BLOC);
-		draw_sprite_90(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y);
+		draw_sprite_r(&s, ANGLE_90);
 
 		 // Reste du tuyau
 		s.position.x = (int)((t->position.x + 1) * LARGEUR_BLOC);
@@ -644,7 +576,7 @@ void draw_pipe(tuyau* t)
 		s.point_hd.x = 0;
 		s.point_hd.y = 0;
 		s.taille.x = (int)(t->longueur * LARGEUR_BLOC);
-		draw_sprite_90(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y);
+		draw_sprite_r(&s, ANGLE_90);
 		break;
 
 	case VERS_LE_BAS:
@@ -655,7 +587,7 @@ void draw_pipe(tuyau* t)
 		s.point_hd.y = 0.5F;
 		s.taille.x = (int)(2 * LARGEUR_BLOC);
 		s.taille.y = (int)(LARGEUR_BLOC);
-		draw_sprite(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y);
+        draw_sprite(&s);
 
 		// Reste du tuyau
 		s.position.y = (int)((t->position.y + 1) * LARGEUR_BLOC);
@@ -664,7 +596,7 @@ void draw_pipe(tuyau* t)
 		s.point_hd.x = 1;
 		s.point_hd.y = 0;
 		s.taille.y = (int)(t->longueur * LARGEUR_BLOC);
-		draw_sprite(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y);
+        draw_sprite(&s);
 		break;
 
 	default : // VERS_LE_HAUT
@@ -675,7 +607,7 @@ void draw_pipe(tuyau* t)
 		s.point_hd.y = 0.5;
 		s.taille.x = (int)(2 * LARGEUR_BLOC);
 		s.taille.y = (int)(t->longueur * LARGEUR_BLOC);
-		draw_sprite(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y);
+        draw_sprite(&s);
 
 		// Haut du tuyau
 		s.position.y = (int)((t->position.y + t->longueur) * LARGEUR_BLOC);
@@ -684,7 +616,7 @@ void draw_pipe(tuyau* t)
 		s.point_hd.x = 1;
 		s.point_hd.y = 1;
 		s.taille.y = (int)(LARGEUR_BLOC);
-		draw_sprite(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y);
+		draw_sprite(&s);
 		break;
 	}
 }
@@ -717,15 +649,16 @@ void draw_particules(particule_generator* generator)
         {
             s.position.x = (int)p.position.x;
             s.position.y = (int)p.position.y;
-			//draw_sprite_layer(&s, s.text_id, 0);
-			draw_sprite(s.position.x, s.position.y, s.taille.x, s.taille.y, s.text_id, s.point_bg.x, s.point_hd.x, s.point_bg.y, s.point_hd.y);
+			draw_sprite(&s);
         }
     }
+    
 	glColor4f(1, 1, 1, 1);
 }
 
 void draw_contours(ecran e)
 {
+    glEnd();
     glColor3ub(0x31, 0x49, 0x6A);
 	glDisable(GL_TEXTURE_2D);
 
@@ -755,6 +688,7 @@ void draw_contours(ecran e)
 
 	glEnable(GL_TEXTURE_2D);
 	glColor3f(1, 1, 1);
+    glBegin(GL_QUADS);
 }
 
 
@@ -770,68 +704,64 @@ void draw_cadre(coordi pos, coordi taille, GLuint texture, int taille_text)
 	s.point_bg.x = 0;
 	s.point_hd.x = 1;
 
-	glBegin(GL_QUADS);
-	{
-		/* coin haut gauche */
-		s.point_bg.y = 0.875;
-		s.point_hd.y = 1;
-		s.position.x = pos.x;
-		s.position.y = pos.y + taille.y - taille_text;
-		draw_sprite_(&s, 0);
+    /* coin haut gauche */
+    s.point_bg.y = 0.875;
+    s.point_hd.y = 1;
+    s.position.x = pos.x;
+    s.position.y = pos.y + taille.y - taille_text;
+    draw_sprite(&s);
 
-		/* coin haut droite */
-		s.point_bg.y -= 0.125;
-		s.point_hd.y -= 0.125;
-		s.position.x = pos.x + taille.x - taille_text;
-		draw_sprite_(&s, texture);
+    /* coin haut droite */
+    s.point_bg.y -= 0.125;
+    s.point_hd.y -= 0.125;
+    s.position.x = pos.x + taille.x - taille_text;
+    draw_sprite(&s);
 
-		/* coin bas gauche */
-		s.point_bg.y -= 0.125;
-		s.point_hd.y -= 0.125;
-		s.position.x = pos.x;
-		s.position.y = pos.y;
-		draw_sprite_(&s, texture);
+    /* coin bas gauche */
+    s.point_bg.y -= 0.125;
+    s.point_hd.y -= 0.125;
+    s.position.x = pos.x;
+    s.position.y = pos.y;
+    draw_sprite(&s);
 
-		/* coin bas droite */
-		s.point_bg.y -= 0.125;
-		s.point_hd.y -= 0.125;
-		s.position.x = pos.x + taille.x - taille_text;
-		draw_sprite_(&s, texture);
+    /* coin bas droite */
+    s.point_bg.y -= 0.125;
+    s.point_hd.y -= 0.125;
+    s.position.x = pos.x + taille.x - taille_text;
+    draw_sprite(&s);
 
-		/* haut */
-		s.taille.x = taille.x - (2 * taille_text);
-		s.point_bg.y -= 0.125;
-		s.point_hd.y -= 0.125;
-		s.position.x = pos.x + taille_text;
-		s.position.y = pos.y + taille.y - taille_text;
-		draw_sprite_(&s, texture);
+    /* haut */
+    s.taille.x = taille.x - (2 * taille_text);
+    s.point_bg.y -= 0.125;
+    s.point_hd.y -= 0.125;
+    s.position.x = pos.x + taille_text;
+    s.position.y = pos.y + taille.y - taille_text;
+    draw_sprite(&s);
 
-		/* droite */
-		s.taille.x = taille_text;
-		s.taille.y = taille.y - (2 * taille_text);
-		s.point_bg.y -= 0.125;
-		s.point_hd.y -= 0.125;
-		s.position.x = pos.x + taille.x - taille_text;
-		s.position.y = pos.y + taille_text;
-		draw_sprite_(&s, texture);
+    /* droite */
+    s.taille.x = taille_text;
+    s.taille.y = taille.y - (2 * taille_text);
+    s.point_bg.y -= 0.125;
+    s.point_hd.y -= 0.125;
+    s.position.x = pos.x + taille.x - taille_text;
+    s.position.y = pos.y + taille_text;
+    draw_sprite(&s);
 
-		/* bas */
-		s.taille.x = taille.x - (2 * taille_text);
-		s.taille.y = taille_text;
-		s.point_bg.y -= 0.125;
-		s.point_hd.y -= 0.125;
-		s.position.x = pos.x + taille_text;
-		s.position.y = pos.y;
-		draw_sprite_(&s, texture);
+    /* bas */
+    s.taille.x = taille.x - (2 * taille_text);
+    s.taille.y = taille_text;
+    s.point_bg.y -= 0.125;
+    s.point_hd.y -= 0.125;
+    s.position.x = pos.x + taille_text;
+    s.position.y = pos.y;
+    draw_sprite(&s);
 
-		/* gauche */
-		s.taille.x = taille_text;
-		s.taille.y = taille.y - (2 * taille_text);
-		s.point_bg.y -= 0.125;
-		s.point_hd.y -= 0.125;
-		s.position.x = pos.x;
-		s.position.y = pos.y + taille_text;
-		draw_sprite_(&s, texture);
-	}
-	glEnd();
+    /* gauche */
+    s.taille.x = taille_text;
+    s.taille.y = taille.y - (2 * taille_text);
+    s.point_bg.y -= 0.125;
+    s.point_hd.y -= 0.125;
+    s.position.x = pos.x;
+    s.position.y = pos.y + taille_text;
+    draw_sprite(&s);
 }

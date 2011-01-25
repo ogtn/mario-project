@@ -81,14 +81,14 @@ void afficher_menu(menu *m, int surligne){
 	pos.y = HAUTEUR_FENETRE / 2;
 
 	/* Dessin du titre du menu */
-	draw_sprite(pos.x - 8, pos.y - 5, 16, 26, texture, 0, (float)1/3, 0, 1);
+	//draw_sprite(pos.x - 8, pos.y - 5, 16, 26, texture, 0, (float)1/3, 0, 1);
 	for(j = 1; j < taille; j++)
 	{
-		draw_sprite(pos.x + j * 8, pos.y -5, 16, 26, texture, (float)1/3, (float)2/3, 0, 1); 
+		//draw_sprite(pos.x + j * 8, pos.y -5, 16, 26, texture, (float)1/3, (float)2/3, 0, 1); 
 	}
-	draw_sprite(pos.x + (int)taille * 8, pos.y - 5, 16, 26, texture, (float)2/3, 1, 0, 1); 
+	//draw_sprite(pos.x + (int)taille * 8, pos.y - 5, 16, 26, texture, (float)2/3, 1, 0, 1); 
 	
-	draw_text(m->titre, pos, 1, 1, 1);
+	//draw_text(m->titre, pos, 1, 1, 1);
 
 	/* Dessin des titres des sous-menus */
 	for(i = 1; i <= m->nb_choix; i++){
@@ -102,14 +102,14 @@ void afficher_menu(menu *m, int surligne){
 		taille = strlen(m->choix[i]->titre);
 		pos.x = LARGEUR_FENETRE / 2 - (((int)taille + 2) * 4);
 
-		draw_sprite(pos.x - 8, pos.y - 5, 16, 26, texture, 0, (float)1/3, 0, 1);
+		//draw_sprite(pos.x - 8, pos.y - 5, 16, 26, texture, 0, (float)1/3, 0, 1);
 		for(j = 1; j < taille; j++)
 		{
-			draw_sprite(pos.x + j * 8, pos.y - 5, 16, 26, texture, (float)1/3, (float)2/3, 0, 1); 
+			//draw_sprite(pos.x + j * 8, pos.y - 5, 16, 26, texture, (float)1/3, (float)2/3, 0, 1); 
 		}
-		draw_sprite(pos.x + (int)taille * 8, pos.y - 5, 16, 26, texture, (float)2/3, 1, 0, 1); 
+		//draw_sprite(pos.x + (int)taille * 8, pos.y - 5, 16, 26, texture, (float)2/3, 1, 0, 1); 
 
-		draw_text(m->choix[i]->titre, pos, 1, 1, 1);
+		//draw_text(m->choix[i]->titre, pos, 1, 1, 1);
 	}
 }
 
@@ -178,7 +178,7 @@ int main_menu(keystate *k)
 		glClear(GL_COLOR_BUFFER_BIT);
 		/* Dessin du fond, du menu et recuperation de la position du pointeur souris
 		et de l'etat des touches */
-		draw_sprite(0, 0, LARGEUR_FENETRE, HAUTEUR_FENETRE, 3, 0, 1, 0, 1);
+		//draw_sprite(0, 0, LARGEUR_FENETRE, HAUTEUR_FENETRE, 3, 0, 1, 0, 1);
 		SDL_GetMouseState(&mx, &my);
 		my = HAUTEUR_FENETRE - my;
 		maj_keystate(k, &continuer);
