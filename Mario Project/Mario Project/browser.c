@@ -35,8 +35,12 @@ dossier *new_dossier(char *path, char *extension)
 
         while((entity = readdir(dir)) != NULL)
         {
-            /* On ignore les fichiers/dossiers cachés, et les fichiers n'ayants pas la bonne extension */
-            if(entity->d_name[0] == '.' || strstr(entity->d_name, extension) == NULL)
+            /* On ignore les fichiers/dossiers cachés */
+            if(entity->d_name[0] == '.')
+                continue;
+
+            /* On ignore les fichiers n'ayant pas la bonne extension */
+            if(strstr(entity->d_name, ".") && !strstr(entity->d_name, extension))
                 continue;
                 
             /* Si c'est un fichier */
@@ -61,7 +65,12 @@ dossier *new_dossier(char *path, char *extension)
 
         while((entity = readdir(dir)) != NULL)
         {
-            if(entity->d_name[0] == '.' || strstr(entity->d_name, extension) == NULL)
+            /* On ignore les fichiers/dossiers cachés */
+            if(entity->d_name[0] == '.')
+                continue;
+
+            /* On ignore les fichiers n'ayant pas la bonne extension */
+            if(strstr(entity->d_name, ".") && !strstr(entity->d_name, extension))
                 continue;
                 
              /* Si c'est un fichier */
@@ -79,6 +88,8 @@ dossier *new_dossier(char *path, char *extension)
 
         closedir(dir);
     }
+
+    printf("Il y a %d dossiers et %d fichiers dans %s\n", dos->nb_dossiers, dos->nb_fichiers, dos->path);
 
     return dos;
 }

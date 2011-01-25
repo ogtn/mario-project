@@ -338,7 +338,7 @@ bouton *set_label(bouton *b, char *label)
 }
 
 
-void draw_bouton(bouton *b, GLuint last, coordi pos)
+void draw_bouton(bouton *b, coordi pos)
 {
     int i;
 
@@ -350,7 +350,7 @@ void draw_bouton(bouton *b, GLuint last, coordi pos)
     {
         for(i = 0; i < b->nb_sous_boutons; i++)
         {
-            draw_bouton(b->sous_boutons[i], last, pos);
+            draw_bouton(b->sous_boutons[i], pos);
         }
     }
     /* Pour les autres on dessine le bouton */
@@ -366,11 +366,9 @@ void draw_bouton(bouton *b, GLuint last, coordi pos)
             screen_printf(label_pos, NULL, COLOR_WHITE, b->label);
         }
 
-        glBegin(GL_QUADS);
-
         if(b->enabled == 0)
         {
-            draw_sprite_(&b->sprite_inactif, last);
+            draw_sprite(&b->sprite_inactif);
 
             /* On affiche l'aide grisée si elle existe */
             if(b->survole && b->aide[0] != '\0')
@@ -383,19 +381,17 @@ void draw_bouton(bouton *b, GLuint last, coordi pos)
                 screen_printf(pos, NULL, COLOR_WHITE, b->aide);
 
             if(b->etat_actuel == RELEVE)
-                draw_sprite_(&b->sprite_survole, last);
+                draw_sprite(&b->sprite_survole);
             else
-                draw_sprite_(&b->sprite_enfonce, last);
+                draw_sprite(&b->sprite_enfonce);
         }
         else
         {
             if(b->etat_actuel == RELEVE)
-                draw_sprite_(&b->sprite_releve, last);
+                draw_sprite(&b->sprite_releve);
             else
-                draw_sprite_(&b->sprite_enfonce, last);
+                draw_sprite(&b->sprite_enfonce);
         }
-
-        glEnd();
     }
 }
 

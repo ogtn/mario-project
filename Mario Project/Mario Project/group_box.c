@@ -219,7 +219,7 @@ void draw_group_box(group_box *g)
         draw_cadre(g->position, g->taille, g->texture, g->epaisseur);
 
         for(i = 0; i < g->nb_boutons; i++)
-            draw_bouton(g->boutons[i], 0, pos);
+            draw_bouton(g->boutons[i], pos);
 
         for(i = 0; i < g->nb_group_boxes; i++)
             draw_group_box(g->group_boxes[i]);

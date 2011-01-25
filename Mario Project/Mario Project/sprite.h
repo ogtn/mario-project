@@ -17,7 +17,7 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
-typedef enum LAYER 
+typedef enum layer
 {
 	LAYER_BACKGROUND,
 	LAYER_BACKGROUND_PARTICLES,
@@ -27,7 +27,16 @@ typedef enum LAYER
 	LAYER_BLOC_2,
 	LAYER_FOREGROUND,
 	LAYER_FOREGROUND_PARTICLES
-}LAYER;
+} layer;
+
+
+typedef enum angle
+{
+    ANGLE_0,
+    ANGLE_90,
+    ANGLE_180,
+    ANGLE_270
+} angle;
 
 /******************************************************************************/
 /*=================================[INCLUDES]=================================*/
@@ -77,34 +86,11 @@ typedef struct ecran
 /*================================[PROTOTYPES]================================*/
 /******************************************************************************/
 
-/* Dessine le sprite ayant pout coordonées du coin bas-gauche (x;y), avec la
-taille donnée par largeur et hauteur avec la texture indiquée. Les coordXX
-fournissent les coordonées de texture à utiliser */
-void draw_sprite(int x, int y, int largeur, int hauteur, GLuint texture,
-				 float coordx1,	 float coordx2, float coordy1, float coordy2);
-
-void draw_sprite_90(int x, int y, int largeur, int hauteur, GLuint texture,
-				 float coordx1,	 float coordx2, float coordy1, float coordy2);
-
-/* Version optimisée de draw_sprite(), il faut lui fournir le dernier
-identificateur de texture OpenGL et un poiteur sur une structure sprite */
-void draw_sprite_(sprite *s, GLuint last);
-
-/* Version avec choix de la profonceur */
-void draw_sprite_layer(sprite *s, GLuint last, int depth);
-
-void draw_sprite_90_(sprite *s, GLuint last);
-
-
-/* Idem avec un triangle et on spécifie la couleur en plus */
-void draw_triangle_illum(int x1, int y1, int x2, int y2, int x3, int y3, GLuint texture,
-						 float coordx1,	 float coordy1,
-						 float coordx2, float coordy2,
-						 float coordx3,	 float coordy3);
-
-/* dessine la chaine de caractere fournie en argument, à la position voulue et
-avec la couleur choisie */
-void draw_text(char *msg, coordi pos, float r, float g, float b);
+/* Dessin d'un sprite */
+void draw_sprite_dr(sprite *s, layer depth, angle a);
+void draw_sprite_d(sprite *s, layer depth);
+void draw_sprite_r(sprite *s, angle a);
+void draw_sprite(sprite *s);
 
 /* ecrit à l'ecran les positions de la souris (debug) */
 void draw_position_souris(void);

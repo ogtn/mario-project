@@ -175,8 +175,10 @@ void draw_str_2d(string_2d str_2d)
     font_2d *font = str_2d.font;
 
     pos_ini = pos;
-
+    
+    glEnd();
     glBindTexture(GL_TEXTURE_2D, font->id_texture);
+    glBegin(GL_QUADS);
 
     s.position = pos;
     s.text_id = font->id_texture;
@@ -187,8 +189,6 @@ void draw_str_2d(string_2d str_2d)
     green = ((c >> 8) & 0xFF) / 255.0f;
     blue =  (c & 0xFF) / 255.0f;
     glColor4f(red, green, blue, alpha);
-
-    glBegin(GL_QUADS);
 
     /* Dessin des sprites pour chaque caractere */
     for(i = 0; msg[i] != '\0' && i < STR_MAX_LEN; i++)
@@ -222,7 +222,7 @@ void draw_str_2d(string_2d str_2d)
             s.taille = t;
             s.point_bg = c_bg;
             s.point_hd = c_hd;
-            draw_sprite_(&s, s.text_id);
+            draw_sprite(&s);
 
             if(msg[i] < 0)
                 pos.x += font->carac[msg[i] + 256].avance_x + font->outline;
@@ -239,8 +239,6 @@ void draw_str_2d(string_2d str_2d)
             pos.y -= font->hauteur_ligne + font->outline;
         }
     }
-
-    glEnd();
 }
 
 
@@ -400,6 +398,7 @@ void screen_flush(void)
     G.ligne_actuelle = 0;
 	G.colonne_actuelle = DEBUT_LIGNE_X;
     G.nb_msg_2d = 0;
+    glColor3f(1.F, 1.F, 1.F);
 }
 
 

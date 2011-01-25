@@ -137,7 +137,7 @@ bouton *set_label(bouton *b, char *label);
 
 /* S'il te plait, dessine moi un bouton
 pos indique ou ecrire l'aide associée au bouton */
-void draw_bouton(bouton *b, GLuint last, coordi pos);
+void draw_bouton(bouton *b, coordi pos);
 
 /* Modifie l'etat du bouton en fonction de la position de la souris */
 void maj_bouton(bouton *b, keystate *k);

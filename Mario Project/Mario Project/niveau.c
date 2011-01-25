@@ -1964,13 +1964,21 @@ void draw_main(niveau *lvl, perso **persos, ecran e, Uint32 duree)
     glTranslated(-e.scroll.x, -e.scroll.y, 0);
 
     /* Dessin des objets en arriere plan */
-	draw_objects(lvl, duree);
+	//draw_objects(lvl, duree);
 
 	/* Dessin des arrivées */
 	for(i = 0; i < lvl->nb_finish; i++)
 	{
 		finish f = lvl->finishes[i];
-		draw_sprite(f.position.x, f.position.y, f.taille.x, f.taille.y, f.id_text, 0, 1, 0, 1);
+        sprite s;
+        
+        s.point_bg.x = s.point_bg.y = 0;
+        s.point_hd.x = s.point_hd.y = 1;
+        s.position.x = (int)f.position.x;
+        s.position.y = (int)f.position.y;
+        s.taille = f.taille;
+        s.text_id = f.id_text;
+		draw_sprite(&s);
 	}
 
 	/* Dessin des items */
@@ -2027,6 +2035,7 @@ void draw_main(niveau *lvl, perso **persos, ecran e, Uint32 duree)
 #ifdef _DEBUG
 
 	// Mise en couleur de la hitbox du personnage
+    glEnd();
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);
 	glBegin(GL_QUADS);
@@ -2041,6 +2050,7 @@ void draw_main(niveau *lvl, perso **persos, ecran e, Uint32 duree)
 	glEnd();
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
+    glBegin(GL_QUADS);
 
 #endif
 
@@ -2118,15 +2128,20 @@ void draw_main_options(niveau *lvl, ecran e, Uint32 duree, int bck, int blocs, i
 void draw_foreground(niveau *n, ecran e, Uint32 duree)
 {
     int i;
+    sprite s;
     coordf decallage;
     coordf text_coord;
-
 	int phase, v_anim;
 
-	decallage.x = (float)e.scroll.x / 5000 * n->nb_backgrounds * 2;
+    decallage.x = (float)e.scroll.x / 5000 * n->nb_backgrounds * 2;
     decallage.y = (float)e.scroll.y / 20000;
-
-    glColor4f(1, 1, 1, 1);
+    
+    s.position.x = e.origine.x + e.scroll.x;
+    s.position.y = 0;
+    s.taille.x = e.taille.x;
+    s.point_bg.x = decallage.x;
+    s.point_bg.y = decallage.y;
+    s.point_hd.y = 1;
 
     for(i = 0; i < n->nb_foregrounds; i++)
     {
@@ -2135,38 +2150,20 @@ void draw_foreground(niveau *n, ecran e, Uint32 duree)
 
 		if(n->foregrounds[i].nb_sprites > 1)
 		{
-
 			// stockage de la vitesse d'animation du foreground actuel
 			v_anim = n->foregrounds[i].v_anim;
 
 			// Détermination de quelle image doit être affichée
 			phase = (duree % v_anim) / (v_anim / n->foregrounds[i].nb_sprites);
+        }
+        else
+            phase = 0;
 
-			draw_sprite(
-			e.origine.x + e.scroll.x,
-            0,
-			e.taille.x,
-			n->foregrounds[i].taille.y,
-            n->foregrounds[i].id_text[phase],
-			decallage.x,
-			decallage.x + text_coord.x,
-			decallage.y,
-			1);
-		}
-		else 
-		{
-			// Affichage de l'image
-			draw_sprite(
-            e.origine.x + e.scroll.x,
-            0,
-			e.taille.x,
-			n->foregrounds[i].taille.y,
-            n->foregrounds[i].id_text[0],
-			decallage.x,
-			decallage.x + text_coord.x,
-			decallage.y,
-			1);
-		}
+        /* Dessin */
+        s.taille.y = n->foregrounds[i].taille.y;
+        s.text_id = n->foregrounds[i].id_text[phase];
+        s.point_hd.x = decallage.x + text_coord.x;
+        draw_sprite(&s);
     }
 }
 
@@ -2174,15 +2171,20 @@ void draw_foreground(niveau *n, ecran e, Uint32 duree)
 void draw_background(niveau *n, ecran e, Uint32 duree)
 {
     int i;
+    sprite s;
     coordf decallage;
     coordf text_coord;
-
 	int phase, v_anim;
 
     decallage.x = (float)e.scroll.x / 5000;
     decallage.y = (float)e.scroll.y / 20000;
 
-    glColor4f(1, 1, 1, 1);
+    s.position.x = 0;
+    s.position.y = 0;
+    s.taille.x = e.taille.x;
+    s.taille.y = e.taille.y;
+    s.point_bg.x = decallage.x;
+    s.point_bg.y = decallage.y;
 
     for(i = 0; i < n->nb_backgrounds; i++)
     {
@@ -2197,33 +2199,15 @@ void draw_background(niveau *n, ecran e, Uint32 duree)
 
 			// Détermination de quelle image doit être affichée
 			phase = (duree % v_anim) / (v_anim / n->backgrounds[i].nb_sprites);
+        }
+        else
+            phase = 0;
 
-			draw_sprite(
-            0,
-            0,
-            e.taille.x,
-            e.taille.y,
-            n->backgrounds[i].id_text[phase],
-			decallage.x,
-			decallage.x + text_coord.x,
-			decallage.y,
-			decallage.y + text_coord.y);
-		}
-
-		else 
-		{
-			// Affichage de l'image
-			draw_sprite(
-            0,
-            0,
-            e.taille.x,
-            e.taille.y,
-            n->backgrounds[i].id_text[0],
-            decallage.x,
-            decallage.x + text_coord.x,
-            decallage.y,
-            decallage.y + text_coord.y);
-		}
+        /* Dessin */
+        s.text_id = n->backgrounds[i].id_text[phase];
+        s.point_hd.x = decallage.x + text_coord.x,
+        s.point_hd.y = decallage.y + text_coord.y;
+        draw_sprite(&s);
 
         decallage.x *= 2;
         decallage.y *= 2;
@@ -2260,9 +2244,6 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
         fin_x++;
     if(fin_y != n->taille.y)
         fin_y++;
-
-    glColor3f(1, 1, 1);
-    glBegin(GL_QUADS);
 
     for(i = debut_x; i < fin_x; i++)
     {	
@@ -2305,25 +2286,25 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
 					case POUSSE_PAR_LA_DROITE:
 						sprite.position.x = occ->position.x + occ->compteur_etat * 2;
 						sprite.position.y = occ->position.y;
-						draw_sprite_layer(&sprite, n->last_texture, 1);
+						draw_sprite_d(&sprite, 1);
 						occ->compteur_etat = (occ->compteur_etat + 1) % 6;
 						break;
 					case POUSSE_PAR_LA_GAUCHE:
 						sprite.position.x = occ->position.x - occ->compteur_etat * 2;
 						sprite.position.y = occ->position.y;
-						draw_sprite_layer(&sprite, n->last_texture, 1);
+						draw_sprite_d(&sprite, 1);
 						occ->compteur_etat = (occ->compteur_etat + 1) % 6;
 						break;
 					case POUSSE_PAR_LE_HAUT:
 						sprite.position.y =  occ->position.y = occ->position.y + occ->compteur_etat;
 						sprite.position.x = occ->position.x;
-						draw_sprite_layer(&sprite, n->last_texture, 0);
+						draw_sprite(&sprite);
 						occ->compteur_etat = (occ->compteur_etat + 1) % 5;
 						break;
 					default:
 						sprite.position.x =  occ->position.x = i * n->taille_blocs.x;
 						sprite.position.y =  occ->position.y = j * n->taille_blocs.y;
-						draw_sprite_layer(&sprite, n->last_texture, 0);
+						draw_sprite(&sprite);
 						break;
 					}
 
@@ -2345,8 +2326,6 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
 			
         }
     }
-
-    glEnd();
 }
 
 // A METTRE DANS SPRITE.C
@@ -2354,21 +2333,18 @@ void draw_objects(niveau *n, Uint32 duree)
 {
     int i, j, v_anim, phase;
     id object_id;
-    sprite sprite;
+    sprite s;
 
     /* comme un seul sprite est placé dans l'image dans le cas des objets, les coordonnées de texture sont toujours les memes (on affiche toute l'image) */
-    sprite.point_bg.x = 0;
-    sprite.point_bg.y = 0;
-    sprite.point_hd.x = 1;
-    sprite.point_hd.y = 1;
-
-    sprite.position.x = 0;
-
-    glBegin(GL_QUADS);
+    s.point_bg.x = 0;
+    s.point_bg.y = 0;
+    s.point_hd.x = 1;
+    s.point_hd.y = 1;
+    s.position.x = 0;
 
     for(i = 0; i < n->taille.x; i++)
     {
-        sprite.position.y = 0;
+        s.position.y = 0;
 
         for(j = 0; j < n->taille.y; j++)
         {
@@ -2387,33 +2363,29 @@ void draw_objects(niveau *n, Uint32 duree)
 					// Détermination de quelle image doit être affichée
 					phase = (duree % v_anim) / (v_anim / n->objets[object_id].nb_sprites);
 
-					sprite.taille.x = n->objets[object_id].taille.x;
-					sprite.taille.y = n->objets[object_id].taille.y;
-					sprite.text_id = n->objets[object_id].id_text[phase];
+					s.taille = n->objets[object_id].taille;
+					s.text_id = n->objets[object_id].id_text[phase];
 
 					// Affichage de l'image
-					draw_sprite_(&sprite, n->last_texture);
-					n->last_texture = sprite.text_id;
+					draw_sprite(&s);
+					n->last_texture = s.text_id;
 				}
 				else
 				{
 					// Sinon on affiche qu'une seule image 
-					sprite.taille.x = n->objets[object_id].taille.x;
-					sprite.taille.y = n->objets[object_id].taille.y;
-					sprite.text_id = n->objets[object_id].id_text[0];
+					s.taille = n->objets[object_id].taille;
+					s.text_id = n->objets[object_id].id_text[0];
 
-					draw_sprite_(&sprite, n->last_texture);
-					n->last_texture = sprite.text_id;
+					draw_sprite(&s);
+					n->last_texture = s.text_id;
 				}
 			}
 
-            sprite.position.y += n->taille_blocs.y;
+            s.position.y += n->taille_blocs.y;
         }
 
-        sprite.position.x += n->taille_blocs.x;
+        s.position.x += n->taille_blocs.x;
     }
-
-    glEnd();
 }
 
 void MAJ_particules(niveau* n, Uint32 duree)
