@@ -180,6 +180,12 @@ void charger_perso(char *nom, perso* p){
 
 	perso_file = fopen(nom_texture, "r");
 
+    if(perso_file == NULL)
+    {
+        printf("Le fichier %s est introuvable.\n", nom_texture);
+        return NULL;
+    }
+
 	/* Chargement des constantes pour le calcul des collisions */
 	fscanf(perso_file, "abscisse_bas : %d\n", &nb_1);
 	p->texture_act->abscisse_bas = nb_1;

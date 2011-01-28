@@ -351,6 +351,7 @@ void draw_perso(perso *perso, Uint32 duree)
     s.point_hd.x = droite;
     s.point_hd.y = haut;
 	draw_sprite(&s);
+    screen_printf_dbg("perso.texture = %d\n", s.text_id);
 
 	glColor4f(1, 1, 1, 1);
 

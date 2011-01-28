@@ -50,12 +50,17 @@ font_2d *load_font_2d(char *nom)
     char nom_texture[TAILLE_NOM_TEXTURE];
 
     flux = fopen(nom, "r");
+    
     if(flux == NULL)
+    {
+        printf("Le fichier %s est introuvable.", nom);
         return NULL;
+    }
 
     f = new_font_2d();
+    
     if(f == NULL)
-        return f;
+        return NULL;
 
     lire_font_2d(flux, f);
 
@@ -175,11 +180,6 @@ void draw_str_2d(string_2d str_2d)
     font_2d *font = str_2d.font;
 
     pos_ini = pos;
-    
-    glEnd();
-    glBindTexture(GL_TEXTURE_2D, font->id_texture);
-    glBegin(GL_QUADS);
-
     s.position = pos;
     s.text_id = font->id_texture;
 

@@ -176,6 +176,12 @@ item* charger_item(char* nom, int type_item)
 
 	item_file = fopen(nom_texture, "r");
 
+    if(item_file == NULL)
+    {
+        printf("Le fichier %s est introuvable.\n", nom_texture);
+        return NULL;
+    }
+
 	i->nom = type_item;
 
 	fscanf(item_file, "vitesse_x : %f\n", &nb1);

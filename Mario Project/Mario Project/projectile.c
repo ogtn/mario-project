@@ -195,6 +195,12 @@ projectile* charger_projectile(char* nom){
 
 	proj_file = fopen(nom_texture, "r");
 
+    if(proj_file == NULL)
+    {
+        printf("Le fichier %s est introuvable.\n", nom_texture);
+        return NULL;
+    }
+
 	fscanf(proj_file, "vitesse_x : %f\n", &tmp);
 	proj->vitesse.x = tmp;
 

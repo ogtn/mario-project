@@ -1078,11 +1078,12 @@ void liberer_textures_niveau(niveau* n)
 		glDeleteTextures(1, &n->projectiles[i]->texture);
 
 	/* Liberation des textures des objets */
-	for(i = 0; i < n->nb_objets; i++) {
+	for(i = 0; i < n->nb_objets; i++)
+    {
 		for(j = 0; j < n->objets[i].nb_sprites; j++)
 			glDeleteTextures(1, &n->objets[i].id_text[j]);
 
-			free(n->objets[i].id_text);
+        free(n->objets[i].id_text);
 	}
 
 	/* Liberation des textures des blocs */
@@ -1117,6 +1118,12 @@ void charger_objet_background(background* b, int is_object)
 	strcat(nom_texture, ".obj");
 
 	back_file = fopen(nom_texture, "r");
+
+    if(back_file == NULL)
+    {
+        printf("Le fichier %s est introuvable.\n", nom_texture);
+        return NULL;
+    }
 
 	fscanf(back_file, "nb_sprites : %d\n", &nb_1);
 	b->nb_sprites = nb_1;
