@@ -209,6 +209,12 @@ monstre *charger_monstre(char* nom){
 
 	mstr_file = fopen(nom_texture, "r");
 
+    if(mstr_file == NULL)
+    {
+        printf("Le fichier %s est introuvable.\n", nom_texture);
+        return NULL;
+    }
+
 	/* Chargement des constantes pour les collisions */
 	fscanf(mstr_file, "abscisse_bas : %d\n", &nb);
 	m->abscisse_bas = nb;

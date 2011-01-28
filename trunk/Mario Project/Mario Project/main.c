@@ -198,9 +198,11 @@ void jouer(world *w_)
     while(continuer)
     {
 		temps_rendu = SDL_GetTicks();
+        glEnd();
         glClear(GL_COLOR_BUFFER_BIT);
 		glClear(GL_DEPTH_BUFFER_BIT);
-
+        glBegin(GL_QUADS);
+        
         /* Mise à jour de l'etat des touches du clavier */
         maj_keystate(w->keystate, &continuer);
         /* Test de collisions */

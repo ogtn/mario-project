@@ -50,8 +50,9 @@ GLuint charger_texture_bis(char *nom, coordi *taille)
 
 	SDL_FreeSurface(texture_sdl);
 
-	return texture_ogl;
+    return texture_ogl;
 }
+
 
 void charger_infos_texture(texture *t)
 {
@@ -66,11 +67,11 @@ void charger_infos_texture(texture *t)
 
 	flux = fopen(nom, "r");
 
-	if(flux == NULL || t ==  NULL)
-	{
-		/* gestion d'erreur? valeurs par defaut? à terminer... */
-	}
-
+    if(flux == NULL)
+    {
+        printf("Le fichier %s est introuvable.\n", nom);
+        return NULL;
+    }
 
 	fscanf(flux, "%d %d %d %d",&(t->taille.x), &(t->taille.y), &(t->taille_sprite.x), &(t->taille_sprite.y));
 	nb_sprites = (t->taille.x / t->taille_sprite.x) * (t->taille.y / t->taille_sprite.y);
@@ -95,11 +96,12 @@ void charger_cfg_texture(char* nom_cfg, texture *t, coordi taille_blocs)
 	int i, nb_blocs_x, nb_blocs_y;
 
 	flux = fopen(nom_cfg, "r");
-    
-	if(flux == NULL || t ==  NULL)
-	{
-		/* gestion d'erreur? valeurs par defaut? à terminer... */
-	}
+
+    if(flux == NULL)
+    {
+        printf("Le fichier %s est introuvable.\n", nom_cfg);
+        return NULL;
+    }
     
 	fscanf(flux, "%d %d",&nb_blocs_y, &nb_blocs_x);
 	nb_sprites = nb_blocs_x * nb_blocs_y;
@@ -191,7 +193,6 @@ char *supprime_extension(char *nom)
 
 coordi calcul_nouvelle_taille(SDL_Surface *t)
 {
-
 	coordi taille;
 	int i = 0;
 
@@ -214,37 +215,8 @@ coordi calcul_nouvelle_taille(SDL_Surface *t)
 	return taille;
 }
 
-Uint32 getpixel(SDL_Surface *surface, int x, int y)
-{
-	int bpp = surface->format->BytesPerPixel;
-
-	/* Here p is the address to the pixel we want to retrieve */
-	Uint8 *p = ((Uint8 *)surface->pixels) + y * surface->pitch + x * bpp;
-   
-	switch (bpp) {
-       case 1:
-           return *p;
-   
-       case 2:
-           return *(Uint16 *)p;
-   
-       case 3:
-           if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-               return p[0] << 16 | p[1] << 8 | p[2];
-           else
-               return p[0] | p[1] << 8 | p[2] << 16;
-   
-       case 4:
-           return *(Uint32 *)p;
-   
-       default:
-           return 0;       /* shouldn't happen, but avoids warnings */
-     } // switch
-}
-
 
 /******** Gestion des listes chainées ************/
-
 liste_texture *new_liste_texture()
 {
     liste_texture *liste = malloc(sizeof(liste_texture));

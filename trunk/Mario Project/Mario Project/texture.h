@@ -118,10 +118,6 @@ char *supprime_extension(char *nom);
 /* Calcule la dimension de la nouvelle texture */
 coordi calcul_nouvelle_taille(SDL_Surface *t);
 
-/* Retourne le pixel qui se trouve en (x, y) dans la surface */
-Uint32 getpixel(SDL_Surface *surface, int x, int y);
-
-
 /*********** Gestion des listes chainees ***********/
 liste_texture *new_liste_texture();
 void free_liste_texture(liste_texture **liste);
