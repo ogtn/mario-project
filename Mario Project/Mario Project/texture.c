@@ -18,7 +18,8 @@ GLuint charger_texture_bis(char *nom, coordi *taille)
 {
 	GLuint texture_ogl;
 	SDL_Surface * texture_sdl;
-
+    glEnd();
+    
 	/* creation de la texture OpenGl */
 	glGenTextures(1, &texture_ogl);
 	glBindTexture(GL_TEXTURE_2D, texture_ogl);
@@ -49,6 +50,7 @@ GLuint charger_texture_bis(char *nom, coordi *taille)
 	}
 
 	SDL_FreeSurface(texture_sdl);
+    glBegin(GL_QUADS);
 
     return texture_ogl;
 }
