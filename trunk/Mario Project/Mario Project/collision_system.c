@@ -386,7 +386,24 @@ void MAJ_collision_monstre(occ_monstre* monstre, ecran e, Uint32 duree) {
 				monstre->vitesse.x = (monstre->vitesse.x < 0)?-M_V_MARCHE:M_V_MARCHE;
 			}
 		}
-		else if(monstre->etat != M_MORT_PAR_SAUT) {
+		else if((monstre->etat == M_RETRACTE || monstre->etat == M_SORT_CARAPACE)
+			&& monstre->tps_retracte > 0)
+		{
+			monstre->tps_retracte -= duree;
+			if(monstre->tps_retracte < monstre->type_monstre->v_anim[M_SORT_CARAPACE] *  monstre->type_monstre->nb_sprites[M_SORT_CARAPACE] / 2)
+			{
+				monstre->etat = M_SORT_CARAPACE;
+			}
+
+			if(monstre->tps_retracte < 0)
+			{
+				monstre->tps_retracte = 0;
+				monstre->etat = M_MARCHE;
+				monstre->vitesse.x = (monstre->cote == COTE_GAUCHE)?-M_V_MARCHE:M_V_MARCHE;
+			}
+		}
+		else if(monstre->etat != M_MORT_PAR_SAUT)
+		{
 
 			/* Gravité */
 			gravity(&monstre->vitesse, duree);
@@ -481,7 +498,7 @@ void MAJ_collision_perso(perso *perso, niveau* lvl, keystate* keystate, Uint32 d
 		if(keystate->actuel[RUN] && !keystate->actuel[BAS] && !keystate->precedent[RUN]
 		&& perso->transformation >= FIRE_MARIO && perso->etat != DERAPE 
 			&& perso->etat != REGARDE_HAUT && !perso->tps_attaque)
-			throw_projectile_perso(perso, lvl, p);
+			throw_special_projectile_perso(perso, lvl, p);
 
 		/* Sauter */
 		if(keystate->actuel[SAUTER] && !keystate->precedent[SAUTER] && !keystate->actuel[HAUT]
@@ -1374,6 +1391,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 										p->etat = DEBOUT_CARAPACE;
 										mstr_actuel->occ_monstre->position.x = p->position.x + p->taille.x / 2;
 										mstr_actuel->occ_monstre->position.y = p->position.y + p->taille.x / 2;
+										mstr_actuel->occ_monstre->tps_retracte = 0;
 										p->monstre_porte = mstr_actuel->occ_monstre;
 										p->monstre_porte->etat = M_RETRACTE_PORTED;
 										p->hud->nb_monstres_tues_carapace = 0;
@@ -1390,6 +1408,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 
 										FSOUND_PlaySound(FSOUND_FREE, mstr_actuel->occ_monstre->type_monstre->sons[SND_PROJ_ON]);
 										p->tps_pousse_carapace = TPS_POUSSE_CARAPACE;
+										p->monstre_porte = mstr_actuel->occ_monstre;
 
 										// Comptage et affichage des points
 										compte_points(p, mstr_actuel->occ_monstre);
@@ -1406,6 +1425,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 
 										// Immobilisation du monstre
 										mstr_actuel->occ_monstre->vitesse.x = 0;
+										mstr_actuel->occ_monstre->tps_retracte = mstr_actuel->occ_monstre->type_monstre->v_anim[M_SORT_CARAPACE] *  mstr_actuel->occ_monstre->type_monstre->nb_sprites[M_SORT_CARAPACE];
 										FSOUND_PlaySound(FSOUND_FREE, mstr_actuel->occ_monstre->type_monstre->sons[SND_JUMP_ON]);
 
 										// Comptage et affichage des points
@@ -1423,7 +1443,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 										else
 											mstr_actuel->occ_monstre->vitesse.x = V_CARAPACE;
 
-
+										mstr_actuel->occ_monstre->tps_retracte = 0;
 										FSOUND_PlaySound(FSOUND_FREE, mstr_actuel->occ_monstre->type_monstre->sons[SND_PROJ_ON]);
 
 										// Comptage et affichage des points
@@ -1436,6 +1456,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 									// Il devient retracté
 									mstr_actuel->occ_monstre->etat = M_RETRACTE;
 									mstr_actuel->occ_monstre->vitesse.x = 0;
+									mstr_actuel->occ_monstre->tps_retracte = 6 * mstr_actuel->occ_monstre->type_monstre->v_anim[M_SORT_CARAPACE] *  mstr_actuel->occ_monstre->type_monstre->nb_sprites[M_SORT_CARAPACE];
 
 									/* Si la touche de saut est active, le personnage saute plus haut */
 									if(keystate->actuel[SAUTER])
@@ -1699,8 +1720,8 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 					{
 						if(m->vitesse.x < 0 && i == bloc_bg.x && j == bloc_bg.y)
 						{
-							if((n->occ_blocs[i][j]->bloc_actuel < 0 || !(n->blocs[n->occ_blocs[i][j]->bloc_actuel].phys && SOL))
-								&& (n->occ_blocs[i + 1][j]->bloc_actuel > 0 && n->blocs[n->occ_blocs[i + 1][j]->bloc_actuel].phys && SOL))
+							if((n->occ_blocs[i][j]->bloc_actuel < 0 || !(n->blocs[n->occ_blocs[i][j]->bloc_actuel].phys & SOL))
+								&& (n->occ_blocs[i + 1][j]->bloc_actuel > 0 && n->blocs[n->occ_blocs[i + 1][j]->bloc_actuel].phys & SOL))
 							{
 								m->cote = COTE_DROIT;
 								m->vitesse.x *= -1;
@@ -1708,8 +1729,8 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 						}
 						else if(m->vitesse.x > 0 && i == bloc_hd.x && j == bloc_bg.y)
 						{
-							if((n->occ_blocs[i][j]->bloc_actuel < 0 || !(n->blocs[n->occ_blocs[i][j]->bloc_actuel].phys && SOL))
-								&& (n->occ_blocs[i - 1][j]->bloc_actuel > 0 && n->blocs[n->occ_blocs[i - 1][j]->bloc_actuel].phys && SOL))
+							if((n->occ_blocs[i][j]->bloc_actuel < 0 || !(n->blocs[n->occ_blocs[i][j]->bloc_actuel].phys & SOL))
+								&& (n->occ_blocs[i - 1][j]->bloc_actuel > 0 && n->blocs[n->occ_blocs[i - 1][j]->bloc_actuel].phys & SOL))
 							{
 								m->cote = COTE_GAUCHE;
 								m->vitesse.x *= -1;
@@ -3274,8 +3295,9 @@ void pause_monstre(occ_monstre* monstre, ecran e)
 		{
 			monstre->position = monstre->position_ini;
 			monstre->position_prec = monstre->position_ini;
+			monstre->vitesse.x = -M_V_MARCHE;
 			monstre->etat = M_MARCHE;
-			monstre->cote = COTE_DROIT;
+			monstre->cote = COTE_GAUCHE;
 		}
 		monstre->actif = 0;
 	}

@@ -1,9 +1,12 @@
 abscisse_bas : 6
 nb_sprites_marche : 8
 nb_sprites_carapace : 6
+nb_sprites_sort_carapace : 9
 est_tuable_par_saut : 0
 est_tuable_par_boule_feu : 1
 peut_sauter_dessus : 1
 reste_sur_plateforme : 0
-v_anim : 650
+v_anim_marche : 600
+v_anim_carapace : 600
+v_anim_sort_carapace : 100
 points : 200

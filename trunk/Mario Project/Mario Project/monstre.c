@@ -25,13 +25,13 @@ monstre* init_monstre(monstre *m)
 
 	if(m != NULL)
 	{
+		int i;
+
 		m->taille.x = 0;
 		m->taille.y = 0;
 		m->abscisse_bas = 0;
-		m->nb_sprites_marche = 0;
 		m->est_tuable_par_boule_feu = 0;
 		m->texture = 0;
-		m->v_anim = 0;
 		m->points = 0;
 		m->tps_disparition = 0;
 		m->tps_sortie_tuyau = 650;
@@ -41,6 +41,12 @@ monstre* init_monstre(monstre *m)
 		m->sons[SND_JUMP_ON] = FSOUND_Sample_Load(FSOUND_FREE, "musics/JumpOnMonster.wav", 0, 0, 0);
 		m->sons[SND_PROJ_ON] = FSOUND_Sample_Load(FSOUND_FREE, "musics/ProjOnMonster.wav", 0, 0, 0);
 		m->sons[SND_LEVEL_ON] = FSOUND_Sample_Load(FSOUND_FREE, "musics/CollisionsMonsterLevel.wav", 0, 0, 0);
+
+		for(i = 0; i < M_NB_ETATS; i++)
+		{
+			m->nb_sprites[i] = 0;
+			m->v_anim[i] = 0;
+		}
 	}
 
 	return m;
@@ -89,6 +95,7 @@ occ_monstre*  init_occ_monstre(occ_monstre *m, float position_x, float position_
 		m->actif = 1;
 
 		m->type_monstre = type_monstre;
+		m->tps_retracte = 0;
 	}
 	return m;
 }
@@ -193,7 +200,7 @@ monstre *charger_monstre(char* nom){
 	char nom_texture[TAILLE_NOM_TEXTURE];
 	FILE *mstr_file;
 	monstre* m = new_monstre();
-	int nb = 0, nb_1 = 0, nb_2 = 0, nb_lignes = 0;
+	int nb = 0, nb_1 = 0, nb_2 = 0, nb_3 = 0, nb_lignes = 0;
 
 	// Chargement de la texture 
 	strcpy(nom_texture, "textures/monstres/");
@@ -221,25 +228,34 @@ monstre *charger_monstre(char* nom){
 
 	/* Chargement du nombre de sprites de chaque état du monstre */
 	fscanf(mstr_file, "nb_sprites_marche : %d\n", &nb);
+	m->nb_sprites[M_MARCHE] = nb;
 	
 	if(nb){
 		nb_lignes++;
-		m->nb_sprites_marche = nb;
 		nb_1 = m->taille.x / nb;
 	}
 
 	fscanf(mstr_file, "nb_sprites_carapace : %d\n", &nb);
-	m->nb_sprites_carapace = nb;
+	m->nb_sprites[M_RETRACTE] = nb;
 	
 	if(nb){
 		nb_lignes++;
 		nb_2 = m->taille.x / nb;
 	}
 
+	fscanf(mstr_file, "nb_sprites_sort_carapace : %d\n", &nb);
+	m->nb_sprites[M_SORT_CARAPACE] = nb;
+	
+	if(nb){
+		nb_lignes++;
+		nb_3 = m->taille.x / nb;
+	}
+
 	fscanf(mstr_file, "est_tuable_par_saut : %d\n", &nb);
 	m->est_tuable_par_saut = nb;
 
-	if(nb){
+	if(nb)
+	{
 		nb_lignes++;
 		m->tps_disparition = M_TPS_DISPARITION;
 	}
@@ -247,7 +263,8 @@ monstre *charger_monstre(char* nom){
 	fscanf(mstr_file, "est_tuable_par_boule_feu : %d\n", &nb);
 	m->est_tuable_par_boule_feu = nb;
 
-	if(!m->est_tuable_par_saut && m->est_tuable_par_boule_feu){
+	if(!m->est_tuable_par_saut && m->est_tuable_par_boule_feu
+		&& m->nb_sprites[M_RETRACTE] == 0) {
 		nb_lignes++;
 	}	
 
@@ -257,16 +274,23 @@ monstre *charger_monstre(char* nom){
 	fscanf(mstr_file, "reste_sur_plateforme : %d\n", &nb);
 	m->reste_sur_plateforme = nb;
 
-	fscanf(mstr_file, "v_anim : %d\n", &nb);
-	m->v_anim = nb;
+	fscanf(mstr_file, "v_anim_marche : %d\n", &nb);
+	m->v_anim[M_MARCHE] = nb;
+
+	fscanf(mstr_file, "v_anim_carapace : %d\n", &nb);
+	m->v_anim[M_RETRACTE] = nb;
+
+	fscanf(mstr_file, "v_anim_sort_carapace : %d\n", &nb);
+	m->v_anim[M_SORT_CARAPACE] = nb;
 
 	/* Calcul la taille d'un sprite de la texture */
-	m->taille.x = (m->nb_sprites_carapace == 0)?nb_1:min(nb_1, nb_2);
+	m->taille.x = (m->nb_sprites[M_RETRACTE] == 0)?nb_1:min(nb_3, min(nb_1, nb_2));
 	m->taille.y = m->taille.y / nb_lignes;
 
 	/* Chargement des points */
 	fscanf(mstr_file, "points : %d\n", &nb);
 	m->points = nb;
+	m->nb_sprites_max = max(m->nb_sprites[M_RETRACTE], max(m->nb_sprites[M_MARCHE], m->nb_sprites[M_SORT_CARAPACE]));
     strcpy(m->nom, nom);
 
 	fclose(mstr_file);
@@ -274,17 +298,20 @@ monstre *charger_monstre(char* nom){
 	return m;
 }
 
-int m_nb_etats_absents(monstre* m){
-
+int m_nb_etats_absents(monstre* m)
+{
 	int cpt = 0;
 
-	if(m->nb_sprites_marche == 0)
+	if(m->nb_sprites[M_MARCHE] == 0)
 		cpt++;
 
-	if(!m->est_tuable_par_saut && !m->est_tuable_par_boule_feu)
+	if(m->est_tuable_par_saut)
+		cpt--;
+
+	if(m->nb_sprites[M_RETRACTE] == 0)
 		cpt++;
 
-	if(m->nb_sprites_carapace == 0)
+	if(m->nb_sprites[M_SORT_CARAPACE] == 0)
 		cpt++;
 
 	return cpt;

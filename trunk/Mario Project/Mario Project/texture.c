@@ -72,7 +72,7 @@ void charger_infos_texture(texture *t)
     if(flux == NULL)
     {
         printf("Le fichier %s est introuvable.\n", nom);
-        return NULL;
+        return;
     }
 
 	fscanf(flux, "%d %d %d %d",&(t->taille.x), &(t->taille.y), &(t->taille_sprite.x), &(t->taille_sprite.y));
@@ -102,7 +102,7 @@ void charger_cfg_texture(char* nom_cfg, texture *t, coordi taille_blocs)
     if(flux == NULL)
     {
         printf("Le fichier %s est introuvable.\n", nom_cfg);
-        return NULL;
+		return;
     }
     
 	fscanf(flux, "%d %d",&nb_blocs_y, &nb_blocs_x);

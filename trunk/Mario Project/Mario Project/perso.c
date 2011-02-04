@@ -183,7 +183,7 @@ void charger_perso(char *nom, perso* p){
     if(perso_file == NULL)
     {
         printf("Le fichier %s est introuvable.\n", nom_texture);
-        return NULL;
+        return;
     }
 
 	/* Chargement des constantes pour le calcul des collisions */

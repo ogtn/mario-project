@@ -20,7 +20,7 @@
 #define M_V_MARCHE				(float)0.05
 #define M_V_MIN					(float)0.008
 #define M_TPS_DISPARITION		500
-#define M_TPS_CARAPACE			5000
+#define M_TPS_RETRACTE			5000
 
 
 /******************************************************************************/
@@ -32,11 +32,12 @@
 
 enum ETATS_MONSTRES {
 	M_MARCHE,
-	M_MORT_PAR_SAUT,
-	M_MORT_PAR_PROJ,
-	M_NB_ETATS,
-	M_MORT,
 	M_RETRACTE,
+	M_SORT_CARAPACE,
+	M_NB_ETATS,
+	M_MORT_PAR_PROJ,
+	M_MORT,
+	M_MORT_PAR_SAUT,
 	M_RETRACTE_RETOURNE,
 	M_RETRACTE_PORTED,
 	M_SORT_DU_TUYAU
@@ -58,6 +59,7 @@ typedef struct occ_monstre {
 	struct monstre* type_monstre;			/* pointeur sur le monstre général */
 	int tps_disparition;					/* Temps restant au monstre avant de disparaitre */
 	int tps_sortie_tuyau;					/* Temps restant au monstre avant de sortir du tuyau */
+	int tps_retracte;						/* Indique le temps avant que l'ennemi retracté ne sorte de la carapace */
 	int actif;								/* indique si le monstre actif (dans l'écran ou non) */
 }occ_monstre;
 
@@ -78,20 +80,20 @@ typedef struct liste_monstre {
 typedef struct monstre {
 	coordi taille;							/* la taille du monstre (en pixels) */
 	int abscisse_bas;						/* contient l'abscisse du point d'où l'on calculera les collisions  */
-	int nb_sprites_marche;					/* donne le nombre de sprites nécessaires à l'animation de la marche du monstre */
-	int nb_sprites_carapace;				/* donne le nombre de sprites nécessaires à l'animation de la carapace du monstre */
+	int nb_sprites[M_NB_ETATS];				/* Nombre de sprites du monstre selon ses etats */
+	int v_anim[M_NB_ETATS];					/* vitesse d'animation du monstre selon ses etats */
+	int nb_sprites_max;						/* donne le nombre de sprites max en longueur dans la texture */
 	int est_tuable_par_boule_feu;			/* indique si le monstre peut etre tué par une boule de feu */
 	int est_tuable_par_saut;				/* indique si le monstre peut etre tué par un saut */
 	int peut_sauter_dessus;					/* indique si le personnage peut sauter sur le monstre, sinon il est touché */
 	int reste_sur_plateforme;				/* indique si le personnage doit rester sur la plateforme sur laquelle il est */
 	GLuint texture;							/* l'identificateur OpenGL de la texture du monstre */
-	int v_anim;								/* vitesse d'animation du monstre */
 	FSOUND_SAMPLE* sons[NB_SONS];			/* tableau des sons correspondant au monstre */
 	int points;								/* points remportés par la mort de ce monstre par un projectile */
 	int tps_disparition;					/* Temps qu' un monstre met à disparaitre après avoir été tué par un saut du personnage */
-	int tps_sortie_tuyau;
+	int tps_sortie_tuyau;					/* Intervalle de temps de sortie depuis un tuyau */
     char nom[255];                          /* Bah, le nom de la bestiole quoi */
-	liste_monstre* occ_monstres;
+	liste_monstre* occ_monstres;			/* Liste de ses occurences dans le niveau */
 }monstre;
 
 

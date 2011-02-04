@@ -173,6 +173,9 @@
     <None Include="textures\blocs\classiques\classiques.cfg" />
     <None Include="textures\blocs\speciaux\cassables\cassables.cfg" />
     <None Include="textures\blocs\speciaux\incassables\[Q]\[Q].cfg" />
+    <None Include="textures\monstres\goomba.mstr" />
+    <None Include="textures\monstres\koopa.mstr" />
+    <None Include="textures\monstres\koopa.png" />
     <None Include="to do list.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
