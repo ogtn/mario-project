@@ -293,6 +293,7 @@ void draw_perso(perso *perso, Uint32 duree)
 
 		if(!perso->tps_transformation){
 			phase = data->v_anim[ATTAQUE_SPECIALE] - perso->tps_attaque_speciale / data->nb_sprites[ATTAQUE_SPECIALE];
+			printf("ATTAQUE SPECIALE Mario : phase = %d\n", phase);
 
 			for(i = 0; i <= data->nb_sprites[ATTAQUE_SPECIALE]; i++){
 				if( i * data->v_anim[ATTAQUE_SPECIALE] / data->nb_sprites[ATTAQUE_SPECIALE] >= phase){
@@ -360,34 +361,33 @@ void draw_perso(perso *perso, Uint32 duree)
 
 void draw_monstre(occ_monstre *monstre, Uint32 duree)
 {
+	int i;
 	float gauche = 0, droite = 0, haut = 0, bas = 0, temp;
-	int v_anim = monstre->type_monstre->v_anim, phase, nb_etats_presents = M_NB_ETATS - m_nb_etats_absents(monstre->type_monstre);
-	int nb_sprites_max = (monstre->type_monstre->nb_sprites_marche > monstre->type_monstre->nb_sprites_carapace) ? monstre->type_monstre->nb_sprites_marche : monstre->type_monstre->nb_sprites_carapace;
+	int phase, nb_etats_presents = M_NB_ETATS - m_nb_etats_absents(monstre->type_monstre);
     sprite s;
 
 	switch(monstre->etat) {
 		case M_MARCHE : case M_SORT_DU_TUYAU:
 			gauche = 0;
-			droite = (float)1 / nb_sprites_max;
+			droite = (float)1 / monstre->type_monstre->nb_sprites_max;
 			haut = 1;
 			bas = 1 - (float)1 / nb_etats_presents;
-			v_anim = monstre->type_monstre->v_anim;
 			break;
 		case M_MORT_PAR_PROJ :
 			gauche = 0;
-			droite = (float)1 / nb_sprites_max;
+			droite = (float)1 / monstre->type_monstre->nb_sprites_max;
 			bas = 1 - (float) 1 / nb_etats_presents;
 			haut = bas - (float) 1 / nb_etats_presents;
 			break;
 		case M_MORT_PAR_SAUT: case M_RETRACTE: case M_RETRACTE_PORTED:
 			gauche = 0;
-			droite = (float)1 / nb_sprites_max;
+			droite = (float)1 / monstre->type_monstre->nb_sprites_max;
 			haut = 1 - (float) 1 / nb_etats_presents;
 			bas = haut - (float) 1 / nb_etats_presents;
 			break;
 		case M_RETRACTE_RETOURNE:
 			gauche = 0;
-			droite = (float)1 / nb_sprites_max;
+			droite = (float)1 / monstre->type_monstre->nb_sprites_max;
 			haut = 1 - (float) 1 / nb_etats_presents;
 			bas = haut - (float) 1 / nb_etats_presents;
 			// Réduction de moitié de la taille du sprite et inversement du sprite
@@ -395,24 +395,46 @@ void draw_monstre(occ_monstre *monstre, Uint32 duree)
 			haut = bas;
 			bas = temp;
 			break;
+		case M_SORT_CARAPACE:
+			haut = (float) 1 / nb_etats_presents;
+			bas = 0;
+			break;
 	}
 
+	/* Animation de la sortie de carapace du monstre */
+	if(monstre->etat == M_SORT_CARAPACE && monstre->tps_retracte > 0)
+	{
+		phase = 6 * monstre->type_monstre->v_anim[M_SORT_CARAPACE] - monstre->tps_retracte / monstre->type_monstre->nb_sprites[M_SORT_CARAPACE];
+
+		for(i = 0; i <= monstre->type_monstre->nb_sprites[M_SORT_CARAPACE]; i++){
+			if( i * monstre->type_monstre->v_anim[M_SORT_CARAPACE] / monstre->type_monstre->nb_sprites[M_SORT_CARAPACE] >= phase)
+			{
+				gauche = (float) (i - 1) / monstre->type_monstre->nb_sprites_max;
+				droite = (float) i / monstre->type_monstre->nb_sprites_max;
+				break;
+			}
+		}
+	}
+
+	if(monstre->etat == M_MARCHE 
+		|| monstre->etat == M_SORT_DU_TUYAU 
+		|| ((monstre->etat == M_RETRACTE || monstre->etat == M_RETRACTE_RETOURNE) && monstre->vitesse.x != 0))
+	{
+		if(monstre->etat == M_RETRACTE || monstre->etat == M_RETRACTE_RETOURNE)
+			phase = (duree % monstre->type_monstre->v_anim[M_RETRACTE]) / (monstre->type_monstre->v_anim[M_RETRACTE] / (monstre->type_monstre->nb_sprites[M_RETRACTE] - 1));
+		else
+			phase = (duree % monstre->type_monstre->v_anim[M_MARCHE]) / (monstre->type_monstre->v_anim[M_MARCHE] / (monstre->type_monstre->nb_sprites[M_MARCHE]));
+
+		gauche += phase * (float)1 / monstre->type_monstre->nb_sprites_max;
+		droite += phase * (float)1 / monstre->type_monstre->nb_sprites_max;
+	}
+
+	/* Changement de côté si besoin */
 	if(monstre->cote == COTE_GAUCHE && monstre->etat != M_RETRACTE && monstre->etat != M_RETRACTE_RETOURNE)
 	{
 		temp = gauche;
 		gauche = droite;
 		droite = temp;
-	}
-
-	if(monstre->etat == M_MARCHE || monstre->etat == M_SORT_DU_TUYAU || ((monstre->etat == M_RETRACTE || monstre->etat == M_RETRACTE_RETOURNE) && monstre->vitesse.x != 0))
-	{
-		if(monstre->etat == M_RETRACTE || monstre->etat == M_RETRACTE_RETOURNE)
-			phase = (duree % v_anim) / (v_anim / (monstre->type_monstre->nb_sprites_carapace - 1));
-		else
-			phase = (duree % v_anim) / (v_anim / (monstre->type_monstre->nb_sprites_marche));
-
-		gauche += phase * (float)1 / nb_sprites_max;
-		droite += phase * (float)1 / nb_sprites_max;
 	}
 
     s.position.x = (int)monstre->position.x;

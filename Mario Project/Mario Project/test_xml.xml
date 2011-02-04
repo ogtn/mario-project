@@ -24,9 +24,8 @@
 		<item img="fleur" type="2" nb="0"/>
 	</items>
 	<monsters nb="1">
-		<monster name="red_koopa" nb="2">
+		<monster name="koopa" nb="1">
 			<occ actual="0" pos="400:192"/>
-            <occ actual="0" pos="440:192"/>
 		</monster>
 	</monsters>
 	<pipes nb="1">
