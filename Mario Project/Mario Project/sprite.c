@@ -293,7 +293,6 @@ void draw_perso(perso *perso, Uint32 duree)
 
 		if(!perso->tps_transformation){
 			phase = data->v_anim[ATTAQUE_SPECIALE] - perso->tps_attaque_speciale / data->nb_sprites[ATTAQUE_SPECIALE];
-			printf("ATTAQUE SPECIALE Mario : phase = %d\n", phase);
 
 			for(i = 0; i <= data->nb_sprites[ATTAQUE_SPECIALE]; i++){
 				if( i * data->v_anim[ATTAQUE_SPECIALE] / data->nb_sprites[ATTAQUE_SPECIALE] >= phase){
@@ -352,7 +351,6 @@ void draw_perso(perso *perso, Uint32 duree)
     s.point_hd.x = droite;
     s.point_hd.y = haut;
 	draw_sprite(&s);
-    screen_printf_dbg("perso.texture = %d\n", s.text_id);
 
 	glColor4f(1, 1, 1, 1);
 
@@ -404,7 +402,7 @@ void draw_monstre(occ_monstre *monstre, Uint32 duree)
 	/* Animation de la sortie de carapace du monstre */
 	if(monstre->etat == M_SORT_CARAPACE && monstre->tps_retracte > 0)
 	{
-		phase = 6 * monstre->type_monstre->v_anim[M_SORT_CARAPACE] - monstre->tps_retracte / monstre->type_monstre->nb_sprites[M_SORT_CARAPACE];
+		phase = monstre->type_monstre->v_anim[M_SORT_CARAPACE] - monstre->tps_retracte / monstre->type_monstre->nb_sprites[M_SORT_CARAPACE];
 
 		for(i = 0; i <= monstre->type_monstre->nb_sprites[M_SORT_CARAPACE]; i++){
 			if( i * monstre->type_monstre->v_anim[M_SORT_CARAPACE] / monstre->type_monstre->nb_sprites[M_SORT_CARAPACE] >= phase)
@@ -478,6 +476,16 @@ void draw_projectile(occ_projectile* proj, Uint32 duree)
 			gauche = droite;
 			droite = temp;
 		}
+
+		s.position.x = (int)proj->position.x;
+		s.position.y = (int)proj->position.y;
+		s.taille = proj->type_projectile->taille;
+		s.text_id = proj->type_projectile->texture;
+		s.point_bg.x = gauche;
+		s.point_bg.y = bas;
+		s.point_hd.x = droite;
+		s.point_hd.y = haut;
+		draw_sprite(&s);
 	}
 	else if(proj->tps_disparition && !proj->tps_vie)
 	{
@@ -495,17 +503,17 @@ void draw_projectile(occ_projectile* proj, Uint32 duree)
 				break;
 			}
 		}
-	}
 
-    s.position.x = (int)proj->position.x;
-    s.position.y = (int)proj->position.y;
-    s.taille = proj->type_projectile->taille;
-    s.text_id = proj->type_projectile->texture;
-    s.point_bg.x = gauche;
-    s.point_bg.y = bas;
-    s.point_hd.x = droite;
-    s.point_hd.y = haut;
-    draw_sprite(&s);
+		s.position.x = (int)proj->position.x;
+		s.position.y = (int)proj->position.y;
+		s.taille = proj->type_projectile->taille;
+		s.text_id = proj->type_projectile->texture;
+		s.point_bg.x = gauche;
+		s.point_bg.y = bas;
+		s.point_hd.x = droite;
+		s.point_hd.y = haut;
+		draw_sprite(&s);
+	}
 }
 
 

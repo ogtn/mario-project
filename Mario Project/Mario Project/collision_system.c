@@ -565,7 +565,7 @@ void MAJ_collision_perso(perso *perso, niveau* lvl, keystate* keystate, Uint32 d
 			if(perso->cote == COTE_DROIT)
 				perso->monstre_porte->position.x = perso->position.x + perso->taille.x - perso->monstre_porte->type_monstre->taille.x / 2.5F;
 			else
-				perso->monstre_porte->position.x = perso->position.x - perso->monstre_porte->type_monstre->taille.x + perso->monstre_porte->type_monstre->taille.x / 1.25F;
+				perso->monstre_porte->position.x = perso->position.x - perso->monstre_porte->type_monstre->taille.x + perso->monstre_porte->type_monstre->taille.x / 2.5F;
 
 			perso->monstre_porte->position.y = perso->position.y + perso->texture_act->ordonnee_haut / 2;
 
@@ -1150,7 +1150,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 							}
 
 							/* Collision avec le mur à droite du personnage */
-							if((phys_bloc_actuel == MUR_A_DROITE) && collision.type_collision == PAR_LA_DROITE)
+							if((phys_bloc_actuel & MUR_A_DROITE) && collision.type_collision == PAR_LA_DROITE)
 							{
 								p->vitesse.x = 0;
 								p->position.x = (float) block.position.x - p->taille.x + p->texture_act->abscisse_bas;
