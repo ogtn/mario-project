@@ -1414,6 +1414,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 										&& mstr_actuel->occ_monstre->vitesse.x == 0)
 									{
 										mstr_actuel->occ_monstre->vitesse.x = (p->cote == COTE_DROIT)? V_CARAPACE : -V_CARAPACE;
+										mstr_actuel->occ_monstre->tps_retracte = 0;
 
 										if(p->etat == DERAPE)
 											mstr_actuel->occ_monstre->vitesse.x *= -1;
