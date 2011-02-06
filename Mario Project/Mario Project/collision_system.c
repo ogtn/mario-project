@@ -369,6 +369,7 @@ void MAJ_collision_monstre(occ_monstre* monstre, ecran e, Uint32 duree) {
 
 	if(monstre->actif)
 	{
+
 		if(monstre->etat == M_SORT_DU_TUYAU)
 		{
 			/* Sauvegarde de la position precedente */
@@ -400,6 +401,17 @@ void MAJ_collision_monstre(occ_monstre* monstre, ecran e, Uint32 duree) {
 				monstre->tps_retracte = 0;
 				monstre->etat = M_MARCHE;
 				monstre->vitesse.x = (monstre->cote == COTE_GAUCHE)?-M_V_MARCHE:M_V_MARCHE;
+			}
+
+			if(monstre->etat == M_RETRACTE)
+			{
+				/* Sauvegarde de la position precedente */
+				monstre->position_prec.x = monstre->position.x;
+				monstre->position_prec.y = monstre->position.y;
+
+				/* Mise à jour des positions à partir de la vitesse */
+				monstre->position.x += monstre->vitesse.x * duree;
+				monstre->position.y += monstre->vitesse.y * duree;
 			}
 		}
 		else if(monstre->etat != M_MORT_PAR_SAUT)
@@ -1398,7 +1410,8 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 
 									}
 									// Cas où mario arrive sur la carapace
-									else if((p->etat == MARCHE || p->etat == DEBOUT || p->etat == DERAPE || p->etat == COURSE_1 || p->etat == COURSE_2) && mstr_actuel->occ_monstre->vitesse.x == 0)
+									else if((p->etat == MARCHE || p->etat == DEBOUT || p->etat == DERAPE || p->etat == COURSE_1 || p->etat == COURSE_2) 
+										&& mstr_actuel->occ_monstre->vitesse.x == 0)
 									{
 										mstr_actuel->occ_monstre->vitesse.x = (p->cote == COTE_DROIT)? V_CARAPACE : -V_CARAPACE;
 
@@ -1408,7 +1421,6 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 
 										FSOUND_PlaySound(FSOUND_FREE, mstr_actuel->occ_monstre->type_monstre->sons[SND_PROJ_ON]);
 										p->tps_pousse_carapace = TPS_POUSSE_CARAPACE;
-										p->monstre_porte = mstr_actuel->occ_monstre;
 
 										// Comptage et affichage des points
 										compte_points(p, mstr_actuel->occ_monstre);
