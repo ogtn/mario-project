@@ -198,7 +198,7 @@
     <None Include="test_xml.xml">
       <Filter>Fichiers de ressources</Filter>
     </None>
-    <None Include="textures\monstres\koopa.png">
+    <None Include="textures\blocs\classiques\Grass.png">
       <Filter>Fichiers de ressources</Filter>
     </None>
   </ItemGroup>
