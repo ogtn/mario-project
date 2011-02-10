@@ -1,6 +1,8 @@
 <level name="==Ceci est un niveau test==" size="100:50" music="">
 	<spawn pos="64:320"/>
-	<check pos="600:160"/>
+  <checkpoints nb="1">
+    <checkpoint img="checkpoint" pos="180:64"/>
+  </checkpoints> 
 	<backgrounds nb="1">
 		<background img="SnowHills"/>
 	</backgrounds>
@@ -8,7 +10,9 @@
 	<foregrounds nb="0"/>
 	<foreground_generators nb="0"/>
 	<objects nb="0"/>
-	<finishes nb="0"/>
+  <finishes nb="1">
+    <finish img="big_castle" pos="480:64"/>
+  </finishes>
 	<projectiles nb="3">
 		<projectile img="debris"/>
 		<projectile img="fireball"/>

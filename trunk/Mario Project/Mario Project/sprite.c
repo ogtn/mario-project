@@ -687,6 +687,47 @@ void draw_particules(particule_generator* generator)
 	glColor4f(1, 1, 1, 1);
 }
 
+void draw_checkpoint(checkpoint *check, Uint32 duree)
+{
+	int phase = 0;
+	float gauche = 0, droite = (float) 1 / max(check->nb_sprites_actif, check->nb_sprites_inactif), haut, bas;
+	sprite s;
+	
+	if(check->etat == NOT_PASSED)
+	{
+		haut = 1;
+		bas = 0.5;
+
+		if(check->nb_sprites_inactif > 1)
+		{
+			phase = (duree % check->v_anim) / (check->v_anim / (check->nb_sprites_inactif - 1));
+			gauche += phase * (float) 1 / check->nb_sprites_inactif;
+			droite += phase * (float) 1 / check->nb_sprites_inactif;
+		}
+	}
+	else
+	{
+		haut = 0.5;
+		bas = 0;
+
+		if(check->nb_sprites_actif  > 1)
+		{
+			phase = (duree % check->v_anim) / (check->v_anim / (check->nb_sprites_actif - 1));
+			gauche += phase * (float) 1 / check->nb_sprites_actif;
+			droite += phase * (float) 1 / check->nb_sprites_actif;
+		}
+	}
+
+	s.position = check->position;
+	s.taille = check->taille;
+	s.text_id = check->id_text;
+	s.point_bg.x = gauche;
+	s.point_bg.y = bas;
+	s.point_hd.x = droite;
+	s.point_hd.y = haut;
+	draw_sprite(&s);
+}
+
 void draw_contours(ecran e)
 {
     glEnd();

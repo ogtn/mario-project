@@ -48,6 +48,7 @@ typedef enum angle
 #include "projectile.h"
 #include "tuyau.h"
 #include "particules.h"
+#include "checkpoint.h"
 
 /******************************************************************************/
 /*================================[STRUCTURES]================================*/
@@ -115,6 +116,9 @@ void draw_pipe(tuyau* t);
 
 /* Dessine les tuyaux présents dans le niveau */
 void draw_particules(particule_generator* generator);
+
+/* Dessine les checkpoints */
+void draw_checkpoint(checkpoint *check, Uint32 duree);
 
 /* dessine un cadre noir autour de l'ecran */
 void draw_contours(ecran e);

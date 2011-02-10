@@ -85,10 +85,10 @@ void main_collisions(world *w)
 
 		if(w->persos[i]->etat == MORT && w->persos[i]->position.y < 0)
 		{
-			if(w->persos[i]->passe_checkpoint)
+			if(w->persos[i]->checkpoint >= 0)
 			{
-				w->persos[i]->position.x = (float)(w->niveau->checkpoint.x);
-				w->persos[i]->position.y = (float)(w->niveau->checkpoint.y);
+				w->persos[i]->position.x = (float)(w->niveau->checkpoints[w->persos[i]->checkpoint]->position.x + 3 * w->niveau->taille_blocs.x);
+				w->persos[i]->position.y = (float)(w->niveau->checkpoints[w->persos[i]->checkpoint]->position.y);
 			}
 			else
 			{
@@ -734,9 +734,6 @@ void MAJ_collision_perso(perso *perso, niveau* lvl, keystate* keystate, Uint32 d
 	/* Mise à jour des positions à partir de la vitesse */
 	perso->position.x += perso->vitesse.x * duree;
 	perso->position.y += perso->vitesse.y * duree;
-
-	if(perso->position.x > lvl->checkpoint.x)
-		perso->passe_checkpoint = VRAI;
 }
 
 void MAJ_perso_tuyau(perso* perso, niveau* lvl)
@@ -867,7 +864,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 	/* Variables pour la detection et la résolution de collisions */
 	int phys_bloc_actuel, ordonnee_haut;
 	float hauteur;
-	carre perso = {0}, block = {0}, monstre = {0}, projectile = {0}, item = {0}, tuyau = {0}, finish = {0};
+	carre perso = {0}, block = {0}, monstre = {0}, projectile = {0}, item = {0}, tuyau = {0}, finish = {0}, check = {0};
 	collision collision;
 
 	/* Variable pour l'affichage des points */
@@ -1643,6 +1640,30 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 				p->etat = FINISH;
 				p->cote = COTE_DROIT;
 			}
+		}
+	}
+
+	/******* COLLISIONS PERSOS <=> CHECKPOINTS ********/
+	for(i = 0; i < n->nb_checkpoints; i++)
+	{
+		check.angle_pente = 0;
+		check.est_bloc_pente = 0;
+		check.hauteur_a_retirer = 0;
+
+		check.taille = n->checkpoints[i]->taille;
+		check.position.x = (float) n->checkpoints[i]->position.x;
+		check.position.y = (float) n->checkpoints[i]->position.y;
+		check.position_prec = check.position;
+
+		determinate_collision(perso, check, &collision);
+
+		if(collision.carre1_est_touche || collision.carre2_est_touche)
+		{
+			if(p->transformation == SMALL_MARIO && n->checkpoints[i]->etat == NOT_PASSED)
+				prend_item(p, CHAMPIGNON);
+
+			n->checkpoints[i]->etat = PASSED;
+			p->checkpoint = i;
 		}
 	}
 }

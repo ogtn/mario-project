@@ -110,7 +110,7 @@ typedef struct perso
 	FSOUND_SAMPLE* sons[NB_SONS];			/* contient les sons des actions du personnage */
 	HUD* hud;								/* informations sur le personnage */
 	tuyau* tuyau;							/* pointeur sur un tuyau si mario se trouve dedans */
-	int passe_checkpoint;					/* indique si le personnage a passé le checkpoint */
+	int checkpoint;							/* indique si le personnage a passé le checkpoint */
 } perso;
 
 
