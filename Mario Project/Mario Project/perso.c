@@ -38,7 +38,7 @@ perso *init_perso(perso *p)
 		p->vitesse.y = 0;
 
 		p->est_invincible = 0;
-		p->passe_checkpoint = 0;
+		p->checkpoint = -1;
 		p->est_invincible_etoile = 0;
 		p->monstre_porte = NULL;
 

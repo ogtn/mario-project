@@ -46,9 +46,11 @@ niveau* init_niveau(niveau *n)
 	n->taille.y = 0;
 	n->spawn.x = 0;
 	n->spawn.y = 0;
-	n->checkpoint.x = 0;
-	n->checkpoint.y = 0;
 	n->last_texture = 0;
+	
+	/* Checkpoints */
+	n->nb_checkpoints = 0;
+	n->checkpoints = NULL;
 
 	/* Finish */
 	n->nb_finish = 0;
@@ -166,6 +168,16 @@ niveau *free_niveau(niveau *n)
 		free(n->finishes);
 	}
 
+	/* Libération checkpoints */
+	if(n->checkpoints != NULL)
+	{
+		for(i = 0; i < n->nb_checkpoints; i++)
+		{
+			free(n->checkpoints[i]);
+		}
+		free(n->checkpoints);
+	}
+
 	/* Libération blocs */
 	if(n->blocs != NULL)
 	{
@@ -265,11 +277,20 @@ void balise_spawn(niveau *n, const char **attrs)
     n->spawn.y = atoi(strchr(attrs[1], ':') + 1);
 }
 
-
-void balise_check(niveau *n, const char **attrs)
+void balise_checkpoints(niveau *n, const char **attrs)
 {
-    n->checkpoint.x = atoi(attrs[1]);
-    n->checkpoint.y = atoi(strchr(attrs[1], ':') + 1);
+	n->nb_checkpoints = atoi(attrs[1]);
+    n->checkpoints = malloc(sizeof(checkpoint*) * n->nb_checkpoints);
+}
+
+void balise_checkpoint(niveau *n, const char **attrs)
+{
+    static int i = 0;
+	n->checkpoints[i] = charger_checkpoint(attrs[1]);
+	n->checkpoints[i]->position.x = atoi(attrs[3]);
+    n->checkpoints[i]->position.y = atoi(strchr(attrs[3], ':') + 1);
+	i++;
+	i %= n->nb_checkpoints;
 }
 
 
@@ -286,6 +307,7 @@ void balise_background(niveau *n, const char **attrs)
 	strcpy(n->backgrounds[i].nom_text, attrs[1]);
 	charger_objet_background(&n->backgrounds[i], FAUX);
 	i++;
+	i %= n->nb_backgrounds;
 }
 
 void balise_background_generators(niveau *n, const char **attrs)
@@ -301,6 +323,7 @@ void balise_background_generator(niveau *n, const char **attrs)
 	coordi taille = { atoi(attrs[3]),   atoi(strchr(attrs[3], ':') + 1) };
 	n->background_generators[i] = new_particule_generator(position, taille, atoi(attrs[4]), atoi(attrs[5]), attrs[6], atoi(attrs[7]), atoi(attrs[8]), atoi(attrs[9]));
 	i++;
+	i %= n->nb_background_generators;
 }
 
 void balise_foregrounds(niveau *n, const char **attrs)
@@ -315,6 +338,7 @@ void balise_foreground(niveau *n, const char **attrs)
 	strcpy(n->foregrounds[i].nom_text, attrs[1]);
 	charger_objet_background(&n->foregrounds[i], FAUX);
 	i++;
+	i %= n->nb_foregrounds;
 }
 
 void balise_foreground_generators(niveau *n, const char **attrs)
@@ -330,6 +354,7 @@ void balise_foreground_generator(niveau *n, const char **attrs)
 	coordi taille = { atoi(attrs[5]),   atoi(strchr(attrs[5], ':') + 1) };
 	n->foreground_generators[i] = new_particule_generator(position, taille, atoi(attrs[7]), atoi(attrs[9]), attrs[1], atoi(attrs[11]), atoi(attrs[13]), atoi(attrs[15]));
 	i++;
+	i %= n->nb_foreground_generators;
 }
 
 void balise_objects(niveau *n, const char **attrs)
@@ -362,6 +387,7 @@ void balise_object(niveau *n, const char **attrs)
 	strcpy(n->objets[i].nom_text, attrs[1]);
 	charger_objet_background(&n->objets[i], VRAI);
 	i++;
+	i %= n->nb_objets;
 }
 
 void balise_finishes(niveau *n, const char **attrs)
@@ -378,6 +404,7 @@ void balise_finish(niveau *n, const char **attrs)
 	n->finishes[i].position.y = atoi(strchr(attrs[3], ':') + 1);
 	charger_finish(&n->finishes[i]);
 	i++;
+	i %= n->nb_finish;
 }
 
 void balise_projectiles(niveau *n, const char **attrs)
@@ -391,6 +418,7 @@ void balise_projectile(niveau *n, const char **attrs)
 	static int i = 0;
 	n->projectiles[i] = charger_projectile(attrs[1]);
 	i++;
+	i %= n->nb_projectiles;
 }
 
 void balise_items(niveau *n, const char **attrs)
@@ -404,6 +432,7 @@ void balise_item(niveau *n, const char **attrs)
 	static int i = 0;
 	n->items[i] = charger_item(attrs[1], atoi(attrs[3]));
 	i++;
+	i %= n->nb_items;
 }
 
 void balise_occ_item(niveau *n, const char **attrs)
@@ -423,6 +452,7 @@ void balise_monster(niveau *n, const char **attrs)
 	static int i = 0;
     n->monstres[i] = charger_monstre(attrs[1]);
 	i++;
+	i %= n->nb_monstres;
 }
 
 
@@ -442,6 +472,7 @@ void balise_pipe(niveau *n, const char **attrs)
 	static int i = 0;
 	n->tuyaux[i] = charger_tuyau(attrs[1], atoi(attrs[3]), atoi(attrs[5]), atoi(attrs[7]), atoi(strchr(attrs[7], ':') + 1), atoi(attrs[9]), atoi(attrs[11]), attrs[13], atoi(attrs[15]));
 	i++;
+	i %= n->nb_tuyaux;
 }
 
 void balise_blocs(niveau *n, const char **attrs)
@@ -468,6 +499,7 @@ void balise_textures(niveau *n, const char **attrs)
     static int i = 0;
 	charger_texture_bloc(attrs[1], &n->textures[i], n->taille_blocs);
 	i++;
+	i %= n->nb_textures;
 }
 
 void balise_bloc(niveau *n, const char **attrs)
@@ -482,6 +514,7 @@ void balise_bloc(niveau *n, const char **attrs)
 	n->blocs[i].type_bloc = atoi(attrs[5]);
 	n->blocs[i].phys = texture_bloc.phys[n->blocs[i].coord_sprite.x + n->blocs[i].coord_sprite.y * (texture_bloc.taille.x / texture_bloc.taille_sprite.x)];
 	i++;
+	i %= n->nb_blocs;
 }
 
 
@@ -504,6 +537,7 @@ void balise_occ_block(niveau *n, const char **attrs)
 	{
 		j %= n->taille.y - 1;
 		i++;
+		i %= n->taille.x;
 	}
 	else
 	{
@@ -516,7 +550,8 @@ void debut_element(void *user_data, const xmlChar *name, const xmlChar **attrs)
     static const xmlChar *elements[] = {
         BAD_CAST"level", 
         BAD_CAST"spawn", 
-        BAD_CAST"check", 
+        BAD_CAST"checkpoints", 
+		BAD_CAST"checkpoint", 
         BAD_CAST"backgrounds", 
         BAD_CAST"background",
 		BAD_CAST"background_generators",
@@ -549,7 +584,8 @@ void debut_element(void *user_data, const xmlChar *name, const xmlChar **attrs)
     static const balise_func functions[] = {
         balise_level,
         balise_spawn,
-        balise_check,
+        balise_checkpoints,
+		balise_checkpoint,
         balise_backgrounds,
         balise_background,
 		balise_background_generators,
@@ -581,7 +617,7 @@ void debut_element(void *user_data, const xmlChar *name, const xmlChar **attrs)
     };
     int i;
 
-    for(i = 0; i < 31; i++)
+    for(i = 0; i < 32; i++)
     {
         if(!xmlStrcmp(name, elements[i]))
         {
@@ -681,9 +717,24 @@ void sauver_niveau(char *nom, niveau *n)
     close_element_short(fic);
 
     /* Checkpoint */
-    open_element(fic, "check");
-    add_attrib(fic, "pos", "%d:%d", n->checkpoint.x, n->checkpoint.y);
-    close_element_short(fic);
+    open_element(fic, "checkpoints");
+	add_attrib(fic, "nb", "%d", n->nb_checkpoints);
+	if(n->nb_checkpoints > 0)
+	{
+		end_element(fic);
+		for(i = 0; i < n->nb_checkpoints; i++)
+		{
+			open_element(fic, "checkpoint");
+			add_attrib(fic, "img", "%s", n->checkpoints[i]->nom_text);
+			add_attrib(fic, "pos", "%d:%d", n->checkpoints[i]->position.x, n->checkpoints[i]->position.y);
+			close_element_short(fic);
+		}
+		close_element(fic, "checkpoints");
+	}
+	else
+	{
+		close_element_short(fic);
+	}
 
     /* Backgrounds */
     open_element(fic, "backgrounds");
@@ -1005,48 +1056,6 @@ void sauver_niveau(char *nom, niveau *n)
 }
 
 
-void charger_textures_niveau(niveau *n)
-{
-	NB i;
-
-	/* Chargement des textures de fond */
-	for(i = 0; i < n->nb_backgrounds; i++)
-	{
-		charger_objet_background(&n->backgrounds[i], FAUX);
-	}
-
-	/* Chargement des textures de premier plan */
-	for(i = 0; i < n->nb_foregrounds; i++)
-	{
-		charger_objet_background(&n->foregrounds[i], FAUX);
-	}
-
-	/* Chargement des textures d'arrivées */
-	for(i = 0; i < n->nb_finish; i++)
-	{
-		charger_finish(&n->finishes[i]);
-	}
-
-	/* Chargement des textures des objets */
-	for(i = 0; i < n->nb_objets ; i++)
-	{
-		charger_objet_background((background*) &n->objets[i], VRAI);
-	}
-
-	/* Chargement des infos de texture des blocs */
-	for(i = 0; i < n->nb_textures; i++)
-	{
-		charger_infos_texture(&n->textures[i]);
-	}
-
-	/* Chargement des textures des blocs */
-	for(i = 0; i < n->nb_textures; i++)
-	{
-		n->textures[i].id_text = charger_texture_bis(n->textures[i].nom, &n->textures[i].taille);
-	}
-}
-
-
 void liberer_textures_niveau(niveau* n)
 {
 	NB i;
@@ -1064,6 +1073,10 @@ void liberer_textures_niveau(niveau* n)
 	/* Libération des textures d'arrivée */
 	for(i = 0; i < n->nb_finish; i++)
 		glDeleteTextures(1, &n->finishes[i].id_text);
+
+	/* Libération des textures d'arrivée */
+	for(i = 0; i < n->nb_checkpoints; i++)
+		glDeleteTextures(1, &n->checkpoints[i]->id_text);
 
 	/* Libération des textures des items */
 	for(i = 0; i < n->nb_items; i++)
@@ -1122,7 +1135,7 @@ void charger_objet_background(background* b, int is_object)
     if(back_file == NULL)
     {
         printf("Le fichier %s est introuvable.\n", nom_texture);
-        return NULL;
+        return;
     }
 
 	fscanf(back_file, "nb_sprites : %d\n", &nb_1);
@@ -1170,767 +1183,6 @@ void charger_objet_background(background* b, int is_object)
 		b->id_text[0] = charger_texture_bis(nom_texture, &b->taille);
 	}
 }
-
-
-void charger_niveau_test_vide(niveau *n)
-{
-	int i, j;
-
-	strcpy(n->nom, "==Ceci est un niveau vide==");
-
-	/* Points clés */
-	n->taille.x = 100;
-	n->taille.y = 50;
-	n->spawn.x = 64;
-	n->spawn.y = 320;
-	n->checkpoint.x = 600;
-	n->checkpoint.y = 160;
-
-	/* Layer monstre */
-	n->nb_monstres = 0;
-	
-	/* Layer projectile */
-	n->nb_projectiles = 0;
-	n->projectiles = NULL;
-
-	/* Layer items */
-	n->nb_items = 0;
-	n->items = NULL;
-	
-	/* Arriere plans */
-	n->nb_backgrounds = 1;
-	n->backgrounds = malloc(sizeof(background) * n->nb_backgrounds);
-	strcpy(n->backgrounds[0].nom_text, "SnowHills");
-	
-	/* Layer tuyaux */
-	n->nb_tuyaux = 0;
-	n->tuyaux = NULL;
-
-	/* Init Blocs et objets */
-	n->nb_blocs = 0;
-	n->nb_objets = 0;
-	n->blocs = NULL;
-	n->objets = NULL;
-	n->taille_blocs.x = (int)LARGEUR_BLOC;
-	n->taille_blocs.y = (int)LARGEUR_BLOC;
-	n->id_objets = malloc(n->taille.x * sizeof(id*));
-
-	for(i = 0; i < n->taille.x; i++)
-	{
-		n->id_objets[i] = malloc(n->taille.y * sizeof(id));
-	}
-
-	// Remplissage des ID des objets 
-	for(i = 0; i < n->taille.x; i++)
-	{
-		for(j = 0; j < n->taille.y; j++)
-		{
-			n->id_objets[i][j] = OBJET_VIDE;
-		}
-	}
-
-	/************ layer blocs ***********/
-
-	n->occ_blocs = malloc(n->taille.x * sizeof(occ_bloc***));
-	for(i = 0; i < n->taille.x; i++)
-	{
-		n->occ_blocs[i] = malloc(n->taille.y * sizeof(occ_bloc**));
-	}
-
-	/* Remplissage des blocs */
-	for(i = 0; i < n->taille.x; i++)
-	{
-		for(j = 0; j < n->taille.y; j++)
-		{
-				n->occ_blocs[i][j] = NULL;
-		}
-	}
-	
-	n->nb_textures = 0;
-	n->textures = NULL;
-}
-
-void charger_niveau_test(niveau *n)
-{
-        int i, j;
-        coordf pos_gen = {0, HAUTEUR_FENETRE};
-        coordi taille_gen = {LARGEUR_FENETRE, 0};
-
-        strcpy(n->nom, "==Ceci est un niveau test==");
-
-        /* Points clés */
-        n->taille.x = 100;
-        n->taille.y = 50;
-        n->spawn.x = 64;
-        n->spawn.y = 320;
-        n->checkpoint.x = 600;
-        n->checkpoint.y = 160;
-
-        /* Layer monstre */
-        n->nb_monstres = 1;
-        n->monstres = malloc(sizeof(monstre*) * n->nb_monstres);
-        n->monstres[0] = charger_monstre("koopa");
-
-        n->monstres[0]->occ_monstres = ajout_monstre(n->monstres[0]->occ_monstres, new_occ_monstre(400, 400, n->monstres[0]));
-
-        /* Layer projectile */
-        n->nb_projectiles = 3;
-        n->projectiles = malloc(sizeof(projectile*) * n->nb_projectiles);
-        n->projectiles[DEBRIS] = charger_projectile("debris");  
-        n->projectiles[FIREBALL] = charger_projectile("fireball");
-		n->projectiles[SPECIAL_FIREBALL] = charger_projectile("special_fireball");
-
-        /* Layer items */
-        n->nb_items = 3;
-        n->items = malloc(sizeof(item*) * n->nb_items);
-        n->items[0] = charger_piece();
-        n->items[1] = charger_champignon();
-        n->items[2] = charger_fleur();
-        
-        // Pièces
-        n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(11 * LARGEUR_BLOC, 6 * LARGEUR_BLOC, 0, n->items[0]->vitesse, NORMAL));
-        n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(12 * LARGEUR_BLOC, 6 * LARGEUR_BLOC, 0, n->items[0]->vitesse, NORMAL));
-        n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(13 * LARGEUR_BLOC, 6 * LARGEUR_BLOC, 0, n->items[0]->vitesse, NORMAL));
-
-        /* Finish */
-        n->nb_finish = 1;
-        n->finishes = malloc(sizeof(finish) * n->nb_finish);
-        strcpy(n->finishes[0].nom_text, "big_castle");
-        n->finishes[0].position.x = 20 * LARGEUR_BLOC;
-        n->finishes[0].position.y = 2 * LARGEUR_BLOC;
-        
-        /* Premiers plans */
-        /*n->nb_foregrounds = 1;
-        n->foregrounds = malloc(sizeof(background) * n->nb_foregrounds);
-
-        strcpy(n->foregrounds[0].nom_text, "fire");*/
-
-        /* Arriere plans */
-        n->nb_backgrounds = 1;
-        n->backgrounds = malloc(sizeof(background) * n->nb_backgrounds);
-
-        strcpy(n->backgrounds[0].nom_text, "SnowHills");
-        
-        /* Layer tuyaux */
-        n->nb_tuyaux = 1;
-        n->tuyaux = malloc(n->nb_tuyaux * sizeof(tuyau*));
-
-        n->tuyaux[0] = charger_tuyau("green_pipe", VERS_LA_DROITE, 2, 0, 20, FERME, 0, NULL, -1);
-        //n->tuyaux[1] = charger_tuyau("green_pipe", VERS_LE_BAS, 3, 10, 0, OUVERT, 0, NULL, -1);
-
-        /* Layer Particules */
-        //n->nb_foreground_generators = 1;
-        //n->foreground_generators = malloc(sizeof(particule_generator*) * n->nb_foreground_generators);
-        //n->foreground_generators[0] = new_particule_generator(pos_gen, taille_gen, 4000, 200, "Snow_back.png", VRAI, 0xFFFFFFFF, 0xFFFFFFFF);
-
-        /* Init Blocs et objets */
-        n->nb_blocs = 24;
-        n->nb_objets = 0;
-
-        n->blocs = malloc(n->nb_blocs * sizeof(bloc));
-        n->objets = malloc(n->nb_objets * sizeof(objet));
-        n->taille_blocs.x = (int)LARGEUR_BLOC;
-        n->taille_blocs.y = (int)LARGEUR_BLOC;
-
-        /*********** layer objets ************/
-        n->id_objets = malloc(n->taille.x * sizeof(id*));
-
-        for(i = 0; i < n->taille.x; i++)
-        {
-                n->id_objets[i] = malloc(n->taille.y * sizeof(id));
-        }
-
-        // Remplissage des ID des objets 
-        for(i = 0; i < n->taille.x; i++)
-        {
-                for(j = 0; j < n->taille.y; j++)
-                {
-                        n->id_objets[i][j] = OBJET_VIDE;
-                }
-        }
-
-        /* On place quelques objets pour tester... */
-        //n->id_objets[10][2] = 0;
-        //n->id_objets[10][20] = 1;
-
-        // remplissage des objets 
-        //strcpy(n->objets[0].nom_text, "cristal");
-
-        //strcpy(n->objets[1].nom_text, "cloud_2_test");
-
-        /************ layer blocs ***********/
-        n->occ_blocs = malloc(n->taille.x * sizeof(occ_bloc***));
-
-        for(i = 0; i < n->taille.x; i++)
-        {
-             n->occ_blocs[i] = malloc(n->taille.y * sizeof(occ_bloc**));
-        }
-
-        /* Remplissage des ID des blocs */
-        for(i = 0; i < n->taille.x; i++)
-        {
-                for(j = 0; j < n->taille.y; j++)
-                {
-                        if(j == 1 && i < 75)
-                                n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 0, -1, -1);
-                        else if (i == 0)
-                                n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 2, -1, -1);
-                        else if (i == 2 && j == 5)
-                                n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, 19, -1);
-                        else if (i == 1 && j == 5)
-                                n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, 19, -1);
-                        else if (i > 10 && i < 15 && j == 5)
-                                n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 18, -1, -1);
-                        //// pente 30° en bas à gauche
-                        //else if(j == 1 && i <= 1)
-                        //      n->occ_blocs[i][j] = 0;
-                        //else if(j == 1 && i == 2)
-                        //      n->occ_blocs[i][j] = 14;
-                        //else if(j == 1 && i == 3)
-                        //      n->occ_blocs[i][j] = 15;
-                        //// pente 45° à gauche
-                        //else if(j == 9 && i <= 1)
-                        //      n->occ_blocs[i][j] = 0;
-                        //else if(j == 8 && i == 3)
-                        //      n->occ_blocs[i][j ] = 11;
-                        //else if(j == 9 && i == 2)
-                        //      n->occ_blocs[i][j] = 11;
-                        //else if(j == 8 && i == 2)
-                        //      n->occ_blocs[i][j] = 8;
-                        //else if(j == 8 && i == 1)
-                        //      n->occ_blocs[i][j] = 9;
-                        //// pente 30° en haut à droite
-                        //else if(j == 15 && i == 41)
-                        //      n->occ_blocs[i][j] = 13;
-                        //else if(j == 15 && i == 42)
-                        //      n->occ_blocs[i][j] = 12;
-                        //else if(j == 15 && i == 43)
-                        //      n->occ_blocs[i][j] = 0;
-                        //// pente 45° à droite
-                        //else if (j == 8 && i == 9)
-                        //      n->occ_blocs[i][j]= 16;
-                        //else if (j == 8 && i == 10)
-                        //      n->occ_blocs[i][j]= 11;
-                        //// Autres
-                        //else if(j == 7 && 0 <= i && i < 25)
-                        //      n->occ_blocs[i][j] = 0;
-                        //else if(j == 14 && 25 < i && i < 45)
-                        //      n->occ_blocs[i][j] = 0;
-                        //else if(j == 6 && 0 <= i && i < 25)
-                        //      n->occ_blocs[i][j] = 1;
-                        //else if(j == 13 && 25 < i && i < 45)
-                        //      n->occ_blocs[i][j] = 1;
-                        //else if (i == 44 && j > 14)
-                        //      n->occ_blocs[i][j] = 3;
-                        //else if(j == 7 && i == 25)
-                        //      n->occ_blocs[i][j] = 4;
-                        //else if(j == 14 && i == 25)
-                        //      n->occ_blocs[i][j] = 5;
-                        //else if(j == 6 && i == 25)
-                        //      n->occ_blocs[i][j] = 6;
-                        //else if(j == 13 && i == 25)
-                        //      n->occ_blocs[i][j] = 7;
-                        else
-                                n->occ_blocs[i][j] = new_occ_bloc(i * LARGEUR_BLOC, j * LARGEUR_BLOC, -1, -1, -1);
-                }
-        }
-
-        // Nouvelle ecriture pour la texture : n->[n->occ_blocs[i][j]].texture
-        // Flag correspondant à la physique du bloc : n->blocs[n->occ_blocs[i][j]].phys
-        // Ajout d'informations supplémentaires : n->blocs[n->occ_blocs[i][j]].est_vide & n->blocs[n->occ_blocs[i][j]].est_cassable
-        
-        n->nb_textures = 2;
-        n->textures = malloc(sizeof(texture) * n->nb_textures);
-
-        strcpy(n->textures[0].nom, "floor_rc4.png");
-        strcpy(n->textures[1].nom, "blocs_spec.png");
-
-        //strcpy(n->textures[0].nom, "classiques/Grass.png");
-
-        /* remplissage des blocs du niveau */
-        n->blocs[0].texture = 0;
-        n->blocs[0].coord_sprite.x = 2;
-        n->blocs[0].coord_sprite.y = 0;
-        n->blocs[0].phys = SOL;
-        n->blocs[0].type_bloc = EST_VIDE;
-
-        n->blocs[1].texture = 0;
-        n->blocs[1].coord_sprite.x = 8;
-        n->blocs[1].coord_sprite.y = 0;
-        n->blocs[1].phys = PLAFOND;
-        n->blocs[1].type_bloc = EST_VIDE;
-
-        n->blocs[2].texture = 0;
-        n->blocs[2].coord_sprite.x = 6;
-        n->blocs[2].coord_sprite.y = 0;
-        n->blocs[2].phys = MUR_A_GAUCHE;
-        n->blocs[2].type_bloc = EST_VIDE;
-
-        n->blocs[3].texture = 0;
-        n->blocs[3].coord_sprite.x = 4;
-        n->blocs[3].coord_sprite.y = 0;
-        n->blocs[3].phys = MUR_A_DROITE;
-        n->blocs[3].type_bloc = EST_VIDE;
-
-        n->blocs[4].texture = 0;
-        n->blocs[4].coord_sprite.x = 3;
-        n->blocs[4].coord_sprite.y = 0;
-        n->blocs[4].phys = COIN_HAUT_A_GAUCHE;
-        n->blocs[4].type_bloc = EST_VIDE;
-
-        n->blocs[5].texture = 0;
-        n->blocs[5].coord_sprite.x = 1;
-        n->blocs[5].coord_sprite.y = 0;
-        n->blocs[5].phys = COIN_HAUT_A_DROITE;
-        n->blocs[5].type_bloc = EST_VIDE;
-
-        n->blocs[6].texture = 0;
-        n->blocs[6].coord_sprite.x = 9;
-        n->blocs[6].coord_sprite.y = 0;
-        n->blocs[6].phys = COIN_BAS_A_GAUCHE;
-        n->blocs[6].type_bloc = EST_VIDE;
-
-        n->blocs[7].texture = 0;
-        n->blocs[7].coord_sprite.x = 7;
-        n->blocs[7].coord_sprite.y = 0;
-        n->blocs[7].phys = COIN_BAS_A_DROITE;
-        n->blocs[7].type_bloc = EST_VIDE;
-
-        n->blocs[8].texture = 0;
-        n->blocs[8].coord_sprite.x = 5;
-        n->blocs[8].coord_sprite.y = 0;
-        n->blocs[8].phys = PLEIN;
-        n->blocs[8].type_bloc = EST_VIDE;
-
-        n->blocs[9].texture = 0;
-        n->blocs[9].coord_sprite.x = 5;
-        n->blocs[9].coord_sprite.y = 0;
-        n->blocs[9].phys = PLEIN;
-        n->blocs[9].type_bloc = EST_VIDE;
-        
-        n->blocs[10].texture = 0;
-        n->blocs[10].coord_sprite.x = 5;
-        n->blocs[10].coord_sprite.y = 2;
-        n->blocs[10].phys = BORD_A_DROITE;
-        n->blocs[10].type_bloc = EST_VIDE;
-
-        n->blocs[11].texture = 0;
-        n->blocs[11].coord_sprite.x = 0;
-        n->blocs[11].coord_sprite.y = 1;
-        n->blocs[11].phys = PENTE_45_DROITE;
-        n->blocs[11].type_bloc = EST_VIDE;
-
-        n->blocs[12].texture = 0;
-        n->blocs[12].coord_sprite.x = 6;
-        n->blocs[12].coord_sprite.y = 2;
-        n->blocs[12].phys = PENTE_30_GAUCHE_8;
-        n->blocs[12].type_bloc = EST_VIDE;
-
-        n->blocs[13].texture = 0;
-        n->blocs[13].coord_sprite.x = 6;
-        n->blocs[13].coord_sprite.y = 2;
-        n->blocs[13].phys = PENTE_30_GAUCHE_16; 
-        n->blocs[13].type_bloc = EST_VIDE;
-
-        n->blocs[14].texture = 0;
-        n->blocs[14].coord_sprite.x = 6;
-        n->blocs[14].coord_sprite.y = 2;
-        n->blocs[14].phys = PENTE_30_DROITE_0;
-        n->blocs[14].type_bloc = EST_VIDE;
-
-        n->blocs[15].texture = 0;
-        n->blocs[15].coord_sprite.x = 6;
-        n->blocs[15].coord_sprite.y = 2;
-        n->blocs[15].phys = PENTE_30_DROITE_8;
-        n->blocs[15].type_bloc = EST_VIDE;
-
-        n->blocs[16].texture = 0;
-        n->blocs[16].coord_sprite.x = 6;
-        n->blocs[16].coord_sprite.y = 1;
-        n->blocs[16].phys = PENTE_45_GAUCHE;
-        n->blocs[16].type_bloc = EST_VIDE;
-
-        /* BLOC '?' */
-        n->blocs[17].texture = 1;
-        n->blocs[17].coord_sprite.x = 0;
-        n->blocs[17].coord_sprite.y = 3;
-        n->blocs[17].phys = BLOC_SPEC;
-        n->blocs[17].type_bloc = 0;
-
-        /* Bloc cassable */
-        n->blocs[18].texture = 1;
-        n->blocs[18].coord_sprite.x = 0;
-        n->blocs[18].coord_sprite.y = 4;
-        n->blocs[18].phys = BLOC_SPEC;  
-        n->blocs[18].type_bloc = EST_VIDE | CASSABLE;
-        n->blocs[18].tps_piece = 0;
-
-        /* Boc incassable */
-        n->blocs[19].texture = 1;
-        n->blocs[19].coord_sprite.x = 0;
-        n->blocs[19].coord_sprite.y = 2;
-        n->blocs[19].phys = BLOC_SPEC;
-        n->blocs[19].type_bloc = EST_VIDE;
-
-        n->blocs[20].texture = 1;
-        n->blocs[20].coord_sprite.x = 0;
-        n->blocs[20].coord_sprite.y = 4;
-        n->blocs[20].phys = BLOC_SPEC;
-        n->blocs[20].type_bloc = EST_VIDE;
-
-        n->blocs[21].texture = 1;
-        n->blocs[21].coord_sprite.x = 0;
-        n->blocs[21].coord_sprite.y = 4;
-        n->blocs[21].phys = BLOC_SPEC;
-        n->blocs[21].type_bloc = EST_VIDE;
-
-        n->blocs[22].texture = 1;
-        n->blocs[22].coord_sprite.x = 0;
-        n->blocs[22].coord_sprite.y = 4;
-        n->blocs[22].phys = BLOC_SPEC;
-        n->blocs[22].type_bloc = EST_VIDE;
-
-        n->blocs[23].texture = 1;
-        n->blocs[23].coord_sprite.x = 0;
-        n->blocs[23].coord_sprite.y = 1;
-        n->blocs[23].phys = EAU;
-        n->blocs[23].type_bloc = EST_VIDE;
-}
-
-
-void charger_niveau_test_xml(niveau *n)
-{
-	int i, j;
-	coordf pos_gen = {0, HAUTEUR_FENETRE};
-	coordi taille_gen = {LARGEUR_FENETRE, 0};
-
-	strcpy(n->nom, "==Ceci est un niveau test==");
-
-	/* Points clés */
-	n->taille.x = 100;
-	n->taille.y = 50;
-	n->spawn.x = 64;
-	n->spawn.y = 320;
-	n->checkpoint.x = 600;
-	n->checkpoint.y = 160;
-
-	/* Layer monstre */
-	n->nb_monstres = 1;
-	n->monstres = malloc(sizeof(monstre*) * n->nb_monstres);
-	n->monstres[0] = charger_monstre("koopa");
-
-	n->monstres[0]->occ_monstres = ajout_monstre(n->monstres[0]->occ_monstres, new_occ_monstre(400, 400, n->monstres[0]));
-
-	/* Layer projectile */
-	n->nb_projectiles = 3;
-	n->projectiles = malloc(sizeof(projectile*) * n->nb_projectiles);
-	n->projectiles[DEBRIS] = charger_projectile("debris");	
-	n->projectiles[FIREBALL] = charger_projectile("fireball");
-	n->projectiles[SPECIAL_FIREBALL] = charger_projectile("special_fireball");
-
-	/* Layer items */
-	n->nb_items = 3;
-	n->items = malloc(sizeof(item*) * n->nb_items);
-	n->items[0] = charger_piece();
-	n->items[1] = charger_champignon();
-	n->items[2] = charger_fleur();
-	
-	// Pièces
-	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(11 * LARGEUR_BLOC, 6 * LARGEUR_BLOC, 0, n->items[0]->vitesse, NORMAL));
-	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(12 * LARGEUR_BLOC, 6 * LARGEUR_BLOC, 0, n->items[0]->vitesse, NORMAL));
-	n->items[0]->occ_items = ajout_item(n->items[0]->occ_items, new_occ_item(13 * LARGEUR_BLOC, 6 * LARGEUR_BLOC, 0, n->items[0]->vitesse, NORMAL));
-
-	/* Finish */
-	/*n->nb_finish = 1;
-	n->finishes = malloc(sizeof(finish) * n->nb_finish);
-	strcpy(n->finishes[0].nom_text, "big_castle");
-	n->finishes[0].position.x = 20 * LARGEUR_BLOC;
-	n->finishes[0].position.y = 2 * LARGEUR_BLOC;*/
-	
-	/* Premiers plans */
-	/*n->nb_foregrounds = 1;
-	n->foregrounds = malloc(sizeof(background) * n->nb_foregrounds);
-
-	strcpy(n->foregrounds[0].nom_text, "fire");*/
-
-	/* Arriere plans */
-	n->nb_backgrounds = 1;
-	n->backgrounds = malloc(sizeof(background) * n->nb_backgrounds);
-
-	strcpy(n->backgrounds[0].nom_text, "SnowHills");
-	
-	/* Layer tuyaux */
-	n->nb_tuyaux = 1;
-	n->tuyaux = malloc(n->nb_tuyaux * sizeof(tuyau*));
-
-	n->tuyaux[0] = charger_tuyau("green_pipe", VERS_LA_DROITE, 2, 0, 20, FERME, 0, NULL, -1);
-	//n->tuyaux[1] = charger_tuyau("green_pipe", VERS_LE_BAS, 3, 10, 0, OUVERT, 0, NULL, -1);
-
-	/* Layer Particules */
-	//n->nb_foreground_generators = 1;
-	//n->foreground_generators = malloc(sizeof(particule_generator*) * n->nb_foreground_generators);
-	//n->foreground_generators[0] = new_particule_generator(pos_gen, taille_gen, 4000, 200, "Snow_back.png", VRAI, 0xFFFFFFFF, 0xFFFFFFFF);
-
-	/* Init Blocs et objets */
-	n->nb_blocs = 20;
-	n->nb_objets = 0;
-
-	n->blocs = malloc(n->nb_blocs * sizeof(bloc));
-	n->objets = malloc(n->nb_objets * sizeof(objet));
-	n->taille_blocs.x = (int)LARGEUR_BLOC;
-	n->taille_blocs.y = (int)LARGEUR_BLOC;
-
-	/*********** layer objets ************/
-	n->id_objets = malloc(n->taille.x * sizeof(id*));
-
-	for(i = 0; i < n->taille.x; i++)
-	{
-		n->id_objets[i] = malloc(n->taille.y * sizeof(id));
-	}
-
-	// Remplissage des ID des objets 
-	for(i = 0; i < n->taille.x; i++)
-	{
-		for(j = 0; j < n->taille.y; j++)
-		{
-			n->id_objets[i][j] = OBJET_VIDE;
-		}
-	}
-
-	/* On place quelques objets pour tester... */
-	//n->id_objets[10][2] = 0;
-	//n->id_objets[10][20] = 1;
-
-	// remplissage des objets 
-	//strcpy(n->objets[0].nom_text, "cristal");
-
-	//strcpy(n->objets[1].nom_text, "cloud_2_test");
-
-	/************ layer blocs ***********/
-
-	n->occ_blocs = malloc(n->taille.x * sizeof(occ_bloc***));
-
-	for(i = 0; i < n->taille.x; i++)
-	{
-		n->occ_blocs[i] = malloc(n->taille.y * sizeof(occ_bloc**));
-	}
-
-	/* Remplissage des ID des blocs */
-	for(i = 0; i < n->taille.x; i++)
-	{
-		for(j = 0; j < n->taille.y; j++)
-		{
-			if(j == 1 && i < 75)
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 0, -1, -1);
-			else if (i == 0)
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 2, -1, -1);
-			else if (i == 2 && j == 5)
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, 19, -1);
-			else if (i == 1 && j == 5)
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, 19, -1);
-			else if (i > 10 && i < 15 && j == 5)
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 18, -1, -1);
-			//// pente 30° en bas à gauche
-			//else if(j == 1 && i <= 1)
-			//	n->occ_blocs[i][j] = 0;
-			//else if(j == 1 && i == 2)
-			//	n->occ_blocs[i][j] = 14;
-			//else if(j == 1 && i == 3)
-			//	n->occ_blocs[i][j] = 15;
-			//// pente 45° à gauche
-			//else if(j == 9 && i <= 1)
-			//	n->occ_blocs[i][j] = 0;
-			//else if(j == 8 && i == 3)
-			//	n->occ_blocs[i][j ] = 11;
-			//else if(j == 9 && i == 2)
-			//	n->occ_blocs[i][j] = 11;
-			//else if(j == 8 && i == 2)
-			//	n->occ_blocs[i][j] = 8;
-			//else if(j == 8 && i == 1)
-			//	n->occ_blocs[i][j] = 9;
-			//// pente 30° en haut à droite
-			//else if(j == 15 && i == 41)
-			//	n->occ_blocs[i][j] = 13;
-			//else if(j == 15 && i == 42)
-			//	n->occ_blocs[i][j] = 12;
-			//else if(j == 15 && i == 43)
-			//	n->occ_blocs[i][j] = 0;
-			//// pente 45° à droite
-			//else if (j == 8 && i == 9)
-			//	n->occ_blocs[i][j]= 16;
-			//else if (j == 8 && i == 10)
-			//	n->occ_blocs[i][j]= 11;
-			//// Autres
-			//else if(j == 7 && 0 <= i && i < 25)
-			//	n->occ_blocs[i][j] = 0;
-			//else if(j == 14 && 25 < i && i < 45)
-			//	n->occ_blocs[i][j] = 0;
-			//else if(j == 6 && 0 <= i && i < 25)
-			//	n->occ_blocs[i][j] = 1;
-			//else if(j == 13 && 25 < i && i < 45)
-			//	n->occ_blocs[i][j] = 1;
-			//else if (i == 44 && j > 14)
-			//	n->occ_blocs[i][j] = 3;
-			//else if(j == 7 && i == 25)
-			//	n->occ_blocs[i][j] = 4;
-			//else if(j == 14 && i == 25)
-			//	n->occ_blocs[i][j] = 5;
-			//else if(j == 6 && i == 25)
-			//	n->occ_blocs[i][j] = 6;
-			//else if(j == 13 && i == 25)
-			//	n->occ_blocs[i][j] = 7;
-			else
-				n->occ_blocs[i][j] = new_occ_bloc(i * LARGEUR_BLOC, j * LARGEUR_BLOC, -1, -1, -1);
-		}
-	}
-
-	// Nouvelle ecriture pour la texture : n->[n->occ_blocs[i][j]].texture
-	// Flag correspondant à la physique du bloc : n->blocs[n->occ_blocs[i][j]].phys
-	// Ajout d'informations supplémentaires : n->blocs[n->occ_blocs[i][j]].est_vide & n->blocs[n->occ_blocs[i][j]].est_cassable
-	
-	n->nb_textures = 4;
-	n->textures = malloc(sizeof(texture) * n->nb_textures);
-
-	/*strcpy(n->textures[0].nom, "floor_rc4.png");
-	strcpy(n->textures[1].nom, "blocs_spec.png");*/
-
-	strcpy(n->textures[0].nom, "classiques/Grass.png");
-	strcpy(n->textures[1].nom, "speciaux/cassables/Overworld.png");
-	strcpy(n->textures[2].nom, "speciaux/incassables/[Q]/Overworld.png");
-	strcpy(n->textures[3].nom, "speciaux/incassables/[Q]/Overworld2.png");
-
-	/* remplissage des blocs du niveau */
-	n->blocs[0].texture = 0;
-	n->blocs[0].coord_sprite.x = 1;
-	n->blocs[0].coord_sprite.y = 2;
-	n->blocs[0].phys = SOL;
-	n->blocs[0].type_bloc = EST_VIDE;
-
-	n->blocs[1].texture = 0;
-	n->blocs[1].coord_sprite.x = 1;
-	n->blocs[1].coord_sprite.y = 0;
-	n->blocs[1].phys = PLAFOND;
-	n->blocs[1].type_bloc = EST_VIDE;
-
-	n->blocs[2].texture = 0;
-	n->blocs[2].coord_sprite.x = 2;
-	n->blocs[2].coord_sprite.y = 1;
-	n->blocs[2].phys = MUR_A_GAUCHE;
-	n->blocs[2].type_bloc = EST_VIDE;
-
-	n->blocs[3].texture = 0;
-	n->blocs[3].coord_sprite.x = 0;
-	n->blocs[3].coord_sprite.y = 1;
-	n->blocs[3].phys = MUR_A_DROITE;
-	n->blocs[3].type_bloc = EST_VIDE;
-
-	n->blocs[4].texture = 0;
-	n->blocs[4].coord_sprite.x = 2;
-	n->blocs[4].coord_sprite.y = 2;
-	n->blocs[4].phys = COIN_HAUT_A_GAUCHE;
-	n->blocs[4].type_bloc = EST_VIDE;
-
-	n->blocs[5].texture = 0;
-	n->blocs[5].coord_sprite.x = 0;
-	n->blocs[5].coord_sprite.y = 2;
-	n->blocs[5].phys = COIN_HAUT_A_DROITE;
-	n->blocs[5].type_bloc = EST_VIDE;
-
-	n->blocs[6].texture = 0;
-	n->blocs[6].coord_sprite.x = 2;
-	n->blocs[6].coord_sprite.y = 0;
-	n->blocs[6].phys = COIN_BAS_A_GAUCHE;
-	n->blocs[6].type_bloc = EST_VIDE;
-
-	n->blocs[7].texture = 0;
-	n->blocs[7].coord_sprite.x = 0;
-	n->blocs[7].coord_sprite.y = 0;
-	n->blocs[7].phys = COIN_BAS_A_DROITE;
-	n->blocs[7].type_bloc = EST_VIDE;
-
-	n->blocs[8].texture = 0;
-	n->blocs[8].coord_sprite.x = 1;
-	n->blocs[8].coord_sprite.y = 1;
-	n->blocs[8].phys = PLEIN;
-	n->blocs[8].type_bloc = EST_VIDE;
-
-	n->blocs[9].texture = 0;
-	n->blocs[9].coord_sprite.x = 1;
-	n->blocs[9].coord_sprite.y = 1;
-	n->blocs[9].phys = PLEIN;
-	n->blocs[9].type_bloc = EST_VIDE;
-	
-	n->blocs[10].texture = 0;
-	n->blocs[10].coord_sprite.x = 5;
-	n->blocs[10].coord_sprite.y = 2;
-	n->blocs[10].phys = BORD_A_DROITE;
-	n->blocs[10].type_bloc = EST_VIDE;
-
-	n->blocs[11].texture = 0;
-	n->blocs[11].coord_sprite.x = 0;
-	n->blocs[11].coord_sprite.y = 1;
-	n->blocs[11].phys = PENTE_45_DROITE;
-	n->blocs[11].type_bloc = EST_VIDE;
-
-	n->blocs[12].texture = 0;
-	n->blocs[12].coord_sprite.x = 6;
-	n->blocs[12].coord_sprite.y = 2;
-	n->blocs[12].phys = PENTE_30_GAUCHE_8;
-	n->blocs[12].type_bloc = EST_VIDE;
-
-	n->blocs[13].texture = 0;
-	n->blocs[13].coord_sprite.x = 6;
-	n->blocs[13].coord_sprite.y = 2;
-	n->blocs[13].phys = PENTE_30_GAUCHE_16;	
-	n->blocs[13].type_bloc = EST_VIDE;
-
-	n->blocs[14].texture = 0;
-	n->blocs[14].coord_sprite.x = 6;
-	n->blocs[14].coord_sprite.y = 2;
-	n->blocs[14].phys = PENTE_30_DROITE_0;
-	n->blocs[14].type_bloc = EST_VIDE;
-
-	n->blocs[15].texture = 0;
-	n->blocs[15].coord_sprite.x = 6;
-	n->blocs[15].coord_sprite.y = 2;
-	n->blocs[15].phys = PENTE_30_DROITE_8;
-	n->blocs[15].type_bloc = EST_VIDE;
-
-	n->blocs[16].texture = 0;
-	n->blocs[16].coord_sprite.x = 6;
-	n->blocs[16].coord_sprite.y = 1;
-	n->blocs[16].phys = PENTE_45_GAUCHE;
-	n->blocs[16].type_bloc = EST_VIDE;
-
-	/* BLOC '?' */
-	n->blocs[17].texture = 2;
-	n->blocs[17].coord_sprite.x = 0;
-	n->blocs[17].coord_sprite.y = 0;
-	n->blocs[17].phys = BLOC_SPEC;
-	n->blocs[17].type_bloc = 0;
-
-	/* Bloc cassable */
-	n->blocs[18].texture = 1;
-	n->blocs[18].coord_sprite.x = 0;
-	n->blocs[18].coord_sprite.y = 0;
-	n->blocs[18].phys = BLOC_SPEC;	
-	n->blocs[18].type_bloc = EST_VIDE | CASSABLE;
-	n->blocs[18].tps_piece = 0;
-
-	/* Boc incassable */
-	n->blocs[19].texture = 3;
-	n->blocs[19].coord_sprite.x = 0;
-	n->blocs[19].coord_sprite.y = 0;
-	n->blocs[19].phys = BLOC_SPEC;
-	n->blocs[19].type_bloc = EST_VIDE;
-
-	//n->blocs[20].texture = 3;
-	//n->blocs[20].coord_sprite.x = 0;
-	//n->blocs[20].coord_sprite.y = 0;
-	//n->blocs[20].phys = EAU;
-	//n->blocs[20].type_bloc = EST_VIDE;
-}
-
 
 void affiche_occ_blocs(niveau* n)
 {
@@ -2007,6 +1259,12 @@ void draw_main(niveau *lvl, perso **persos, ecran e, Uint32 duree)
 
 	/* Dessin du plan du personnage */
 	draw_blocs(lvl, e, duree);
+
+	/* Dessin des checkpoints */
+	for(i = 0; i < lvl->nb_checkpoints; i++)
+	{
+		draw_checkpoint(lvl->checkpoints[i], duree);
+	}
 	
 	/* Dessin des monstres */
 	for(i = 0; i < lvl->nb_monstres; i++)

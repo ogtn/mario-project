@@ -30,7 +30,6 @@ world *init_world(world *w)
 	w->nb_niveaux = 0;
 
 	w->persos = NULL;
-	w->niveau = new_niveau();
 	w->liste_niveaux = NULL;
 	w->keystate = new_keystate();
 	w->ecran.scroll.x = 0;
@@ -49,7 +48,6 @@ world *init_world(world *w)
 	/* cela concerne tout ce qui suit jusqu'au return */
 
 	w->nb_persos = 1;
-	w->num_niveau = 1;
 	w->nb_niveaux = 1;
 
 	/* Initialisation du perso */
@@ -57,10 +55,6 @@ world *init_world(world *w)
     w->persos[0] = new_perso();
 	charger_perso("small_mario", w->persos[0]);
 	transforme_perso(SMALL_MARIO, w->persos[0]);
-
-	w->liste_niveaux = malloc(sizeof(char*));
-	w->liste_niveaux[0] = malloc(TAILLE_NOM_NIVEAU);
-	strcpy(w->liste_niveaux[0], "niveau1.lvl");
 
 	return w;
 }
@@ -119,19 +113,48 @@ world *free_world(world *w)
 
 void load_world(world *w)
 {
-	/* Chargement du niveau */
-    //charger_niveau_test_vide(w->niveau);
-	//charger_niveau_test(w->niveau);
-	//charger_niveau_test_xml(w->niveau);
+	int i;
+
+	FILE* wldFile = fopen("world1.wld", "r");
+	if(wldFile == NULL)
+	{
+		printf("Le fichier est introuvable !\n");
+	}
+
+	fscanf(wldFile, "nb_niveaux : %d", &w->nb_niveaux);
+	w->liste_niveaux = malloc(sizeof(char*) * w->nb_niveaux);
+
+	for(i = 0; i < w->nb_niveaux; i++)
+	{
+		w->liste_niveaux[i] = malloc(sizeof(char) * TAILLE_NOM_NIVEAU);
+		fscanf(wldFile, "%s", w->liste_niveaux[i]);
+	}	
+}
+
+void begin_level(world *w)
+{
+	int i;
+
+	/* Désignation du niveau de départ */
+	w->niveau = new_niveau();
+	charger_niveau(w->liste_niveaux[w->num_niveau], w->niveau);
+
+	for(i = 0; i < w->nb_persos; i++)
+	{
+		/* Initialisation de la position des persos */
+		w->persos[i]->position.x = w->niveau->spawn.x;
+		w->persos[i]->position.y = w->niveau->spawn.y;
+
+		w->persos[i]->position_prec = w->persos[i]->position;
+		w->persos[i]->etat = DEBOUT;
+
+		/* Initialisation du nom et du temps dans le HUD pour chaque niveau chargé */
+		w->persos[i]->hud->nom_niveau = w->niveau->nom;
+		w->persos[i]->hud->time = 4000;
+	}
 	
-	//sauver_niveau("test_xml.xml", w->niveau);
-	charger_niveau("test_xml.xml", w->niveau);
-	//affiche_occ_blocs(w->niveau);
-	//charger_textures_niveau(w->niveau);
-	
-	/* Initialisation du nom et du temps dans le HUD pour chaque niveau chargé */
-	w->persos[0]->hud->nom_niveau = w->niveau->nom;
-	w->persos[0]->hud->time = 4000;
+	/* Lancement de la musique */
+	FSOUND_Stream_Play(FSOUND_FREE, charger_musique(w->niveau->titre_zik, 255, 1)); 
 }
 
 
@@ -224,7 +247,7 @@ void update_taille_fenetre(world *w)
 	}
 }
 
-void check_lives_finish(world *w, int* continuer)
+void check_lives_finish(world *w, int* gagne)
 {
 	int i, sont_vivants = 0;
 
@@ -233,13 +256,13 @@ void check_lives_finish(world *w, int* continuer)
 		sont_vivants |= (w->persos[i]->hud->nb_vies != 0);
 		if(w->persos[i]->etat == FINISH_CHATEAU && w->persos[i]->tps_finish == 0)
 		{
-			*continuer = 0;
+			*gagne = 1;
 			return;
 		}
 	}
 
 	if(!sont_vivants)
-		*continuer = 0;
+		*gagne = 1;
 }
 
 int perso_mort_ou_transforme(world* w)

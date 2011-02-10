@@ -93,6 +93,9 @@
     <ClCompile Include="bloc.c">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="checkpoint.c">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="action.h">
@@ -173,6 +176,9 @@
     <ClInclude Include="bloc.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="checkpoint.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ressources.rc">
@@ -198,8 +204,16 @@
     <None Include="test_xml.xml">
       <Filter>Fichiers de ressources</Filter>
     </None>
-    <None Include="textures\blocs\classiques\Grass.png">
+    <None Include="textures\objects\checkpoint.png">
       <Filter>Fichiers de ressources</Filter>
     </None>
+    <None Include="world1.wld">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="textures\objects\checkpoint.obj">
+      <Filter>Fichiers de ressources</Filter>
+    </Object>
   </ItemGroup>
 </Project>

@@ -17,8 +17,6 @@
 #ifndef NIVEAU_H
 #define NIVEAU_H
 
-
-
 /******************************************************************************/
 /*=================================[INCLUDES]=================================*/
 /******************************************************************************/
@@ -29,6 +27,7 @@
 #include "projectile.h"
 #include "tuyau.h"
 #include "particules.h"
+#include "checkpoint.h"
 #include "bloc.h"
 
 /******************************************************************************/
@@ -61,8 +60,11 @@ typedef struct niveau
 	char titre_zik[TAILLE_TITRE_MUSIQUE];			/* nom du fichier audio à lire pendant le niveau */
 	coordi taille;									/* la taille du niveau (en blocs) */
 	coordi spawn;									/* les coordonnées du spawn point (en bloc) */
-	coordi checkpoint;								/* les coordonnées du checkpoint (en bloc) */
 	GLuint last_texture;							/* dernier identificateur OpenGL ayant été utilisé */
+
+	/* Layer checkpoint */
+	int nb_checkpoints;
+	checkpoint** checkpoints;
 
 	/* Layer finish */
 	nb nb_finish;									/* Nombre d'arrivées dans le niveau */

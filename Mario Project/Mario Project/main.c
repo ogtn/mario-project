@@ -168,7 +168,7 @@ void init_OpenGL(int x, int y)
 
 void jouer(world *w_)
 {
-    int continuer = VRAI;
+    int continuer = VRAI, gagne = FAUX;
     world *w;
 	Uint32 temps_rendu = 0;
 
@@ -191,91 +191,111 @@ void jouer(world *w_)
     w->ecran.taille.y = HAUTEUR_FENETRE;
     w->ecran.origine.x = 0;
     w->ecran.origine.y = 0;
-	
-	/* Boucle principale du programme à modifier pour qu'elle soit plus "intelligente"
-    il faut que lorsqu' on presse echap le menu pause s'ouvre, et qu'on retourne dans
-    la boucle en quittant le menu (sauf si on decide d'arreter de jouer) */
-    while(continuer)
-    {
-		temps_rendu = SDL_GetTicks();
-        glEnd();
-        glClear(GL_COLOR_BUFFER_BIT);
-		glClear(GL_DEPTH_BUFFER_BIT);
-        glBegin(GL_QUADS);
-        
-        /* Mise à jour de l'etat des touches du clavier */
-        maj_keystate(w->keystate, &continuer);
-        /* Test de collisions */
-        if(perso_mort_ou_transforme(w))
+
+	/* Tant qu'on a pas passé le nombre de niveaux */
+	while(w->num_niveau < w->nb_niveaux && continuer)
+	{
+		begin_level(w);
+
+		/* Boucle principale du programme à modifier pour qu'elle soit plus "intelligente"
+		il faut que lorsqu' on presse echap le menu pause s'ouvre, et qu'on retourne dans
+		la boucle en quittant le menu (sauf si on decide d'arreter de jouer) */
+		while(continuer && !gagne)
 		{
-			/* Mise à jour de toutes les positions des objets/enemis */
-			main_collisions(w);
-		}
-        else
-        {
-            w->persos[0]->tps_transformation -= w->temps_ecoule;
-            if(w->persos[0]->tps_transformation > pow(2, 31))
-                w->persos[0]->tps_transformation = 0;
+			temps_rendu = SDL_GetTicks();
+			glEnd();
+			glClear(GL_COLOR_BUFFER_BIT);
+			glClear(GL_DEPTH_BUFFER_BIT);
+			glBegin(GL_QUADS);
 
-			w->persos[0]->tps_mort -= w->temps_ecoule;
-            if(w->persos[0]->tps_mort > pow(2, 31))
-                w->persos[0]->tps_mort = 0;
-        }
+			/* Mise à jour de l'etat des touches du clavier */
+			maj_keystate(w->keystate, &continuer);
+			/* Test de collisions */
+			if(perso_mort_ou_transforme(w))
+			{
+				/* Mise à jour de toutes les positions des objets/enemis */
+				main_collisions(w);
+			}
+			else
+			{
+				w->persos[0]->tps_transformation -= w->temps_ecoule;
+				if(w->persos[0]->tps_transformation > pow(2, 31))
+					w->persos[0]->tps_transformation = 0;
 
-		/* Vérification du nombre vies restantes, fin de niveau, etc... */
-		check_lives_finish(w, &continuer);
+				w->persos[0]->tps_mort -= w->temps_ecoule;
+				if(w->persos[0]->tps_mort > pow(2, 31))
+					w->persos[0]->tps_mort = 0;
+			}
 
-        /* Mise à jour de la position de l'ecran (en fonction de celle du perso) */
-        update_screen(w);
+			/* Vérification du nombre vies restantes, fin de niveau, etc... */
+			check_lives_finish(w, &gagne);
 
-		/* Mise à jour des positions des particules */
-		MAJ_particules(w->niveau, w->temps_ecoule);
+			/* Mise à jour de la position de l'ecran (en fonction de celle du perso) */
+			update_screen(w);
 
-		draw_main(w->niveau, w->persos, w->ecran, w->temps_actuel);
+			/* Mise à jour des positions des particules */
+			MAJ_particules(w->niveau, w->temps_ecoule);
 
-        /* Infos debug */
+			draw_main(w->niveau, w->persos, w->ecran, w->temps_actuel);
+
+			/* Infos debug */
 #ifdef _DEBUG
-        //affichage_debug(w);
+			//affichage_debug(w);
 #endif
 
-        /* audio? */
+			/* audio? */
 
-        /* Gestion du temps */
-        if(perso_mort_ou_transforme(w))
-		{
-			update_time(w);
+			/* Gestion du temps */
+			if(perso_mort_ou_transforme(w))
+			{
+				update_time(w);
+			}
+
+			temps_rendu = SDL_GetTicks() - temps_rendu;
+			//if(temps_rendu > 17)
+			//{
+			//	temps_rendu = SDL_GetTicks();
+
+			//	/* Dessin de la scene */
+			//	draw_main(w->niveau, w->persos, w->ecran, w->temps_actuel);
+
+			//	screen_flush();
+			//	SDL_GL_SwapBuffers();
+			//}
+			//else
+			//{
+			//	my_sleep(1);
+			//}
+
+			//if(temps_rendu < 17)
+			//    my_sleep(17 - temps_rendu);
+
+			{
+				GLenum err = glGetError();
+
+				if(err != GL_NO_ERROR)
+					printf("Erreur OpenGL:%s\n", gluErrorString(glGetError()));
+			}
+
+			screen_printf_dbg("FPS: %d\n", w->fps);
+			screen_flush();
+			SDL_GL_SwapBuffers();
 		}
 
-		temps_rendu = SDL_GetTicks() - temps_rendu;
-		//if(temps_rendu > 17)
-		//{
-		//	temps_rendu = SDL_GetTicks();
+		/* Si on veut quitter le jeu */
+		if(!continuer)
+			break;
 
-		//	/* Dessin de la scene */
-		//	draw_main(w->niveau, w->persos, w->ecran, w->temps_actuel);
+		/* teste s'il y a un autre niveau après celui-ci */
+		if(w->num_niveau < w->nb_niveaux - 1)
+		{
+			free_niveau(w->niveau);
+			gagne = 0;
+			continuer = 1;
+		}
 
-		//	screen_flush();
-		//	SDL_GL_SwapBuffers();
-		//}
-		//else
-		//{
-		//	my_sleep(1);
-		//}
-
-		//if(temps_rendu < 17)
-        //    my_sleep(17 - temps_rendu);
-
-        {
-            GLenum err = glGetError();
-
-            if(err != GL_NO_ERROR)
-                printf("Erreur OpenGL:%s\n", gluErrorString(glGetError()));
-        }
-        
-        screen_printf_dbg("FPS: %d\n", w->fps);
-        screen_flush();
-	    SDL_GL_SwapBuffers();
-    }
+		w->num_niveau++;
+	}
 
     if(w_ == NULL)
     {
