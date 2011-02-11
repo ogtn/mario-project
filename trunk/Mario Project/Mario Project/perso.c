@@ -81,6 +81,7 @@ perso *init_perso(perso *p)
 		p->sons[SND_DIE] = FSOUND_Sample_Load(FSOUND_FREE, "musics/die.ogg", 0, 0, 0);
 		p->sons[SND_PIPE] = FSOUND_Sample_Load(FSOUND_FREE, "musics/pipe.wav", 0, 0, 0);
 		p->sons[SND_CLEAR] = FSOUND_Sample_Load(FSOUND_FREE, "musics/smw-clear.wav", 0, 0, 0);
+		p->sons[SND_CHECKPOINT] = FSOUND_Sample_Load(FSOUND_FREE, "musics/checkpoint.wav", 0, 0, 0);
 
 
 		/* initialisation du HUD */

@@ -207,13 +207,8 @@
     <None Include="textures\objects\checkpoint.png">
       <Filter>Fichiers de ressources</Filter>
     </None>
-    <None Include="world1.wld">
+    <None Include="musics\checkpoint.wav">
       <Filter>Fichiers de ressources</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Object Include="textures\objects\checkpoint.obj">
-      <Filter>Fichiers de ressources</Filter>
-    </Object>
   </ItemGroup>
 </Project>
