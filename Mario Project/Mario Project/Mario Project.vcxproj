@@ -171,16 +171,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="level_design_log.txt" />
+    <None Include="musics\checkpoint.wav" />
     <None Include="test_xml.xml" />
     <None Include="textures\blocs\classiques\classiques.cfg" />
     <None Include="textures\blocs\speciaux\cassables\cassables.cfg" />
     <None Include="textures\blocs\speciaux\incassables\[Q]\[Q].cfg" />
     <None Include="textures\objects\checkpoint.png" />
     <None Include="to do list.txt" />
-    <None Include="world1.wld" />
-  </ItemGroup>
-  <ItemGroup>
-    <Object Include="textures\objects\checkpoint.obj" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

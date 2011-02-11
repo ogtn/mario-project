@@ -1661,9 +1661,13 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 		{
 			if(p->transformation == SMALL_MARIO && n->checkpoints[i]->etat == NOT_PASSED)
 				prend_item(p, CHAMPIGNON);
-
-			n->checkpoints[i]->etat = PASSED;
-			p->checkpoint = i;
+			
+			if(n->checkpoints[i]->etat == NOT_PASSED)
+			{
+				FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_CHECKPOINT]);
+				n->checkpoints[i]->etat = PASSED;
+				p->checkpoint = i;
+			}
 		}
 	}
 }
