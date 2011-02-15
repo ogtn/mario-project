@@ -150,7 +150,7 @@ void begin_level(world *w)
 
 		/* Initialisation du nom et du temps dans le HUD pour chaque niveau chargé */
 		w->persos[i]->hud->nom_niveau = w->niveau->nom;
-		w->persos[i]->hud->time = 4000;
+		w->persos[i]->hud->time = 3000;
 	}
 	
 	/* Lancement de la musique */

@@ -305,7 +305,7 @@ int m_nb_etats_absents(monstre* m)
 	if(m->nb_sprites[M_MARCHE] == 0)
 		cpt++;
 
-	if(m->est_tuable_par_saut)
+	if(m->est_tuable_par_saut || m->est_tuable_par_boule_feu)
 		cpt--;
 
 	if(m->nb_sprites[M_RETRACTE] == 0)
@@ -314,5 +314,6 @@ int m_nb_etats_absents(monstre* m)
 	if(m->nb_sprites[M_SORT_CARAPACE] == 0)
 		cpt++;
 
-	return cpt;
+
+	return (cpt < 0)?0:cpt;
 }

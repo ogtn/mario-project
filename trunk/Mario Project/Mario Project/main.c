@@ -236,7 +236,20 @@ void jouer(world *w_)
 			/* Mise à jour des positions des particules */
 			MAJ_particules(w->niveau, w->temps_ecoule);
 
-			draw_main(w->niveau, w->persos, w->ecran, w->temps_actuel);
+			if(gagne)
+			{
+				FSOUND_PlaySound(1, w->persos[0]->sons[SND_PTS_FINAL]);
+				while(calc_finish_points(w->persos, w->nb_persos))
+				{
+					draw_main(w->niveau, w->persos, w->ecran, w->temps_actuel);
+					update_time(w);
+					screen_flush();
+					SDL_GL_SwapBuffers();
+				}
+				FSOUND_StopSound(1);
+			}
+			else
+				draw_main(w->niveau, w->persos, w->ecran, w->temps_actuel);
 
 			/* Infos debug */
 #ifdef _DEBUG
@@ -252,24 +265,6 @@ void jouer(world *w_)
 			}
 
 			temps_rendu = SDL_GetTicks() - temps_rendu;
-			//if(temps_rendu > 17)
-			//{
-			//	temps_rendu = SDL_GetTicks();
-
-			//	/* Dessin de la scene */
-			//	draw_main(w->niveau, w->persos, w->ecran, w->temps_actuel);
-
-			//	screen_flush();
-			//	SDL_GL_SwapBuffers();
-			//}
-			//else
-			//{
-			//	my_sleep(1);
-			//}
-
-			//if(temps_rendu < 17)
-			//    my_sleep(17 - temps_rendu);
-
 			{
 				GLenum err = glGetError();
 
@@ -277,7 +272,6 @@ void jouer(world *w_)
 					printf("Erreur OpenGL:%s\n", gluErrorString(glGetError()));
 			}
 
-			screen_printf_dbg("FPS: %d\n", w->fps);
 			screen_flush();
 			SDL_GL_SwapBuffers();
 		}

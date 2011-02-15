@@ -372,8 +372,8 @@ void draw_monstre(occ_monstre *monstre, Uint32 duree)
 			bas = 1 - (float)1 / nb_etats_presents;
 			break;
 		case M_MORT_PAR_PROJ :
-			gauche = 0;
-			droite = (float)1 / monstre->type_monstre->nb_sprites_max;
+			gauche = (float)1 / monstre->type_monstre->nb_sprites_max;
+			droite = (float)2 / monstre->type_monstre->nb_sprites_max;
 			bas = 1 - (float) 1 / nb_etats_presents;
 			haut = bas - (float) 1 / nb_etats_presents;
 			break;

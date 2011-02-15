@@ -82,6 +82,7 @@ perso *init_perso(perso *p)
 		p->sons[SND_PIPE] = FSOUND_Sample_Load(FSOUND_FREE, "musics/pipe.wav", 0, 0, 0);
 		p->sons[SND_CLEAR] = FSOUND_Sample_Load(FSOUND_FREE, "musics/smw-clear.wav", 0, 0, 0);
 		p->sons[SND_CHECKPOINT] = FSOUND_Sample_Load(FSOUND_FREE, "musics/checkpoint.wav", 0, 0, 0);
+		p->sons[SND_PTS_FINAL] = FSOUND_Sample_Load(FSOUND_FREE, "musics/Points_finaux.wav", 0, 0, 0);
 
 
 		/* initialisation du HUD */
@@ -442,4 +443,20 @@ file_pts* free_file_pts(file_pts* file)
 	}
 
 	return file;
+}
+
+int calc_finish_points(perso** persos, int nb_persos)
+{
+	int i, reste_temps = 0;
+
+	for(i = 0; i < nb_persos; i++)
+	{
+		persos[i]->hud->score += 50;
+		persos[i]->hud->time -= 10;
+		if(persos[i]->hud->time > 3000)
+			persos[i]->hud->time = 0;
+		reste_temps |= (persos[i]->hud->time > 0);
+	}
+
+	return reste_temps;
 }

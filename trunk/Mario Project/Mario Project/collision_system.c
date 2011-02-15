@@ -161,7 +161,7 @@ void main_collisions(world *w)
 
 				/* Fonction résolvant les collisions sur la copie du monstre */
 				if(m_bis->etat != M_MORT_PAR_PROJ)
-					solve_collisions_monstre(m_bis, mstr_actuel->occ_monstre, w->persos[0], w->niveau, w->temps_ecoule);
+					solve_collisions_monstre(m_bis, w->persos[0], w->niveau, w->temps_ecoule);
 
 				diff_x = abs((int)m_bis->position_prec.x - (int)m_bis->position.x);
 				diff_y = abs((int)m_bis->position_prec.y - (int)m_bis->position.y);
@@ -184,7 +184,7 @@ void main_collisions(world *w)
 
 						/* Fonction résolvant les collisions */
 						if(mstr_actuel->occ_monstre->etat != M_MORT_PAR_PROJ)
-							solve_collisions_monstre(mstr_actuel->occ_monstre, NULL, w->persos[0], w->niveau, w->temps_ecoule);
+							solve_collisions_monstre(mstr_actuel->occ_monstre, w->persos[0], w->niveau, w->temps_ecoule);
 					}
 				}
 				mstr_actuel = mstr_actuel->suivant;
@@ -510,7 +510,7 @@ void MAJ_collision_perso(perso *perso, niveau* lvl, keystate* keystate, Uint32 d
 		if(keystate->actuel[RUN] && !keystate->actuel[BAS] && !keystate->precedent[RUN]
 		&& perso->transformation >= FIRE_MARIO && perso->etat != DERAPE 
 			&& perso->etat != REGARDE_HAUT && !perso->tps_attaque)
-			throw_special_projectile_perso(perso, lvl, p);
+			throw_projectile_perso(perso, lvl, p);
 
 		/* Sauter */
 		if(keystate->actuel[SAUTER] && !keystate->precedent[SAUTER] && !keystate->actuel[HAUT]
@@ -1435,7 +1435,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 
 										// Immobilisation du monstre
 										mstr_actuel->occ_monstre->vitesse.x = 0;
-										mstr_actuel->occ_monstre->tps_retracte = mstr_actuel->occ_monstre->type_monstre->v_anim[M_SORT_CARAPACE] *  mstr_actuel->occ_monstre->type_monstre->nb_sprites[M_SORT_CARAPACE];
+										mstr_actuel->occ_monstre->tps_retracte = 6 * mstr_actuel->occ_monstre->type_monstre->v_anim[M_SORT_CARAPACE] *  mstr_actuel->occ_monstre->type_monstre->nb_sprites[M_SORT_CARAPACE];
 										FSOUND_PlaySound(FSOUND_FREE, mstr_actuel->occ_monstre->type_monstre->sons[SND_JUMP_ON]);
 
 										// Comptage et affichage des points
@@ -1671,7 +1671,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 		}
 	}
 }
-void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p, niveau* n, Uint32 duree)
+void solve_collisions_monstre(occ_monstre* m, perso* p, niveau* n, Uint32 duree)
 {
 
 	/* Variables pour l'initialisation */
@@ -1679,7 +1679,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 	int i, j;
 
 	/* Variables pour la detection et la résolution de collisions */
-	elem_monstre* mstr_actuel = m->type_monstre->occ_monstres->monstre;
+	elem_monstre* mstr_actuel;
 	int phys_bloc_actuel, prec_collision_bloc = 0;
 	float hauteur;
 	carre block = {0}, monstre = {0}, monstre_2 = {0}, projectile = {0}, tuyau = {0};
@@ -1715,9 +1715,9 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 
 	/* Si le monstre est retracté, il est plus petit */
 	if(m->etat == M_RETRACTE || m->etat == M_RETRACTE_PORTED || m->etat == M_RETRACTE_RETOURNE)
-		monstre.taille.y = mstr_actuel->occ_monstre->type_monstre->taille.y / 2;
+		monstre.taille.y = m->type_monstre->taille.y / 2;
 	else
-		monstre.taille.y = mstr_actuel->occ_monstre->type_monstre->taille.y;
+		monstre.taille.y = m->type_monstre->taille.y;
 
 	monstre.est_bloc_pente = 0;
 
@@ -1750,7 +1750,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 							m->vitesse.x = -VITESSE_X_EJECTION;
 						FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_PROJ_ON]);
 
-						compte_points(p, mstr_actuel->occ_monstre);
+						compte_points(p, m);
 					}
 
 					/* Cas où le monstre doit rester sur la plateforme */
@@ -1823,7 +1823,7 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 								m->vitesse.y = VITESSE_Y_EJECTION * 2;
 								FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_PROJ_ON]);
 
-								compte_points(p, mstr_actuel->occ_monstre);
+								compte_points(p, m);
 							}
 							else
 							{
@@ -2138,96 +2138,101 @@ void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p,
 	}
 
 	/************* Collisions MONSTRES <=> MONSTRES *************/
-	while(mstr_actuel != NULL && ((m->vitesse.x != 0) || m->etat == M_RETRACTE_PORTED))
+	for(i = 0; i < n->nb_monstres; i++)
 	{
+		mstr_actuel = n->monstres[i]->occ_monstres->monstre;
 
-		if(mstr_actuel->occ_monstre->etat != M_MORT_PAR_PROJ && mstr_actuel->occ_monstre->etat != M_MORT_PAR_SAUT 
-			&& mstr_actuel->occ_monstre->etat != M_RETRACTE_PORTED
-			&& m != mstr_copie)
+		while(mstr_actuel != NULL && ((m->vitesse.x != 0) || m->etat == M_RETRACTE_PORTED))
 		{
-			/* Initialisation du carre monstre_2 */
-			monstre_2.position.x = mstr_actuel->occ_monstre->position.x + mstr_actuel->occ_monstre->type_monstre->abscisse_bas;
-			monstre_2.position.y = mstr_actuel->occ_monstre->position.y;
 
-			monstre_2.position_prec.x = mstr_actuel->occ_monstre->position_prec.x + mstr_actuel->occ_monstre->type_monstre->abscisse_bas;
-			monstre_2.position_prec.y = mstr_actuel->occ_monstre->position_prec.y;
-
-			monstre_2.taille.x = mstr_actuel->occ_monstre->type_monstre->taille.x - 2 *  mstr_actuel->occ_monstre->type_monstre->abscisse_bas;
-
-			/* Si le monstre est retracté, il est plus petit */
-			if(mstr_actuel->occ_monstre->etat == M_RETRACTE)
-				monstre_2.taille.y = mstr_actuel->occ_monstre->type_monstre->taille.y / 2;
-			else
-				monstre_2.taille.y = mstr_actuel->occ_monstre->type_monstre->taille.y;
-
-			monstre_2.est_bloc_pente = 0;
-
-			determinate_collision(monstre, monstre_2, &collision);
-
-			if((collision.carre1_est_touche || collision.carre2_est_touche) && collision.type_collision != SUPERPOSITION)
+			if(mstr_actuel->occ_monstre->etat != M_MORT_PAR_PROJ && mstr_actuel->occ_monstre->etat != M_MORT_PAR_SAUT
+				&& mstr_actuel->occ_monstre->etat != M_RETRACTE_PORTED && mstr_actuel->occ_monstre->actif)
 			{
-				/* Cas où l'autre monstre est retracté mais qu'il ne bouge pas ou qu'il marche */
-				if(mstr_actuel->occ_monstre->etat == M_RETRACTE 
-					|| mstr_actuel->occ_monstre->etat == M_MARCHE
-					|| mstr_actuel->occ_monstre->etat == M_RETRACTE_RETOURNE)
+				/* Initialisation du carre monstre_2 */
+				monstre_2.position.x = mstr_actuel->occ_monstre->position.x + mstr_actuel->occ_monstre->type_monstre->abscisse_bas;
+				monstre_2.position.y = mstr_actuel->occ_monstre->position.y;
+
+				monstre_2.position_prec.x = mstr_actuel->occ_monstre->position_prec.x + mstr_actuel->occ_monstre->type_monstre->abscisse_bas;
+				monstre_2.position_prec.y = mstr_actuel->occ_monstre->position_prec.y;
+
+				monstre_2.taille.x = mstr_actuel->occ_monstre->type_monstre->taille.x - 2 *  mstr_actuel->occ_monstre->type_monstre->abscisse_bas;
+
+				/* Si le monstre est retracté, il est plus petit */
+				if(mstr_actuel->occ_monstre->etat == M_RETRACTE)
+					monstre_2.taille.y = mstr_actuel->occ_monstre->type_monstre->taille.y / 2;
+				else
+					monstre_2.taille.y = mstr_actuel->occ_monstre->type_monstre->taille.y;
+
+				monstre_2.est_bloc_pente = 0;
+
+				determinate_collision(monstre, monstre_2, &collision);
+
+				if((collision.carre1_est_touche || collision.carre2_est_touche) && collision.type_collision != SUPERPOSITION)
 				{
-					if((m->etat == M_RETRACTE || m->etat == M_RETRACTE_RETOURNE) && m->vitesse.x != 0)
+					/* Cas où l'autre monstre est retracté mais qu'il ne bouge pas ou qu'il marche */
+					if(mstr_actuel->occ_monstre->etat == M_RETRACTE 
+						|| mstr_actuel->occ_monstre->etat == M_MARCHE
+						|| mstr_actuel->occ_monstre->etat == M_RETRACTE_RETOURNE)
 					{
 
-						if((mstr_actuel->occ_monstre->etat == M_RETRACTE || mstr_actuel->occ_monstre->etat == M_RETRACTE_RETOURNE)
-							&& mstr_actuel->occ_monstre->vitesse.x != 0)
-						{							
+						if((m->etat == M_RETRACTE || m->etat == M_RETRACTE_RETOURNE) && m->vitesse.x != 0)
+						{
+
+							if((mstr_actuel->occ_monstre->etat == M_RETRACTE || mstr_actuel->occ_monstre->etat == M_RETRACTE_RETOURNE)
+								&& mstr_actuel->occ_monstre->vitesse.x != 0)
+							{							
+								/* Le monstre touché meurt */
+								m->etat = M_MORT_PAR_PROJ;
+								m->vitesse.y = VITESSE_Y_EJECTION;
+
+								// Comptage des points
+								compte_points(p, mstr_actuel->occ_monstre);
+								p->hud->nb_monstres_tues_carapace = 0;
+							}
+
 							/* Le monstre touché meurt */
+							mstr_actuel->occ_monstre->etat = M_MORT_PAR_PROJ;
+							mstr_actuel->occ_monstre->vitesse.y = VITESSE_Y_EJECTION;
+							FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_PROJ_ON]);
+
+							// Comptage des points
+							compte_points(p, mstr_actuel->occ_monstre);
+						}
+
+
+						/* Si l'un deux est porté, les deux meurent */
+						if(m->etat == M_RETRACTE_PORTED)
+						{
+							mstr_actuel->occ_monstre->etat = M_MORT_PAR_PROJ;
+							mstr_actuel->occ_monstre->vitesse.y = VITESSE_Y_EJECTION;
+
 							m->etat = M_MORT_PAR_PROJ;
 							m->vitesse.y = VITESSE_Y_EJECTION;
+							FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_PROJ_ON]);
 
 							// Comptage des points
 							compte_points(p, mstr_actuel->occ_monstre);
 							p->hud->nb_monstres_tues_carapace = 0;
 						}
 
-						/* Le monstre touché meurt */
-						mstr_actuel->occ_monstre->etat = M_MORT_PAR_PROJ;
-						mstr_actuel->occ_monstre->vitesse.y = VITESSE_Y_EJECTION;
-						FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_PROJ_ON]);
-
-						// Comptage des points
-						compte_points(p, mstr_actuel->occ_monstre);
 					}
 
+					/* Cas où deux monstres se touchent */
+					if(m->etat != M_RETRACTE && m->etat != M_RETRACTE_RETOURNE)
+					{ 
+						if(m->cote == COTE_DROIT)
+							m->cote = COTE_GAUCHE;
+						else
+							m->cote = COTE_DROIT;
 
-					/* Si l'un deux est porté, les deux meurent */
-					if(m->etat == M_RETRACTE_PORTED)
-					{
-						mstr_actuel->occ_monstre->etat = M_MORT_PAR_PROJ;
-						mstr_actuel->occ_monstre->vitesse.y = VITESSE_Y_EJECTION;
-
-						m->etat = M_MORT_PAR_PROJ;
-						m->vitesse.y = VITESSE_Y_EJECTION;
-						FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_PROJ_ON]);
-
-						// Comptage des points
-						compte_points(p, mstr_actuel->occ_monstre);
-						p->hud->nb_monstres_tues_carapace = 0;
+						m->vitesse.x *= -1;
 					}
-
-				}
-
-				/* Cas où deux monstres se touchent */
-				if(m->etat != M_RETRACTE && m->etat != M_RETRACTE_RETOURNE)
-				{ 
-					if(m->cote == COTE_DROIT)
-						m->cote = COTE_GAUCHE;
-					else
-						m->cote = COTE_DROIT;
-
-					m->vitesse.x *= -1;
 				}
 			}
-		}
 
-		mstr_actuel = mstr_actuel->suivant;
-	}	
+			mstr_actuel = mstr_actuel->suivant;
+		}
+	}
 
 	/************* Collisions MONSTRES <=> PROJECTILES *************/
 	for(i = 0; i < n->nb_projectiles; i ++)
