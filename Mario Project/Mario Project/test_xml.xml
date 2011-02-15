@@ -27,10 +27,13 @@
 		<item img="champignon" type="1" nb="0"/>
 		<item img="fleur" type="2" nb="0"/>
 	</items>
-	<monsters nb="1">
-		<monster name="koopa" nb="1">
+	<monsters nb="2">
+		<monster name="goomba" nb="1">
 			<occ actual="0" pos="400:192"/>
 		</monster>
+    <monster name="koopa" nb="1">
+      <occ actual="1" pos="300:192"/>
+    </monster>
 	</monsters>
 	<pipes nb="1">
 		<pipe img="green_pipe" sens="2" length="2" pos="0:20" state="1" destination_pipe="0" level_destination="(null)" monster="-1"/>

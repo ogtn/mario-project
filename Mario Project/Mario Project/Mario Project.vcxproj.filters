@@ -204,10 +204,7 @@
     <None Include="test_xml.xml">
       <Filter>Fichiers de ressources</Filter>
     </None>
-    <None Include="textures\objects\checkpoint.png">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="musics\checkpoint.wav">
+    <None Include="musics\Points_finaux.wav">
       <Filter>Fichiers de ressources</Filter>
     </None>
   </ItemGroup>

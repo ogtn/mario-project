@@ -132,7 +132,7 @@ void throw_special_projectile_perso(perso *perso, niveau* lvl, occ_projectile *p
 void solve_collisions_perso(perso* p, niveau *n, keystate* keystate);
 
 /* Detection/resolution de collisions sur le monstre */
-void solve_collisions_monstre(occ_monstre* m, occ_monstre* mstr_copie, perso* p, niveau* n, Uint32 duree);
+void solve_collisions_monstre(occ_monstre* m, perso* p, niveau* n, Uint32 duree);
 
 /* Detection/resolution de collisions sur l'item */
 void solve_collisions_item(occ_item* it, perso** persos, niveau* n, Uint32 duree);

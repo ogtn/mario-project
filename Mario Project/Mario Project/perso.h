@@ -157,4 +157,7 @@ file_pts* add_file_pts(file_pts* file, int points, coordi position);
 /* Libération d'éléments */
 file_pts* free_file_pts(file_pts* file);
 
+/* Calcul des poins à la fin d'un niveau */
+int calc_finish_points(perso** persos, int nb_persos);
+
 #endif
