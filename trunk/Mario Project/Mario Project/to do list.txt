@@ -116,7 +116,7 @@ void in_air(SDL_Rect *player,int time1,int atterri,int *air,int time3)
 }
 
 
-_trouver l'origine du bug qui oblige à utiliser le mode de compatibilité XP
+_trouver l'origine du bug qui oblige à utiliser le mode de compatibilité XP (réglé mais sans savoir pourquoi...)
 
 _gestion des debuts/fins de niveau et des checkpoint (respawn du perso, attribution de points en fonction du temps restant sur la fin...)
 

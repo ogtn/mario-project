@@ -29,6 +29,8 @@ world *init_world(world *w)
 	w->num_niveau = 0;
 	w->nb_niveaux = 0;
 
+	w->niveau = new_niveau();
+
 	w->persos = NULL;
 	w->liste_niveaux = NULL;
 	w->keystate = new_keystate();
@@ -128,7 +130,9 @@ void load_world(world *w)
 	{
 		w->liste_niveaux[i] = malloc(sizeof(char) * TAILLE_NOM_NIVEAU);
 		fscanf(wldFile, "%s", w->liste_niveaux[i]);
-	}	
+	}
+	
+	charger_niveau(w->liste_niveaux[w->num_niveau], w->niveau);
 }
 
 void begin_level(world *w)
@@ -136,8 +140,11 @@ void begin_level(world *w)
 	int i;
 
 	/* Désignation du niveau de départ */
-	w->niveau = new_niveau();
-	charger_niveau(w->liste_niveaux[w->num_niveau], w->niveau);
+	if(w->num_niveau > 0)
+	{
+		w->niveau = new_niveau();
+		charger_niveau(w->liste_niveaux[w->num_niveau], w->niveau);
+	}
 
 	for(i = 0; i < w->nb_persos; i++)
 	{
@@ -187,7 +194,8 @@ void update_time(world *w)
 
 	for(i = 0; i < w->nb_persos; i++)
 	{
-		w->persos[i]->hud->time -= w->temps_ecoule / 10;
+		if(w->persos[i]->etat != FINISH && w->persos[i]->etat != FINISH_CHATEAU)
+			w->persos[i]->hud->time -= w->temps_ecoule / 10;
 	}
 	
 
