@@ -13,10 +13,9 @@
   <finishes nb="1">
     <finish img="big_castle" pos="480:64"/>
   </finishes>
-	<projectiles nb="3">
+	<projectiles nb="2">
 		<projectile img="debris"/>
 		<projectile img="fireball"/>
-		<projectile img="special_fireball"/>
 	</projectiles>
 	<items nb="3">
 		<item img="piece" type="0" nb="3">
