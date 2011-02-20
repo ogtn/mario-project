@@ -204,8 +204,5 @@
     <None Include="test_xml.xml">
       <Filter>Fichiers de ressources</Filter>
     </None>
-    <None Include="musics\smw-clear.wav">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
   </ItemGroup>
 </Project>

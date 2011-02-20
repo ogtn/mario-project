@@ -98,12 +98,17 @@ perso* free_perso(perso *p)
 
 	if(p != NULL)
 	{
+		/* Libération des sons */
 		for(i = 0; i < NB_SONS; i++)
 			FSOUND_Sample_Free(p->sons[i]);
+		
 		free(p->texture_act);
 		free(p->texture_prec);
+		
+		/* Libération du HUD */
 		free_file_pts(p->hud->file_points);
 		free(p->hud);
+
 		free(p);
 	}
 	return NULL;
@@ -407,8 +412,8 @@ file_pts* add_file_pts(file_pts* file, int points, coordi position) {
 
 	if(file != NULL)
 		file->precedent = debut_file;
-	else
-		file = debut_file;
+	
+	file = debut_file;
 
 	return debut_file;
 }
@@ -433,12 +438,11 @@ file_pts* free_file_pts(file_pts* file)
 		}
 
 		if(file != NULL) {
+			file->suivant = NULL;
+
 			/* On replace le pointeur en début de file */
 			while(file->precedent != NULL)
 				file = file->precedent;
-
-			if(file != NULL)
-				file->suivant = NULL;
 		}
 	}
 

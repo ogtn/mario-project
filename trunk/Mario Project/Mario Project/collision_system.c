@@ -325,41 +325,38 @@ void MAJ_collision_projectile(occ_projectile* projectile, ecran e, Uint32 duree)
 
 	pause_projectile(projectile, e);
 
-	if(projectile->actif)
+	/* Voir pour la gravité en fonction du type de projectile */
+	if(projectile->type_projectile->soumission & SOUMIS_GRAVITE)
+		gravity(&projectile->vitesse, duree);
+
+
+	/* MAJ des temps d'apparition, de disparition, de vie */
+	if(projectile->tps_apparition){
+		projectile->tps_apparition -= duree;
+		if(projectile->tps_apparition > pow(2, 31))
+			projectile->tps_apparition = 0;
+	}
+	else if(projectile->tps_vie)
 	{
-		/* Voir pour la gravité en fonction du type de projectile */
-		if(projectile->type_projectile->soumission & SOUMIS_GRAVITE)
-			gravity(&projectile->vitesse, duree);
 
+		/* Sauvegarde de la position precedente */
+		projectile->position_prec.x = projectile->position.x;
+		projectile->position_prec.y = projectile->position.y;
 
-		/* MAJ des temps d'apparition, de disparition, de vie */
-		if(projectile->tps_apparition){
-			projectile->tps_apparition -= duree;
-			if(projectile->tps_apparition > pow(2, 31))
-				projectile->tps_apparition = 0;
-		}
-		else if(projectile->tps_vie)
-		{
+		/* Mise à jour des positions à partir de la vitesse */
+		projectile->position.x += projectile->vitesse.x * duree;
+		projectile->position.y += projectile->vitesse.y * duree;
 
-			/* Sauvegarde de la position precedente */
-			projectile->position_prec.x = projectile->position.x;
-			projectile->position_prec.y = projectile->position.y;
-
-			/* Mise à jour des positions à partir de la vitesse */
-			projectile->position.x += projectile->vitesse.x * duree;
-			projectile->position.y += projectile->vitesse.y * duree;
-
-			/* ça veut dire que le projectile est apparut */
-			projectile->tps_vie -= duree;
-			if(projectile->tps_vie > pow(2, 31))
-				projectile->tps_vie = 0;
-		}
-		else 
-		{
-			projectile->tps_disparition -= duree;
-			if(projectile->tps_disparition > pow(2, 31))
-				projectile->tps_disparition = 0;
-		}
+		/* ça veut dire que le projectile est apparut */
+		projectile->tps_vie -= duree;
+		if(projectile->tps_vie > pow(2, 31))
+			projectile->tps_vie = 0;
+	}
+	else 
+	{
+		projectile->tps_disparition -= duree;
+		if(projectile->tps_disparition > pow(2, 31))
+			projectile->tps_disparition = 0;
 	}
 }
 
@@ -1721,7 +1718,7 @@ void solve_collisions_monstre(occ_monstre* m, perso* p, niveau* n, Uint32 duree)
 
 	monstre.est_bloc_pente = 0;
 
-	if( m->etat != M_RETRACTE_PORTED && m->etat != M_MORT)
+	if(m->etat != M_RETRACTE_PORTED && m->etat != M_MORT && m->etat != M_MORT_PAR_PROJ)
 	{
 
 		/************* Collisions MONSTRES <=> NIVEAU *************/
@@ -2235,56 +2232,55 @@ void solve_collisions_monstre(occ_monstre* m, perso* p, niveau* n, Uint32 duree)
 	}
 
 	/************* Collisions MONSTRES <=> PROJECTILES *************/
-	for(i = 0; i < n->nb_projectiles; i ++)
+	if(m->etat != M_MORT_PAR_SAUT && m->actif && m->etat != M_MORT_PAR_PROJ)
 	{
-
-		elem_projectile* proj_actuel = n->projectiles[i]->occ_projectiles->projectile;
-		while(proj_actuel != NULL && m->etat != M_MORT_PAR_PROJ)
+		for(i = 0; i < n->nb_projectiles; i ++)
 		{
 
-			if(proj_actuel->occ_projectile->tps_vie > 0 && proj_actuel->occ_projectile->envoyeur == GENTIL && m->etat != M_MORT_PAR_SAUT)
+			elem_projectile* proj_actuel = n->projectiles[i]->occ_projectiles->projectile;
+			while(proj_actuel != NULL)
 			{
 
-				// Initialisation du bloc monstre
-				projectile.position.x = proj_actuel->occ_projectile->position.x + proj_actuel->occ_projectile->type_projectile->abscisse_bas;
-				projectile.position.y = proj_actuel->occ_projectile->position.y - proj_actuel->occ_projectile->type_projectile->taille.y + proj_actuel->occ_projectile->type_projectile->ordonnee_haut;
-
-				projectile.position_prec.x = proj_actuel->occ_projectile->position_prec.x + proj_actuel->occ_projectile->type_projectile->abscisse_bas;
-				projectile.position_prec.y = proj_actuel->occ_projectile->position_prec.y - proj_actuel->occ_projectile->type_projectile->taille.y + proj_actuel->occ_projectile->type_projectile->ordonnee_haut;
-
-				projectile.taille.x = proj_actuel->occ_projectile->type_projectile->taille.x - 2 *  proj_actuel->occ_projectile->type_projectile->abscisse_bas;
-				projectile.taille.y = 2 * proj_actuel->occ_projectile->type_projectile->ordonnee_haut - proj_actuel->occ_projectile->type_projectile->taille.y;
-
-				determinate_collision(monstre, projectile, &collision);
-
-				/* Si le premier carré est touché c'est-à-dire le monstre */
-				if(collision.carre1_est_touche)
+				if(proj_actuel->occ_projectile->tps_vie > 0 && proj_actuel->occ_projectile->envoyeur == GENTIL)
 				{
-					/* Si le monstre peut être tué par une fireball, il meurt */
-					if(m->type_monstre->est_tuable_par_boule_feu)
+
+					// Initialisation du bloc monstre
+					projectile.position.x = proj_actuel->occ_projectile->position.x + proj_actuel->occ_projectile->type_projectile->abscisse_bas;
+					projectile.position.y = proj_actuel->occ_projectile->position.y - proj_actuel->occ_projectile->type_projectile->taille.y + proj_actuel->occ_projectile->type_projectile->ordonnee_haut;
+
+					projectile.position_prec.x = proj_actuel->occ_projectile->position_prec.x + proj_actuel->occ_projectile->type_projectile->abscisse_bas;
+					projectile.position_prec.y = proj_actuel->occ_projectile->position_prec.y - proj_actuel->occ_projectile->type_projectile->taille.y + proj_actuel->occ_projectile->type_projectile->ordonnee_haut;
+
+					projectile.taille.x = proj_actuel->occ_projectile->type_projectile->taille.x - 2 *  proj_actuel->occ_projectile->type_projectile->abscisse_bas;
+					projectile.taille.y = 2 * proj_actuel->occ_projectile->type_projectile->ordonnee_haut - proj_actuel->occ_projectile->type_projectile->taille.y;
+
+					determinate_collision(monstre, projectile, &collision);
+
+					/* Si le premier carré est touché c'est-à-dire le monstre */
+					if(collision.carre1_est_touche)
 					{
-						m->etat = M_MORT_PAR_PROJ;
-						m->vitesse.x = (proj_actuel->occ_projectile->vitesse.x < 0)? -m->vitesse.x : m->vitesse.x;
-						m->vitesse.y = VITESSE_Y_EJECTION;
+						/* Si le monstre peut être tué par une fireball, il meurt */
+						if(m->type_monstre->est_tuable_par_boule_feu)
+						{
+							m->etat = M_MORT_PAR_PROJ;
+							m->vitesse.x = (proj_actuel->occ_projectile->vitesse.x < 0)? -m->vitesse.x : m->vitesse.x;
+							m->vitesse.y = VITESSE_Y_EJECTION;
 
-						/* Comptage des points */
-						text_points.x = (int)(m->position.x);
-						text_points.y = (int)(m->position.y + m->type_monstre->taille.y);
-						p->hud->file_points = add_file_pts(p->hud->file_points, m->type_monstre->points, text_points);
+							/* Comptage des points */
+							compte_points(p, m);
+						}
 
-						p->hud->score += m->type_monstre->points;
+						if(m->type_monstre->est_tuable_par_boule_feu)
+							FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_PROJ_ON]);
+						else
+							FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_LEVEL_ON]);
+
+						proj_actuel->occ_projectile->tps_vie = 0;
 					}
-
-					if(m->type_monstre->est_tuable_par_boule_feu)
-						FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_PROJ_ON]);
-					else
-						FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_LEVEL_ON]);
-
-					proj_actuel->occ_projectile->tps_vie = 0;
 				}
-			}
 
-			proj_actuel = proj_actuel->suivant;
+				proj_actuel = proj_actuel->suivant;
+			}
 		}
 	}
 }
@@ -3357,9 +3353,7 @@ void pause_projectile(occ_projectile* projectile, ecran e)
 		|| projectile->position.x + projectile->type_projectile->taille.x < e.origine.x + e.scroll.x
 		|| projectile->position.y > e.origine.y + e.scroll.y + e.taille.y
 		|| projectile->position.y + projectile->type_projectile->taille.y < e.origine.y + e.scroll.y)
-		projectile->actif = 0;
-	else
-		projectile->actif = 1;
+		projectile->tps_vie = 0;
 }
 
 void pause_item(niveau* n, occ_item* item, ecran e)
@@ -3381,7 +3375,8 @@ void compte_points(perso* p, occ_monstre* monstre)
 	text_points.x = (int)(monstre->position.x);
 	text_points.y = (int)(monstre->position.y + monstre->type_monstre->taille.y);
 
-	if(p->hud->nb_monstres_tues_carapace > TAB_POINTS_LENGTH - 1) {
+	if(p->hud->nb_monstres_tues_carapace > TAB_POINTS_LENGTH - 1)
+	{
 		p->hud->file_points = add_file_pts(p->hud->file_points, 10000, text_points);
 		prend_item(p, CHAMPI_VIE); // pour éviter la dupilcation de code
 	}

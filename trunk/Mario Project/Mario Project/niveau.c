@@ -240,11 +240,22 @@ niveau *free_niveau(niveau *n)
 
 	/* Libération arrières-plans */
 	if(n->backgrounds != NULL)
+	{
+		for(i = 0; i < n->nb_backgrounds;i++)
+			free(n->backgrounds[i].id_text);
+
 		free(n->backgrounds);
+	}
 
 	/* Libération avants-plans */
 	if(n->foregrounds != NULL)
+	{
+		for(i = 0; i < n->nb_foregrounds;i++)
+			free(n->foregrounds[i].id_text);
+
 		free(n->foregrounds);
+	}
+		
 
 	/* Libération textures */
 	if(n->textures != NULL)
@@ -1066,15 +1077,20 @@ void liberer_textures_niveau(niveau* n)
 	{
 		for(j = 0; j < n->backgrounds[i].nb_sprites; j++)
 			glDeleteTextures(1, &n->backgrounds[i].id_text[j]);
-	
-		free(n->backgrounds[i].id_text);
+	}
+
+	/* Liberation des textures de devant */
+	for(i = 0; i < n->nb_foregrounds; i++)
+	{
+		for(j = 0; j < n->foregrounds[i].nb_sprites; j++)
+			glDeleteTextures(1, &n->foregrounds[i].id_text[j]);
 	}
 
 	/* Libération des textures d'arrivée */
 	for(i = 0; i < n->nb_finish; i++)
 		glDeleteTextures(1, &n->finishes[i].id_text);
 
-	/* Libération des textures d'arrivée */
+	/* Libération des checkpoints */
 	for(i = 0; i < n->nb_checkpoints; i++)
 		glDeleteTextures(1, &n->checkpoints[i]->id_text);
 
@@ -1095,8 +1111,6 @@ void liberer_textures_niveau(niveau* n)
     {
 		for(j = 0; j < n->objets[i].nb_sprites; j++)
 			glDeleteTextures(1, &n->objets[i].id_text[j]);
-
-        free(n->objets[i].id_text);
 	}
 
 	/* Liberation des textures des blocs */
@@ -1156,13 +1170,13 @@ void charger_objet_background(background* b, int is_object)
 
 	if(b->nb_sprites > 1)
 	{
+		if(is_object)
+			strcpy(nom_texture, "textures/objects/");
+		else
+			strcpy(nom_texture, "textures/backgrounds/");
+
 		for(i = 0; i < b->nb_sprites; i ++)
 		{
-			if(is_object)
-				strcpy(nom_texture, "textures/bbjects/");
-			else
-				strcpy(nom_texture, "textures/backgrounds/");
-
 			strcat(nom_texture, b->nom_text);
 			strcat(nom_texture, itoa(i, test, 10));
 			strcat(nom_texture, ".png");

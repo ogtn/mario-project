@@ -171,7 +171,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="level_design_log.txt" />
-    <None Include="musics\smw-clear.wav" />
     <None Include="test_xml.xml" />
     <None Include="textures\blocs\classiques\classiques.cfg" />
     <None Include="textures\blocs\speciaux\cassables\cassables.cfg" />
