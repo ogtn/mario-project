@@ -30,6 +30,7 @@ SOURCES       = action.c \
 		bloc.c \
 		bouton.c \
 		browser.c \
+		checkpoint.c \
 		collision_system.c \
 		editeur.c \
 		editeur_action.c \
@@ -55,6 +56,7 @@ OBJECTS       = action.o \
 		bloc.o \
 		bouton.o \
 		browser.o \
+		checkpoint.o \
 		collision_system.o \
 		editeur.o \
 		editeur_action.o \
@@ -167,6 +169,11 @@ browser.o: browser.c browser.h \
 		alloc_free.h
 	$(CC) -c $(CFLAGS) $(INCPATH) -o browser.o browser.c
 
+checkpoint.o: checkpoint.c checkpoint.h \
+		constantes.h \
+		texture.h
+	$(CC) -c $(CFLAGS) $(INCPATH) -o checkpoint.o checkpoint.c
+	
 collision_system.o: collision_system.c collision_system.h \
 		world.h \
 		constantes.h \
