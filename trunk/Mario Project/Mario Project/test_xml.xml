@@ -1,12 +1,10 @@
-<level name="==Ceci est un niveau test==" size="100:50" music="musics/Tropical_Paradise.mp3">
+<level name="==Ceci est un niveau test==" size="100:50" music="">
 	<spawn pos="64:320"/>
   <checkpoints nb="1">
     <checkpoint img="checkpoint" pos="180:64"/>
   </checkpoints> 
-	<backgrounds nb="3">
-    <background img="Edge"/>
-    <background img="LittleEdge"/>
-		<background img="FrontEdge"/>
+	<backgrounds nb="1">
+    <background img="SnowHills"/>
 	</backgrounds>
 	<background_generators nb="0"/>
   <foregrounds nb="0"/>
