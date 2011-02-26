@@ -455,7 +455,7 @@ void maj_bouton(bouton *b, keystate *k)
             for(i = 0; i < b->nb_sous_boutons; i++)
             {
                 maj_bouton(b->sous_boutons[i], k);
-                if(b->sous_boutons[i]->etat_actuel == JUSTE_ENFONCE)
+                if(b->sous_boutons[i]->etat_actuel == JUSTE_ENFONCE && b->sous_boutons[i]->type != CLASSIQUE)
                     nouveau = i;
             }
 

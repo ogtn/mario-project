@@ -82,6 +82,8 @@ enum actions_editeur
     AC_REMPLISSAGE,
     AC_ADD_TO_FAVORITES,
     AC_SELECTIONNE_FAVORI,
+    AC_OUTIL_MAGIQUE_GAUCHE,
+    AC_OUTIL_MAGIQUE_DROITE,
 
     /* Actions propres au mode ennemi */
     AC_ADD_ENNEMI_TO_FAVORITES,
@@ -116,6 +118,8 @@ enum actions_bloc
     AC_BLOC_ENREGISTRER_SOUS,
     AC_BLOC_OUVRIR,
     AC_BLOC_TEST_LEVEL,
+    AC_BLOC_OUTIL_MAGIQUE_GAUCHE,
+    AC_BLOC_OUTIL_MAGIQUE_DROITE,
     NB_ACTIONS_BLOC
 };
 
@@ -199,6 +203,9 @@ enum boutons_outil_3x3
     SELECT_COL_2,
     SELECT_COL_3,
 
+    SELECT_LEFT_TEXTURE,
+    SELECT_RIGHT_TEXTURE,
+
     OUTIL_3x3_TAILLE
 };
 
@@ -267,7 +274,7 @@ typedef struct niveau_editeur
 typedef struct outil_3x3
 {
     bouton *bouton;
-    sprite sprite;
+    int state;
 } outil_3x3;
 
 
@@ -319,6 +326,7 @@ typedef struct editeur_bloc
     int prev_select_type;                       /* Type de la selection précédente */
     coordi debut_selection;		                /* Le bloc par lequel la selection à commencée */
     coordi fin_selection;		                /* Le bloc qui a mis fin à la selecton */
+    outil_3x3 outil;                            /* L'outil magique :p */
 } editeur_bloc;
 
 
@@ -417,13 +425,16 @@ void dessine_viseur(editeur *e);
 void dessine_selection(editeur *e);
 
 /* Bouton radio prévu pour la manipulation de textures 3*3 blocs */
-bouton *new_outil_3x3(void);
+bouton *new_outil_3x3(editeur *e);
 
 /* Mise en place des positions des sous-boutons */
 bouton *set_pos_outil_3x3(bouton *b, int x, int y);
 
 /* Chargement d'une texture dans l'outil */
 bouton *set_text_outil_3x3(bouton *b, char *nom);
+
+/* Decalle les sprites en fonction de l'état de l'outil */
+void move_text_outil_3x3(outil_3x3 *o);
 
 /* Dessin de l'outil */
 void draw_outil_3x3(bouton *b);
@@ -459,6 +470,8 @@ void ac_supprimer(action *a);
 void ac_remplissage(action *a);
 void ac_add_to_favorites(action *a);
 void ac_selectionne_favori(action *a);
+void ac_outil_magique_gauche(action *a);
+void ac_outil_magique_droite(action *a);
 
 /* Declaration ici en attendant mieux... La fonction devrait être dans 
 world.c, mais elle a besoin de collision.h, ce qui crée un probleme 
