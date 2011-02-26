@@ -131,20 +131,22 @@ void load_world(world *w)
 		w->liste_niveaux[i] = malloc(sizeof(char) * TAILLE_NOM_NIVEAU);
 		fscanf(wldFile, "%s", w->liste_niveaux[i]);
 	}
-	
-	charger_niveau(w->liste_niveaux[w->num_niveau], w->niveau);
+
+    w->niveau = new_niveau();
+    charger_niveau(w->liste_niveaux[w->num_niveau], w->niveau);
 }
+
 
 void begin_level(world *w)
 {
 	int i;
 
 	/* Désignation du niveau de départ */
-	if(w->num_niveau > 0)
-	{
-		w->niveau = new_niveau();
-		charger_niveau(w->liste_niveaux[w->num_niveau], w->niveau);
-	}
+    if(w->num_niveau > 0)
+    {
+        w->niveau = new_niveau();
+        charger_niveau(w->liste_niveaux[w->num_niveau], w->niveau);
+    }
 
 	for(i = 0; i < w->nb_persos; i++)
 	{

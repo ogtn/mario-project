@@ -204,5 +204,11 @@
     <None Include="test_xml.xml">
       <Filter>Fichiers de ressources</Filter>
     </None>
+    <None Include="textures\boutons\boutton_enemis.png">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="textures\boutons\boutton_enemis2.png">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -618,3 +618,64 @@ void ac_mode_switch(action *a)
         show(e->onglets[e->bouton_onglet->etat_actuel]);
     }
 }
+
+
+void ac_outil_magique_gauche(action *a)
+{
+    if(a != NULL && a->data != NULL)
+    {
+        editeur *e = a->data;
+
+        e->mode_bloc.outil.state--;
+
+
+        switch(e->mode_bloc.outil.state)
+        {
+        case 0:
+            set_label(e->mode_bloc.outil.bouton, "Sols et murs");
+            disable_action(a);
+            break;
+
+        case 1:
+            set_label(e->mode_bloc.outil.bouton, "Sols 2");
+            break;
+
+        case 2:
+            set_label(e->mode_bloc.outil.bouton, "Pentes 1");
+            enable_action(e->actions[AC_OUTIL_MAGIQUE_DROITE]);
+            break;
+        }
+
+        move_text_outil_3x3(&e->mode_bloc.outil);
+    }
+}
+
+
+void ac_outil_magique_droite(action *a)
+{
+    if(a != NULL && a->data != NULL)
+    {
+        editeur *e = a->data;
+
+        e->mode_bloc.outil.state++;
+
+        switch(e->mode_bloc.outil.state)
+        {
+        case 1:
+            set_label(e->mode_bloc.outil.bouton, "Sols 2");
+            enable_action(e->actions[AC_OUTIL_MAGIQUE_GAUCHE]);
+            break;
+
+        case 2:
+            set_label(e->mode_bloc.outil.bouton, "Pentes 1");
+            break;
+
+        case 3:
+            set_label(e->mode_bloc.outil.bouton, "Pentes 2");
+            disable_action(a);
+            break;
+        }            
+
+        move_text_outil_3x3(&e->mode_bloc.outil);
+    }
+}

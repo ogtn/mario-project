@@ -106,8 +106,8 @@ int main(int argc, char *argv[])
     //jouer();
     //choix = main_menu(k);
     //}
-    jouer(NULL);
-    //main_editeur();
+    //jouer(NULL);
+    main_editeur();
  
     // Astuce pour que le compilo ne dise pas que ces deux parametres ne sont pas
     //utilisés. On peut eventuellement les utiliser pour un mode debug,
@@ -160,6 +160,7 @@ void init_OpenGL(int x, int y)
     glEnable(GL_BGR_EXT);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_ALPHA_TEST);
+    //glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glAlphaFunc(GL_GREATER, 0.1);
@@ -170,7 +171,6 @@ void jouer(world *w_)
 {
     int continuer = VRAI, gagne = FAUX;
     world *w;
-	Uint32 temps_rendu = 0;
 
     /* On cache le curseur, ni vu ni connu je t'embrouille */
     SDL_ShowCursor(0);
@@ -198,14 +198,12 @@ void jouer(world *w_)
 		begin_level(w);
 
 		/* Boucle principale du programme à modifier pour qu'elle soit plus "intelligente"
-		il faut que lorsqu' on presse echap le menu pause s'ouvre, et qu'on retourne dans
+		il faut que lorsque l'on presse echap le menu pause s'ouvre, et qu'on retourne dans
 		la boucle en quittant le menu (sauf si on decide d'arreter de jouer) */
 		while(continuer && !gagne)
 		{
-			temps_rendu = SDL_GetTicks();
 			glEnd();
-			glClear(GL_COLOR_BUFFER_BIT);
-			glClear(GL_DEPTH_BUFFER_BIT);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glBegin(GL_QUADS);
 
 			/* Mise à jour de l'etat des touches du clavier */
@@ -249,8 +247,8 @@ void jouer(world *w_)
 				FSOUND_StopSound(1);
 			}
 			else
-				draw_main(w->niveau, w->persos, w->ecran, w->temps_actuel);
-
+                draw_main(w->niveau, w->persos, w->ecran, w->temps_actuel);
+				
 			/* Infos debug */
 #ifdef _DEBUG
 			//affichage_debug(w);
@@ -263,15 +261,7 @@ void jouer(world *w_)
 			{
 				update_time(w);
 			}
-
-			temps_rendu = SDL_GetTicks() - temps_rendu;
-			{
-				GLenum err = glGetError();
-
-				if(err != GL_NO_ERROR)
-					printf("Erreur OpenGL:%s\n", gluErrorString(glGetError()));
-			}
-
+            
 			screen_flush();
 			SDL_GL_SwapBuffers();
 		}

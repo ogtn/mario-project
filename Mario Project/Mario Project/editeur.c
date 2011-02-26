@@ -45,13 +45,17 @@ static const table_actions_editeur action_master_table[NB_ACTIONS] =
     {CLASSIQUE,	"textures/boutons/test.png",	"Supprime la séléction",						ac_supprimer,				SUPPR,		ON_CHANGE,              1},
     {0, 		NULL,							NULL,											ac_remplissage,				AUCUN,		0,                      1},
     {0, 		NULL,							NULL,											ac_add_to_favorites,		ENTRER,		0,                      0},
-    {0, 		NULL,							NULL,											ac_selectionne_favori,    	AUCUN,		0,                      1}   
+    {0, 		NULL,							NULL,											ac_selectionne_favori,    	AUCUN,		0,                      1},
+    {0, 		NULL,							NULL,               							ac_outil_magique_gauche,   	AUCUN,		ON_CHANGE,              0},
+    {0, 		NULL,							NULL,           								ac_outil_magique_droite,   	AUCUN,		ON_CHANGE,              1}
 };
 
 
 void main_editeur(void)
 {
     int continuer = VRAI;
+    UINT32 start, end, total = 0;
+    int nb_frames = 0;
     editeur e;
 
     /* Initialisation de l'editeur */
@@ -62,19 +66,33 @@ void main_editeur(void)
     la boucle en quittant le menu (sauf si on decide d'arreter de jouer) */
     while(continuer)
     {
-        glClear(GL_COLOR_BUFFER_BIT);
+        glEnd();
+        glClearColor(0x31 / 256., 0x49 / 256., 0x6A / 256., 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glBegin(GL_QUADS);
 
         /* Mise à jour */
         maj_keystate(e.world->keystate, &continuer); 
         update_taille_fenetre(e.world);
         maj_editeur(&e);
+
         /* Rendu */
+        if(nb_frames == 1000)
+        {
+            printf("Temps de rendu moyen sur 1000 frames: %.3fms\n", total / 1000.f);
+            nb_frames = 0;
+            total = 0;
+        }
+        start = SDL_GetTicks();
         draw_main_editeur(&e);
+        end = SDL_GetTicks();
+        total += end - start;
+        nb_frames++;
 
         /* Impression du texte */
         screen_flush();
         SDL_GL_SwapBuffers();
-        //my_sleep(1);
+        my_sleep(2);
     }
 
     //liberer_textures_niveau(e.world->niveau);
@@ -278,10 +296,13 @@ void init_onglet_bloc(editeur *e)
     
     /* Outil magique */
     gb = e->onglets[ONGLET_BLOCS]->group_boxes[REGION_OUTIL_MAGIQUE_BLOC];
-    b = new_outil_3x3();
+    b = new_outil_3x3(e);
     set_pos_outil_3x3(b, 61, 61);
-    set_text_outil_3x3(b, "");
+    set_text_outil_3x3(b, "textures/blocs/classiques/Grass.png");
     add_btn(gb, b);
+    e->mode_bloc.outil.bouton = b;
+    e->mode_bloc.outil.state = 0;
+    move_text_outil_3x3(&e->mode_bloc.outil);
 
     /* Initialisation des favoris des blocs */
     gb = e->onglets[ONGLET_BLOCS];
@@ -847,7 +868,7 @@ int find_bloc_survole(editeur *e)
 
     SDL_GetMouseState(&mx, &my);
     my = HAUTEUR_FENETRE - my;
-
+    
     /* Si la souris se trouve sur l'ecran */
     if(mx > e->world->ecran.origine.x
         && mx < (e->world->ecran.origine.x + e->world->ecran.taille.x)
@@ -974,12 +995,12 @@ void dessine_selection(editeur *e)
 }
 
 
-bouton *new_outil_3x3(void)
+bouton *new_outil_3x3(editeur *e)
 {
-    bouton *b = new_bouton_radio(16);
+    bouton *b = new_bouton_radio(OUTIL_3x3_TAILLE);
     b->etat_precedent = b->etat_actuel = SELECT_ALL;
 
-    /******************************* pas optimal car textures chargés plusieurs fois en mémoire *****************/
+    set_label(b, "Sols");
     set_text_globale(b->sous_boutons[SELECT_ALL], "textures/boutons/fleche_d.png");
     set_text_globale(b->sous_boutons[SELECT_COL_1], "textures/boutons/fleche_v.png");
     set_text_globale(b->sous_boutons[SELECT_COL_2], "textures/boutons/fleche_v.png");
@@ -988,6 +1009,13 @@ bouton *new_outil_3x3(void)
     set_text_globale(b->sous_boutons[SELECT_LINE_2], "textures/boutons/fleche_h.png");
     set_text_globale(b->sous_boutons[SELECT_LINE_3], "textures/boutons/fleche_h.png");
 
+    set_text_globale(b->sous_boutons[SELECT_LEFT_TEXTURE], "textures/boutons/boutton_enemis2.png");
+    set_text_globale(b->sous_boutons[SELECT_RIGHT_TEXTURE], "textures/boutons/boutton_enemis.png");
+    b->sous_boutons[SELECT_LEFT_TEXTURE]->type = CLASSIQUE;
+    b->sous_boutons[SELECT_RIGHT_TEXTURE]->type = CLASSIQUE;
+    link_action_btn(e->actions[AC_OUTIL_MAGIQUE_GAUCHE], b->sous_boutons[SELECT_LEFT_TEXTURE], ON_CLICK);
+    link_action_btn(e->actions[AC_OUTIL_MAGIQUE_DROITE], b->sous_boutons[SELECT_RIGHT_TEXTURE], ON_CLICK);
+
     return b;
 }
 
@@ -995,7 +1023,7 @@ bouton *new_outil_3x3(void)
 bouton *set_pos_outil_3x3(bouton *b, int x, int y)
 {
     int i;
-    int p_x = x, p_y = y;
+    int p_x = x, p_y = y + 32;
 
     if(b == NULL)
         return NULL;
@@ -1003,7 +1031,10 @@ bouton *set_pos_outil_3x3(bouton *b, int x, int y)
     b->pos.x = p_x;
     b->pos.y = p_y;
 
-    for(i = 0; i < OUTIL_3x3_TAILLE; i++)
+    set_pos(b->sous_boutons[SELECT_LEFT_TEXTURE], x, y);
+    set_pos(b->sous_boutons[SELECT_RIGHT_TEXTURE], x + 96, y);
+
+    for(i = 0; i <= SELECT_COL_3; i++)
     {
         if(i % 4 == 0 && i != 0)
         {
@@ -1034,7 +1065,7 @@ bouton *set_text_outil_3x3(bouton *b, char *nom)
     if(strcmp(nom, ""))
     {
         text = charger_texture_bis(nom, &taille);
-        taille.x /= 3;
+        taille.x /= 12;
         taille.y /= 3;
     }
     else
@@ -1149,6 +1180,62 @@ bouton *set_text_outil_3x3(bouton *b, char *nom)
     b->sous_boutons[SELECT_HD]->sprite_releve = b->sous_boutons[SELECT_HD]->sprite_enfonce;
 
     return b;
+}
+
+
+/* Là encore, je vois mal comment factoriser ce bordel sans revoir totalement les structures... */
+void move_text_outil_3x3(outil_3x3 *o)
+{
+    float pas = 1 / 12.f;
+    bouton *b = o->bouton;
+
+    float coord = pas * (o->state * 3);
+    b->sous_boutons[SELECT_BG]->sprite_enfonce.point_bg.x = coord;
+    b->sous_boutons[SELECT_BG]->sprite_releve.point_bg.x = coord;
+    b->sous_boutons[SELECT_MG]->sprite_enfonce.point_bg.x = coord;
+    b->sous_boutons[SELECT_MG]->sprite_releve.point_bg.x = coord;
+    b->sous_boutons[SELECT_HG]->sprite_enfonce.point_bg.x = coord;
+    b->sous_boutons[SELECT_HG]->sprite_releve.point_bg.x = coord;
+
+    coord += pas;
+    b->sous_boutons[SELECT_BG]->sprite_enfonce.point_hd.x = coord;
+    b->sous_boutons[SELECT_BG]->sprite_releve.point_hd.x = coord;
+    b->sous_boutons[SELECT_MG]->sprite_enfonce.point_hd.x = coord;
+    b->sous_boutons[SELECT_MG]->sprite_releve.point_hd.x = coord;
+    b->sous_boutons[SELECT_HG]->sprite_enfonce.point_hd.x = coord;
+    b->sous_boutons[SELECT_HG]->sprite_releve.point_hd.x = coord;
+
+    coord = pas * (o->state * 3 + 1);
+    b->sous_boutons[SELECT_BM]->sprite_enfonce.point_bg.x = coord;
+    b->sous_boutons[SELECT_BM]->sprite_releve.point_bg.x = coord;
+    b->sous_boutons[SELECT_MM]->sprite_enfonce.point_bg.x = coord;
+    b->sous_boutons[SELECT_MM]->sprite_releve.point_bg.x = coord;
+    b->sous_boutons[SELECT_HM]->sprite_enfonce.point_bg.x = coord;
+    b->sous_boutons[SELECT_HM]->sprite_releve.point_bg.x = coord;
+
+    coord += pas;
+    b->sous_boutons[SELECT_BM]->sprite_enfonce.point_hd.x = coord;
+    b->sous_boutons[SELECT_BM]->sprite_releve.point_hd.x = coord;
+    b->sous_boutons[SELECT_MM]->sprite_enfonce.point_hd.x = coord;
+    b->sous_boutons[SELECT_MM]->sprite_releve.point_hd.x = coord;
+    b->sous_boutons[SELECT_HM]->sprite_enfonce.point_hd.x = coord;
+    b->sous_boutons[SELECT_HM]->sprite_releve.point_hd.x = coord;
+
+    coord = pas * (o->state * 3 + 2);
+    b->sous_boutons[SELECT_BD]->sprite_enfonce.point_bg.x = coord;
+    b->sous_boutons[SELECT_BD]->sprite_releve.point_bg.x = coord;
+    b->sous_boutons[SELECT_MD]->sprite_enfonce.point_bg.x = coord;
+    b->sous_boutons[SELECT_MD]->sprite_releve.point_bg.x = coord;
+    b->sous_boutons[SELECT_HD]->sprite_enfonce.point_bg.x = coord;
+    b->sous_boutons[SELECT_HD]->sprite_releve.point_bg.x = coord;
+
+    coord += pas;
+    b->sous_boutons[SELECT_BD]->sprite_enfonce.point_hd.x = coord;
+    b->sous_boutons[SELECT_BD]->sprite_releve.point_hd.x = coord;
+    b->sous_boutons[SELECT_MD]->sprite_enfonce.point_hd.x = coord;
+    b->sous_boutons[SELECT_MD]->sprite_releve.point_hd.x = coord;
+    b->sous_boutons[SELECT_HD]->sprite_enfonce.point_hd.x = coord;
+    b->sous_boutons[SELECT_HD]->sprite_releve.point_hd.x = coord;
 }
 
 
