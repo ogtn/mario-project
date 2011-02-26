@@ -1170,13 +1170,13 @@ void charger_objet_background(background* b, int is_object)
 
 	if(b->nb_sprites > 1)
 	{
-		if(is_object)
-			strcpy(nom_texture, "textures/objects/");
-		else
-			strcpy(nom_texture, "textures/backgrounds/");
-
 		for(i = 0; i < b->nb_sprites; i ++)
 		{
+			if(is_object)
+				strcpy(nom_texture, "textures/objects/");
+			else
+				strcpy(nom_texture, "textures/backgrounds/");
+
 			strcat(nom_texture, b->nom_text);
 			strcat(nom_texture, itoa(i, test, 10));
 			strcat(nom_texture, ".png");

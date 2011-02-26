@@ -32,7 +32,6 @@ monstre* init_monstre(monstre *m)
 		m->abscisse_bas = 0;
 		m->est_tuable_par_boule_feu = 0;
 		m->texture = 0;
-		m->points = 0;
 		m->tps_disparition = 0;
 		m->tps_sortie_tuyau = 650;
 		m->occ_monstres = new_liste_monstre();
@@ -287,9 +286,6 @@ monstre *charger_monstre(char* nom){
 	m->taille.x = (m->nb_sprites[M_RETRACTE] == 0)?nb_1:min(nb_3, min(nb_1, nb_2));
 	m->taille.y = m->taille.y / nb_lignes;
 
-	/* Chargement des points */
-	fscanf(mstr_file, "points : %d\n", &nb);
-	m->points = nb;
 	m->nb_sprites_max = max(m->nb_sprites[M_RETRACTE], max(m->nb_sprites[M_MARCHE], m->nb_sprites[M_SORT_CARAPACE]));
     strcpy(m->nom, nom);
 
