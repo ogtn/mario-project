@@ -1473,17 +1473,16 @@ void draw_background(niveau *n, ecran e, Uint32 duree)
     s.position.y = 0;
     s.taille.x = e.taille.x;
     s.taille.y = e.taille.y;
-    s.point_bg.x = decallage.x;
-    s.point_bg.y = decallage.y;
 
     for(i = 0; i < n->nb_backgrounds; i++)
     {
+        s.point_bg.x = decallage.x;
+        s.point_bg.y = decallage.y;
         text_coord.x  = (float)e.taille.x / n->backgrounds[i].taille.x;
         text_coord.y  = (float)e.taille.y / n->backgrounds[i].taille.y;
 
 		if(n->backgrounds[i].nb_sprites > 1)
 		{
-
 			// stockage de la vitesse d'animation du background actuel
 			v_anim = n->backgrounds[i].v_anim;
 
