@@ -85,6 +85,8 @@ void main_collisions(world *w)
 
 		if(w->persos[i]->etat == MORT && w->persos[i]->position.y < 0)
 		{
+			transforme_perso(SMALL_MARIO, w->persos[i]);
+
 			if(w->persos[i]->checkpoint >= 0)
 			{
 				w->persos[i]->position.x = (float)(w->niveau->checkpoints[w->persos[i]->checkpoint]->position.x + 3 * w->niveau->taille_blocs.x);
@@ -1418,7 +1420,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 										p->tps_pousse_carapace = TPS_POUSSE_CARAPACE;
 
 										// Comptage et affichage des points
-										compte_points(p, mstr_actuel->occ_monstre);
+										compte_points(p, mstr_actuel->occ_monstre, 0);
 									}
 									// Cas où Mario saute sur le monstre retracté et mobile
 									else if((p->etat == SAUT_DESCENDANT || p->etat == SAUT_BAISSE || p->etat == SAUT_CARAPACE)
@@ -1436,7 +1438,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 										FSOUND_PlaySound(FSOUND_FREE, mstr_actuel->occ_monstre->type_monstre->sons[SND_JUMP_ON]);
 
 										// Comptage et affichage des points
-										compte_points(p, mstr_actuel->occ_monstre);
+										compte_points(p, mstr_actuel->occ_monstre, 0);
 									}
 									// Cas où Mario saute sur le monstre retracté et immobile
 									else if((p->etat == SAUT_DESCENDANT || p->etat == SAUT_BAISSE || p->etat == SAUT_CARAPACE)
@@ -1454,7 +1456,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 										FSOUND_PlaySound(FSOUND_FREE, mstr_actuel->occ_monstre->type_monstre->sons[SND_PROJ_ON]);
 
 										// Comptage et affichage des points
-										compte_points(p, mstr_actuel->occ_monstre);
+										compte_points(p, mstr_actuel->occ_monstre, 0);
 									}
 								}
 								// Cas où le monstre n'était pas retracté mais touché quand même
@@ -1474,7 +1476,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 									FSOUND_PlaySound(FSOUND_FREE, mstr_actuel->occ_monstre->type_monstre->sons[SND_JUMP_ON]);
 
 									// Comptage et affichage des points
-									compte_points(p, mstr_actuel->occ_monstre);
+									compte_points(p, mstr_actuel->occ_monstre, 0);
 								}
 							}
 							// Cas où le monstre meurt à cause d'un saut
@@ -1494,7 +1496,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 									FSOUND_PlaySound(FSOUND_FREE, mstr_actuel->occ_monstre->type_monstre->sons[SND_JUMP_ON]);
 
 									// Comptage et affichage des points
-									compte_points(p, mstr_actuel->occ_monstre);
+									compte_points(p, mstr_actuel->occ_monstre, 0);
 								}
 							}
 						}
@@ -1515,7 +1517,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 							mstr_actuel->occ_monstre->vitesse.y = VITESSE_Y_EJECTION;
 
 							/* Comptage des points */
-							compte_points(p, mstr_actuel->occ_monstre);
+							compte_points(p, mstr_actuel->occ_monstre, 0);
 
 							FSOUND_PlaySound(FSOUND_FREE, mstr_actuel->occ_monstre->type_monstre->sons[SND_PROJ_ON]);
 						}
@@ -1632,6 +1634,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 
 			if(p->etat != FINISH && p->etat != FINISH_CHATEAU)
 			{
+				kill_monster_finish(n, p);
 				FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_CLEAR]);
 				p->tps_finish = TPS_FINISH;
 				p->etat = FINISH;
@@ -1747,7 +1750,7 @@ void solve_collisions_monstre(occ_monstre* m, perso* p, niveau* n, Uint32 duree)
 							m->vitesse.x = -VITESSE_X_EJECTION;
 						FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_PROJ_ON]);
 
-						compte_points(p, m);
+						compte_points(p, m, 0);
 					}
 
 					/* Cas où le monstre doit rester sur la plateforme */
@@ -1820,7 +1823,7 @@ void solve_collisions_monstre(occ_monstre* m, perso* p, niveau* n, Uint32 duree)
 								m->vitesse.y = VITESSE_Y_EJECTION * 2;
 								FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_PROJ_ON]);
 
-								compte_points(p, m);
+								compte_points(p, m, 0);
 							}
 							else
 							{
@@ -2183,7 +2186,7 @@ void solve_collisions_monstre(occ_monstre* m, perso* p, niveau* n, Uint32 duree)
 								m->vitesse.y = VITESSE_Y_EJECTION;
 
 								// Comptage des points
-								compte_points(p, mstr_actuel->occ_monstre);
+								compte_points(p, mstr_actuel->occ_monstre, 0);
 								p->hud->nb_monstres_tues_carapace = 0;
 							}
 
@@ -2193,7 +2196,7 @@ void solve_collisions_monstre(occ_monstre* m, perso* p, niveau* n, Uint32 duree)
 							FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_PROJ_ON]);
 
 							// Comptage des points
-							compte_points(p, mstr_actuel->occ_monstre);
+							compte_points(p, mstr_actuel->occ_monstre, 0);
 						}
 
 
@@ -2208,7 +2211,7 @@ void solve_collisions_monstre(occ_monstre* m, perso* p, niveau* n, Uint32 duree)
 							FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_PROJ_ON]);
 
 							// Comptage des points
-							compte_points(p, mstr_actuel->occ_monstre);
+							compte_points(p, mstr_actuel->occ_monstre, 0);
 							p->hud->nb_monstres_tues_carapace = 0;
 						}
 
@@ -2267,7 +2270,7 @@ void solve_collisions_monstre(occ_monstre* m, perso* p, niveau* n, Uint32 duree)
 							m->vitesse.y = VITESSE_Y_EJECTION;
 
 							/* Comptage des points */
-							compte_points(p, m);
+							compte_points(p, m, 0);
 						}
 
 						if(m->type_monstre->est_tuable_par_boule_feu)
@@ -3368,22 +3371,51 @@ void pause_item(niveau* n, occ_item* item, ecran e)
 		item->actif = 1;
 }
 
-void compte_points(perso* p, occ_monstre* monstre)
+void compte_points(perso* p, occ_monstre* monstre, int is_finish)
 {
 	coordi text_points = {0};
 
 	text_points.x = (int)(monstre->position.x);
 	text_points.y = (int)(monstre->position.y + monstre->type_monstre->taille.y);
 
-	if(p->hud->nb_monstres_tues_carapace > TAB_POINTS_LENGTH - 1)
+	if(is_finish)
 	{
-		p->hud->file_points = add_file_pts(p->hud->file_points, 10000, text_points);
-		prend_item(p, CHAMPI_VIE); // pour éviter la dupilcation de code
+		p->hud->file_points = add_file_pts(p->hud->file_points, 1000, text_points);
+		p->hud->score += 1000;
 	}
-	else 
+	else
 	{
-		p->hud->file_points = add_file_pts(p->hud->file_points, p->hud->tab_points[p->hud->nb_monstres_tues], text_points);
-		p->hud->score += p->hud->tab_points[p->hud->nb_monstres_tues];
-		p->hud->nb_monstres_tues++;
+		if(p->hud->nb_monstres_tues_carapace > TAB_POINTS_LENGTH - 1)
+		{
+			p->hud->file_points = add_file_pts(p->hud->file_points, 10000, text_points);
+			prend_item(p, CHAMPI_VIE); // pour éviter la duplication de code
+		}
+		else 
+		{
+			p->hud->file_points = add_file_pts(p->hud->file_points, p->hud->tab_points[p->hud->nb_monstres_tues], text_points);
+			p->hud->score += p->hud->tab_points[p->hud->nb_monstres_tues];
+			p->hud->nb_monstres_tues++;
+		}
+	}
+}
+
+void kill_monster_finish(niveau* n, perso* p)
+{
+	int i;
+
+	for(i = 0; i < n->nb_monstres; i++)
+	{
+		elem_monstre *mstr_actuel = n->monstres[i]->occ_monstres->monstre;
+
+		while(mstr_actuel != NULL)
+		{
+			if(mstr_actuel->occ_monstre->actif)
+			{
+				mstr_actuel->occ_monstre->etat = M_MORT_PAR_PROJ;
+				compte_points(p, mstr_actuel->occ_monstre, 1);
+			}
+
+			mstr_actuel = mstr_actuel->suivant;
+		}
 	}
 }

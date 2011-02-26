@@ -106,8 +106,8 @@ int main(int argc, char *argv[])
     //jouer();
     //choix = main_menu(k);
     //}
-    //jouer(NULL);
-    main_editeur();
+    jouer(NULL);
+    //main_editeur();
  
     // Astuce pour que le compilo ne dise pas que ces deux parametres ne sont pas
     //utilisés. On peut eventuellement les utiliser pour un mode debug,
@@ -261,7 +261,7 @@ void jouer(world *w_)
 			{
 				update_time(w);
 			}
-            
+			screen_printf_dbg("FPS : %d\n", w->fps);
 			screen_flush();
 			SDL_GL_SwapBuffers();
 		}

@@ -89,7 +89,6 @@ typedef struct monstre {
 	int reste_sur_plateforme;				/* indique si le personnage doit rester sur la plateforme sur laquelle il est */
 	GLuint texture;							/* l'identificateur OpenGL de la texture du monstre */
 	FSOUND_SAMPLE* sons[NB_SONS];			/* tableau des sons correspondant au monstre */
-	int points;								/* points remportés par la mort de ce monstre par un projectile */
 	int tps_disparition;					/* Temps qu' un monstre met à disparaitre après avoir été tué par un saut du personnage */
 	int tps_sortie_tuyau;					/* Intervalle de temps de sortie depuis un tuyau */
     char nom[255];                          /* Bah, le nom de la bestiole quoi */

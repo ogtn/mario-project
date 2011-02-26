@@ -1,17 +1,19 @@
-<level name="==Ceci est un niveau test==" size="100:50" music="">
+<level name="==Ceci est un niveau test==" size="100:50" music="musics/Tropical_Paradise.mp3">
 	<spawn pos="64:320"/>
   <checkpoints nb="1">
     <checkpoint img="checkpoint" pos="180:64"/>
   </checkpoints> 
-	<backgrounds nb="1">
-		<background img="SnowHills"/>
+	<backgrounds nb="3">
+    <background img="Edge"/>
+    <background img="LittleEdge"/>
+		<background img="FrontEdge"/>
 	</backgrounds>
 	<background_generators nb="0"/>
-	<foregrounds nb="0"/>
+  <foregrounds nb="0"/>
 	<foreground_generators nb="0"/>
 	<objects nb="0"/>
   <finishes nb="1">
-    <finish img="big_castle" pos="480:64"/>
+    <finish img="big_castle" pos="400:64"/>
   </finishes>
 	<projectiles nb="2">
 		<projectile img="debris"/>
@@ -27,8 +29,9 @@
 		<item img="fleur" type="2" nb="0"/>
 	</items>
 	<monsters nb="2">
-		<monster name="goomba" nb="1">
+		<monster name="goomba" nb="2">
 			<occ actual="0" pos="400:192"/>
+      <occ actual="0" pos="433:192"/>
 		</monster>
     <monster name="koopa" nb="1">
       <occ actual="1" pos="300:192"/>
