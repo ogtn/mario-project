@@ -169,7 +169,7 @@ void init_OpenGL(int x, int y)
 
 void jouer(world *w_)
 {
-    int continuer = VRAI, gagne = FAUX;
+    int continuer = VRAI, gagne = FAUX, persos_tous_morts = FAUX;
     world *w;
 
     /* On cache le curseur, ni vu ni connu je t'embrouille */
@@ -195,12 +195,12 @@ void jouer(world *w_)
 	/* Tant qu'on a pas passé le nombre de niveaux */
 	while(w->num_niveau < w->nb_niveaux && continuer)
 	{
-		begin_level(w);
+		begin_level(w, persos_tous_morts);
 
 		/* Boucle principale du programme à modifier pour qu'elle soit plus "intelligente"
 		il faut que lorsque l'on presse echap le menu pause s'ouvre, et qu'on retourne dans
 		la boucle en quittant le menu (sauf si on decide d'arreter de jouer) */
-		while(continuer && !gagne)
+		while(continuer && !gagne && !persos_tous_morts)
 		{
 			glEnd();
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -208,8 +208,9 @@ void jouer(world *w_)
 
 			/* Mise à jour de l'etat des touches du clavier */
 			maj_keystate(w->keystate, &continuer);
+
 			/* Test de collisions */
-			if(perso_mort_ou_transforme(w))
+			if(!perso_transforme_ou_meurt(w))
 			{
 				/* Mise à jour de toutes les positions des objets/enemis */
 				main_collisions(w);
@@ -225,14 +226,15 @@ void jouer(world *w_)
 					w->persos[0]->tps_mort = 0;
 			}
 
-			/* Vérification du nombre vies restantes, fin de niveau, etc... */
-			check_lives_finish(w, &gagne);
-
 			/* Mise à jour de la position de l'ecran (en fonction de celle du perso) */
 			update_screen(w);
 
 			/* Mise à jour des positions des particules */
 			MAJ_particules(w->niveau, w->temps_ecoule);
+
+			/* Vérification du nombre vies restantes, fin de niveau, s'ils sont tous morts... */
+			check_finish(w, &gagne);
+			persos_morts(w, &persos_tous_morts);
 
 			if(gagne)
 			{
@@ -257,11 +259,11 @@ void jouer(world *w_)
 			/* audio? */
 
 			/* Gestion du temps */
-			if(perso_mort_ou_transforme(w))
+			if(!perso_transforme_ou_meurt(w) && !persos_tous_morts)
 			{
 				update_time(w);
 			}
-			screen_printf_dbg("FPS : %d\n", w->fps);
+
 			screen_flush();
 			SDL_GL_SwapBuffers();
 		}
@@ -270,15 +272,23 @@ void jouer(world *w_)
 		if(!continuer)
 			break;
 
-		/* teste s'il y a un autre niveau après celui-ci */
-		if(w->num_niveau < w->nb_niveaux - 1)
+		/* Si tous les persos sont morts, on recommence */
+		if(persos_tous_morts)
 		{
-			free_niveau(w->niveau);
-			gagne = 0;
-			continuer = 1;
+			persos_tous_morts = FAUX;
 		}
+		else
+		{
+			/* teste s'il y a un autre niveau après celui-ci */
+			if(w->num_niveau < w->nb_niveaux - 1)
+			{
+				free_niveau(w->niveau);
+				gagne = 0;
+				continuer = 1;
+			}
 
-		w->num_niveau++;
+			w->num_niveau++;
+		}
 	}
 
     if(w_ == NULL)

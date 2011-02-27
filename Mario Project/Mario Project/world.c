@@ -137,12 +137,12 @@ void load_world(world *w)
 }
 
 
-void begin_level(world *w)
+void begin_level(world *w, int persos_tous_morts)
 {
 	int i;
 
 	/* Désignation du niveau de départ */
-    if(w->num_niveau > 0)
+	if(w->num_niveau > 0 && !persos_tous_morts)
     {
         w->niveau = new_niveau();
         charger_niveau(w->liste_niveaux[w->num_niveau], w->niveau);
@@ -150,9 +150,19 @@ void begin_level(world *w)
 
 	for(i = 0; i < w->nb_persos; i++)
 	{
+		transforme_perso(SMALL_MARIO, w->persos[i]);
+
 		/* Initialisation de la position des persos */
-		w->persos[i]->position.x = w->niveau->spawn.x;
-		w->persos[i]->position.y = w->niveau->spawn.y;
+		if(persos_tous_morts && w->persos[i]->checkpoint >= 0)
+		{
+			w->persos[i]->position.x = (float)(w->niveau->checkpoints[w->persos[i]->checkpoint]->position.x + 3 * w->niveau->taille_blocs.x);
+			w->persos[i]->position.y = (float)(w->niveau->checkpoints[w->persos[i]->checkpoint]->position.y);
+		}
+		else
+		{
+			w->persos[i]->position.x = (float)w->niveau->spawn.x;
+			w->persos[i]->position.y = (float)w->niveau->spawn.y;
+		}
 
 		w->persos[i]->position_prec = w->persos[i]->position;
 		w->persos[i]->etat = DEBOUT;
@@ -257,31 +267,27 @@ void update_taille_fenetre(world *w)
 	}
 }
 
-void check_lives_finish(world *w, int* gagne)
+void check_finish(world *w, int* gagne)
 {
-	int i, sont_vivants = 0;
+	int i;
 
 	for(i = 0; i < w->nb_persos; i++)
 	{
-		sont_vivants |= (w->persos[i]->hud->nb_vies != 0);
 		if(w->persos[i]->etat == FINISH_CHATEAU && w->persos[i]->tps_finish == 0)
 		{
 			*gagne = 1;
 			return;
 		}
 	}
-
-	if(!sont_vivants)
-		*gagne = 1;
 }
 
-int perso_mort_ou_transforme(world* w)
+int perso_transforme_ou_meurt(world* w)
 {
 	int i, res = 0;
 
 	for(i = 0; i < w->nb_persos; i++)
 	{
-		if(!w->persos[i]->tps_transformation && !w->persos[i]->tps_mort)
+		if(w->persos[i]->tps_transformation || w->persos[i]->tps_mort)
 		{
 			res = 1;
 			break;
@@ -289,4 +295,14 @@ int perso_mort_ou_transforme(world* w)
 	}
 
 	return res;
+}
+
+void persos_morts(world* w, int *persos_morts)
+{
+	int i;
+
+	for(i = 0; i < w->nb_persos; i++)
+	{
+		*persos_morts = *persos_morts || (w->persos[i]->etat == MORT && w->persos[i]->position.y < 0);
+	}
 }

@@ -187,7 +187,7 @@ void pause_projectile(occ_projectile* projectile, ecran e);
 void pause_item(niveau* n, occ_item* item, ecran e);
 
 /* Compte les points */
-void compte_points(perso* p, occ_monstre* montre);
+void compte_points(perso* p, occ_monstre* montre, int is_finish);
 
 /* S'occupe de tuer les monstres à la fin d'un niveau */
 void kill_monster_finish(niveau *n, perso* p);

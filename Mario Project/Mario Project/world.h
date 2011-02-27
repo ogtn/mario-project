@@ -93,7 +93,7 @@ personnage du joueur, les sprites, les blocs etc... */
 void load_world(world *w);
 
 /* fonction qui prépare le début d'un niveau */
-void begin_level(world *w);
+void begin_level(world *w, int persos_tous_morts);
 
 /* mise à jour des champs qui stockent notament le temps écoulé entre 
 deux images */
@@ -107,10 +107,13 @@ void update_screen(world *w);
 void update_taille_fenetre(world *w);
 
 /* Vérification du nombre de vies */
-void check_lives_finish(world *w, int* continuer);
+void check_finish(world *w, int* gagne);
 
-/* Teste si un des personnages est mort ou se transforme */
-int perso_mort_ou_transforme(world* w);
+/* Teste si un des personnages se transforme ou est en train de mourir */
+int perso_transforme_ou_meurt(world* w);
+
+/* Teste si un des personnages meurt */
+void persos_morts(world* w, int *persos_morts);
 
 /* Fonctions de main.c, à placer ailleurs peut etre */
 void init_SDL(int x, int y);

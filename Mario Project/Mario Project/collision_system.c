@@ -83,23 +83,7 @@ void main_collisions(world *w)
 
 		MAJ_HUD(w->persos[i], w->temps_ecoule, w->ecran);
 
-		if(w->persos[i]->etat == MORT && w->persos[i]->position.y < 0)
-		{
-			transforme_perso(SMALL_MARIO, w->persos[i]);
-
-			if(w->persos[i]->checkpoint >= 0)
-			{
-				w->persos[i]->position.x = (float)(w->niveau->checkpoints[w->persos[i]->checkpoint]->position.x + 3 * w->niveau->taille_blocs.x);
-				w->persos[i]->position.y = (float)(w->niveau->checkpoints[w->persos[i]->checkpoint]->position.y);
-			}
-			else
-			{
-				w->persos[i]->position.x = (float)(w->niveau->spawn.x);
-				w->persos[i]->position.y = (float)(w->niveau->spawn.y);
-			}
-			w->persos[i]->etat = DEBOUT;
-		}
-		else if(w->persos[i]->etat == MORT) 
+		if(w->persos[i]->etat == MORT) 
 		{
 			MAJ_collision_perso(w->persos[i], w->niveau, w->keystate, w->temps_ecoule);
 		}
@@ -1079,13 +1063,13 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 									{
 										int index = (p->transformation == FIRE_MARIO)? p->transformation - 1: p->transformation;
 										vitesse.y = VIT_SORTIE_BLOC;
-										item = new_occ_item(n->occ_blocs[i][j]->position.x, n->occ_blocs[i][j]->position.y, index, vitesse, SORT_DU_BLOC);
+										item = new_occ_item((float)n->occ_blocs[i][j]->position.x, (float)n->occ_blocs[i][j]->position.y, index, vitesse, SORT_DU_BLOC);
 										FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_ITEM_BLOCK]);
 									}
 									else
 									{
 										vitesse.y =  VIT_SORTIE_BLOC * 4;
-										item = new_occ_item(n->occ_blocs[i][j]->position.x, n->occ_blocs[i][j]->position.y, n->occ_blocs[i][j]->item, vitesse, SORT_DU_BLOC);
+										item = new_occ_item((float)n->occ_blocs[i][j]->position.x, (float)n->occ_blocs[i][j]->position.y, n->occ_blocs[i][j]->item, vitesse, SORT_DU_BLOC);
 										prend_item(p, n->items[item->type_item]->nom);
 
 										if((bloc_actuel.type_bloc & DISTRIBUTEUR_PIECE)	&& bloc_actuel.tps_piece == 0)
@@ -1685,8 +1669,6 @@ void solve_collisions_monstre(occ_monstre* m, perso* p, niveau* n, Uint32 duree)
 	carre block = {0}, monstre = {0}, monstre_2 = {0}, projectile = {0}, tuyau = {0};
 	collision collision;
 
-	coordi text_points;
-
 	/************************************************* DETECTIONS ET RESOLUTIONS DE COLLISIONS *******************************************/
 
 	/* Collision de base avec les bords du niveau */
@@ -2075,11 +2057,11 @@ void solve_collisions_monstre(occ_monstre* m, perso* p, niveau* n, Uint32 duree)
 		tuyau.est_bloc_pente = 0;
 		tuyau.hauteur_a_retirer = 0;
 
-		tuyau.position.x = n->tuyaux[i]->position.x * n->taille_blocs.x;
-		tuyau.position.y = n->tuyaux[i]->position.y * n->taille_blocs.y;
+		tuyau.position.x = (float)n->tuyaux[i]->position.x * n->taille_blocs.x;
+		tuyau.position.y = (float)n->tuyaux[i]->position.y * n->taille_blocs.y;
 
-		tuyau.position_prec.x = n->tuyaux[i]->position.x * n->taille_blocs.x;
-		tuyau.position_prec.y = n->tuyaux[i]->position.y * n->taille_blocs.y;
+		tuyau.position_prec.x = (float)n->tuyaux[i]->position.x * n->taille_blocs.x;
+		tuyau.position_prec.y = (float)n->tuyaux[i]->position.y * n->taille_blocs.y;
 
 		if(n->tuyaux[i]->sens_sortie == VERS_LE_HAUT ||
 			n->tuyaux[i]->sens_sortie == VERS_LE_BAS) {

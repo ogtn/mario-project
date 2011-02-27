@@ -330,7 +330,7 @@ void balise_background_generators(niveau *n, const char **attrs)
 void balise_background_generator(niveau *n, const char **attrs)
 {
 	static int i = 0;
-	coordf position = { atoi(attrs[2]),  atoi(strchr(attrs[2], ':') + 1) };
+	coordf position = { (float)atoi(attrs[2]), (float) atoi(strchr(attrs[2], ':') + 1) };
 	coordi taille = { atoi(attrs[3]),   atoi(strchr(attrs[3], ':') + 1) };
 	n->background_generators[i] = new_particule_generator(position, taille, atoi(attrs[4]), atoi(attrs[5]), attrs[6], atoi(attrs[7]), atoi(attrs[8]), atoi(attrs[9]));
 	i++;
@@ -361,7 +361,7 @@ void balise_foreground_generators(niveau *n, const char **attrs)
 void balise_foreground_generator(niveau *n, const char **attrs)
 {
 	static int i = 0;
-	coordf position = { atoi(attrs[3]),   atoi(strchr(attrs[3], ':') + 1) };
+	coordf position = { (float)atoi(attrs[3]),  (float) atoi(strchr(attrs[3], ':') + 1) };
 	coordi taille = { atoi(attrs[5]),   atoi(strchr(attrs[5], ':') + 1) };
 	n->foreground_generators[i] = new_particule_generator(position, taille, atoi(attrs[7]), atoi(attrs[9]), attrs[1], atoi(attrs[11]), atoi(attrs[13]), atoi(attrs[15]));
 	i++;
@@ -411,8 +411,8 @@ void balise_finish(niveau *n, const char **attrs)
 {
 	static int i = 0;
 	strcpy(n->finishes[i].nom_text, attrs[1]);
-	n->finishes[i].position.x = atoi(attrs[3]);
-	n->finishes[i].position.y = atoi(strchr(attrs[3], ':') + 1);
+	n->finishes[i].position.x = (float)atoi(attrs[3]);
+	n->finishes[i].position.y = (float)atoi(strchr(attrs[3], ':') + 1);
 	charger_finish(&n->finishes[i]);
 	i++;
 	i %= n->nb_finish;
@@ -448,7 +448,7 @@ void balise_item(niveau *n, const char **attrs)
 
 void balise_occ_item(niveau *n, const char **attrs)
 {
-	n->items[atoi(attrs[1])]->occ_items = ajout_item(n->items[atoi(attrs[1])]->occ_items, new_occ_item(atoi(attrs[3]), atoi(strchr(attrs[3], ':') + 1), atoi(attrs[1]), n->items[atoi(attrs[1])]->vitesse, NORMAL));
+	n->items[atoi(attrs[1])]->occ_items = ajout_item(n->items[atoi(attrs[1])]->occ_items, new_occ_item((float)atoi(attrs[3]), (float)atoi(strchr(attrs[3], ':') + 1), atoi(attrs[1]), n->items[atoi(attrs[1])]->vitesse, NORMAL));
 }
 
 
@@ -469,7 +469,7 @@ void balise_monster(niveau *n, const char **attrs)
 
 void balise_occ(niveau *n, const char **attrs)
 {
-	n->monstres[atoi(attrs[1])]->occ_monstres = ajout_monstre(n->monstres[atoi(attrs[1])]->occ_monstres, new_occ_monstre(atoi(attrs[3]), atoi(strchr(attrs[3], ':') + 1), n->monstres[atoi(attrs[1])]));
+	n->monstres[atoi(attrs[1])]->occ_monstres = ajout_monstre(n->monstres[atoi(attrs[1])]->occ_monstres, new_occ_monstre((float)atoi(attrs[3]), (float)atoi(strchr(attrs[3], ':') + 1), n->monstres[atoi(attrs[1])]));
 }
 
 void balise_pipes(niveau *n, const char **attrs)
