@@ -213,5 +213,11 @@
     <None Include="textures\blocs\speciaux\incassables\interaction\plante.png">
       <Filter>Fichiers de ressources</Filter>
     </None>
+    <None Include="textures\persos\small_mario.perso">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="textures\persos\small_mario.png">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
   </ItemGroup>
 </Project>
