@@ -235,7 +235,7 @@ void jouer(world *w_)
 			/* Vérification du nombre vies restantes, fin de niveau, s'ils sont tous morts... */
 			check_finish(w, &gagne);
 			persos_morts(w, &persos_tous_morts);
-
+			
 			if(gagne)
 			{
 				FSOUND_PlaySound(1, w->persos[0]->sons[SND_PTS_FINAL]);
@@ -259,7 +259,7 @@ void jouer(world *w_)
 			/* audio? */
 
 			/* Gestion du temps */
-			if(!perso_transforme_ou_meurt(w) && !persos_tous_morts)
+			if(!perso_transforme_ou_meurt(w))
 			{
 				update_time(w);
 			}

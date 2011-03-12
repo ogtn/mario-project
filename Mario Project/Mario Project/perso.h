@@ -95,6 +95,7 @@ typedef struct perso
 	int cote;								/* indique vers quel coté est tourné le personnage (gauche ou droite) */
 	int etat;								/* l'etat actuel du personnage */
 	int transformation;						/* la transformation actuelle du personnage (FIRE_MARIO, MINI_MARIO,...) */
+	int peut_grimper;						/* indique si le perso peut grimper à une échelle */
 	float accel;							/* accélération actuelle du personnage */
 	occ_monstre* monstre_porte;				/* pointeur sur l'occurrence du monstre porté par le personnage */
 	Uint32 est_invincible;					/* indique le temps qu'il reste au personnage avant qu'il ne redevienne vulnérable */

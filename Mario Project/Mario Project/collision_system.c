@@ -474,8 +474,8 @@ int MAJ_collision_item(niveau* n, occ_item* item, ecran e, Uint32 duree)
 	return 0;
 }
 
-void MAJ_collision_perso(perso *perso, niveau* lvl, keystate* keystate, Uint32 duree){
-
+void MAJ_collision_perso(perso *perso, niveau* lvl, keystate* keystate, Uint32 duree)
+{
 	occ_projectile *p = NULL;
 
 	if(perso->etat != MORT && perso->etat != RENTRE_TUYAU_HORIZONTAL && perso->etat != SORT_TUYAU_HORIZONTAL
@@ -497,7 +497,7 @@ void MAJ_collision_perso(perso *perso, niveau* lvl, keystate* keystate, Uint32 d
 
 		/* Sauter */
 		if(keystate->actuel[SAUTER] && !keystate->precedent[SAUTER] && !keystate->actuel[HAUT]
-		&& perso->environnement == SOL_DUR)
+		&& (perso->environnement == SOL_DUR || perso->etat == MONTE_ECHELLE))
 			jump_perso(perso);
 
 		if(perso->vitesse.y != 0)
@@ -549,6 +549,19 @@ void MAJ_collision_perso(perso *perso, niveau* lvl, keystate* keystate, Uint32 d
 				perso->etat = REGARDE_HAUT_CARAPACE;
 			else if(keystate->actuel[HAUT] && keystate->actuel[BAS])
 				perso->etat = DEBOUT_CARAPACE;
+		}
+
+		/* Grimper */
+		if(keystate->actuel[HAUT] && perso->peut_grimper && perso->etat != MONTE_ECHELLE)
+		{
+			perso->etat = MONTE_ECHELLE;
+			perso->vitesse.x = 0;
+			perso->vitesse.y = 0;
+		}
+
+		if(!perso->peut_grimper && perso->etat == MONTE_ECHELLE)
+		{
+			perso->etat = SAUT_DESCENDANT;
 		}
 
 		/* Mise à jour de la position du monstre si le personnage en porte un */
@@ -614,7 +627,8 @@ void MAJ_collision_perso(perso *perso, niveau* lvl, keystate* keystate, Uint32 d
 
 	/* Gravité */
 	if(perso->etat != RENTRE_TUYAU_HORIZONTAL && perso->etat != SORT_TUYAU_HORIZONTAL
-		&& perso->etat != RENTRE_TUYAU_VERTICAL && perso->etat != SORT_TUYAU_VERTICAL)
+		&& perso->etat != RENTRE_TUYAU_VERTICAL && perso->etat != SORT_TUYAU_VERTICAL
+		&& perso->etat != MONTE_ECHELLE)
 		gravity(&perso->vitesse, duree);
 	else
 	{
@@ -842,16 +856,13 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 {
 	/* Variables pour l'initialisation */
 	coordi bloc_bg, bloc_hd;
-	int i, j;
+	int i, j, peut_grimper = 0;
 
 	/* Variables pour la detection et la résolution de collisions */
 	int phys_bloc_actuel, ordonnee_haut;
 	float hauteur;
 	carre perso = {0}, block = {0}, monstre = {0}, projectile = {0}, item = {0}, tuyau = {0}, finish = {0}, check = {0};
 	collision collision;
-
-	/* Variable pour l'affichage des points */
-	//coordi text_points;
 
 	/************************************************* DETECTIONS ET RESOLUTIONS DE COLLISIONS *******************************************/
 
@@ -1046,9 +1057,9 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 							{
 
 								p->vitesse.y = 0;
-								p->position.y = (float)block.position.y - p->taille.y + (p->taille.y - ordonnee_haut);
+								p->position.y = (float)block.position.y - ordonnee_haut - 1;
 
-								if(!(bloc_actuel.type_bloc & EST_VIDE))
+								if(!(bloc_actuel.type_bloc & EST_VIDE) && p->etat != MONTE_ECHELLE)
 								{
 									/* Ajout de l'occurence d'item */
 									coordf vitesse;
@@ -1117,12 +1128,13 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 								else 
 								{
 
-									if((bloc_actuel.type_bloc & CASSABLE) && p->transformation < SUPER_MARIO)
+									if((bloc_actuel.type_bloc & CASSABLE) && p->transformation < SUPER_MARIO && p->etat != MONTE_ECHELLE)
 									{
 										n->occ_blocs[i][j]->etat = POUSSE_PAR_LE_HAUT;
 										n->occ_blocs[i][j]->id_perso = p->personnage;
+										FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_UNBREAKABLE_BLOCK]);
 									}
-									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_UNBREAKABLE_BLOCK]);
+									
 								}
 
 								// MAJ du carré perso
@@ -1151,10 +1163,16 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 								perso.position.x = p->position.x + p->texture_act->abscisse_bas;
 								determinate_collision(perso, block, &collision);
 							}
+
+							/* Collision avec un bloc qu'on peut escalader */
+							peut_grimper |= (bloc_actuel.type_bloc & PEUT_GRIMPER);
 						}
 					}
 				}
 			}
+
+			/* Si un seul bloc peut être grimpé */
+			p->peut_grimper = peut_grimper;
 
 
 			/************* Collisions PERSO <=> TUYAUX *************/
@@ -3044,8 +3062,8 @@ void jump_perso(perso* p)
 	
 	FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_SAUT]);
 
-
-	p->environnement = AIR;
+	if(p->environnement == SOL_DUR)
+		p->environnement = AIR;
 
 	/* S'il porte un monstre, ses états différents */
 	if(p->monstre_porte == NULL)
@@ -3078,7 +3096,6 @@ void frottements(perso *p, Uint32 duree)
 
 	if(duree != 0)
 	{
-		/* application des frottements */
 		p->vitesse.x /= 1 + 5 * coeff * duree * COEFF_GLISSE;
 	}
 
@@ -3113,7 +3130,7 @@ void solve_acc(perso *p, keystate *k)
 
 	/* Modification de l'accélèration en fonction de l'appui
 	ou non sur la touche d'accélèration */
-	if(p->etat != FINISH)
+	if(p->etat != FINISH || p->etat != MONTE_ECHELLE)
 	{
 		if(k->actuel[RUN])
 			p->accel = ACC_COURSE * coeff;
@@ -3155,87 +3172,115 @@ void lateral_move(perso *p, keystate *k, Uint32 t)
 			else if(k->actuel[GAUCHE])
 				p->cote = COTE_GAUCHE;
 
-			if(!k->actuel[BAS])
-			{
+			/*if(!k->actuel[BAS])
+			{*/
 				if(k->actuel[DROITE])
 				{
-					/* Si il avance à l'opposé de la touche enfoncée, il derape */
-					if(p->vitesse.x < 0)
+					if(!k->actuel[BAS])
 					{
-						if(p->environnement != AIR && p->monstre_porte == NULL
-							&& p->etat != DERAPE)
+						/* Si il avance à l'opposé de la touche enfoncée, il derape */
+						if(p->vitesse.x < 0)
 						{
-							p->etat = DERAPE;
-							FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_DERAPE]);
-						}
-						frottements(p, t);
-					}
-					else
-					{
-						if(p->monstre_porte == NULL)
-						{
-							if(p->environnement == SOL_DUR)
+							if(p->environnement != AIR && p->monstre_porte == NULL
+								&& p->etat != DERAPE)
 							{
-								if(k->actuel[RUN])
-									p->etat = COURSE_1;
-								else
-									p->etat = MARCHE;
+								p->etat = DERAPE;
+								FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_DERAPE]);
 							}
+							frottements(p, t);
 						}
 						else
 						{
-							if(p->environnement == SOL_DUR)
-								p->etat = MARCHE_CARAPACE;
+							if(p->monstre_porte == NULL)
+							{
+								if(p->environnement == SOL_DUR)
+								{
+									if(p->etat != MONTE_ECHELLE)
+									{
+										if(k->actuel[RUN])
+											p->etat = COURSE_1;
+										else
+											p->etat = MARCHE;
+									}
+								}
+							}
+							else
+							{
+								if(p->environnement == SOL_DUR)
+									p->etat = MARCHE_CARAPACE;
+							}
 						}
-					}
 
-					p->vitesse.x += p->accel * t;
+						p->vitesse.x += p->accel * t;
+					}
 				}
 				else if(k->actuel[GAUCHE])
 				{
-					/* S'il avance à l'opposé de la touche enfoncée, il derape */
-					if(p->vitesse.x > 0)
+					if(!k->actuel[BAS])
 					{
-						if(p->environnement != AIR && p->monstre_porte == NULL
-							&& p->etat != DERAPE)
+						/* S'il avance à l'opposé de la touche enfoncée, il derape */
+						if(p->vitesse.x > 0)
 						{
-							p->etat = DERAPE;
-							FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_DERAPE]);
-						}
-						frottements(p, t);
-					}
-					else
-					{
-						if(p->monstre_porte == NULL)
-						{
-							if(p->environnement == SOL_DUR)
+							if(p->environnement != AIR && p->monstre_porte == NULL
+								&& p->etat != DERAPE)
 							{
-								if(k->actuel[RUN])
-									p->etat = COURSE_1;
-								else
-									p->etat = MARCHE;
+								p->etat = DERAPE;
+								FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_DERAPE]);
 							}
+							frottements(p, t);
 						}
 						else
 						{
-							if(p->environnement == SOL_DUR)
-								p->etat = MARCHE_CARAPACE;
+							if(p->monstre_porte == NULL)
+							{
+								if(p->environnement == SOL_DUR)
+								{
+									if(p->etat != MONTE_ECHELLE)
+									{
+										if(k->actuel[RUN])
+											p->etat = COURSE_1;
+										else
+											p->etat = MARCHE;
+									}
+								}
+							}
+							else
+							{
+								if(p->environnement == SOL_DUR)
+									p->etat = MARCHE_CARAPACE;
+							}
 						}
-					}
 
-					p->vitesse.x -= p->accel * t;
+						p->vitesse.x -= p->accel * t;
+					}
 				}
 				else if(!p->tps_attaque_speciale && !p->tps_attaque){
 
-					if(p->monstre_porte == NULL) {
-						if(p->environnement == AIR)
+					/* Si le perso ne porte rien */
+					if(p->monstre_porte == NULL) 
+					{
+						if(p->etat == MONTE_ECHELLE)
 						{
-							if(k->precedent[BAS] && k->actuel[BAS])
-								p->etat = SAUT_BAISSE;
+							if(k->actuel[BAS])
+								p->vitesse.y -= p->accel * t;
+							else if(k->actuel[HAUT])
+								p->vitesse.y += p->accel * t;
+							else
+								p->vitesse.y = 0;
+
 						}
-						else {
-							p->etat = DEBOUT;
-							p->hud->nb_monstres_tues = 0;
+						else
+						{
+							if(p->environnement == AIR)
+							{
+								if(k->precedent[BAS] && k->actuel[BAS])
+									p->etat = SAUT_BAISSE;
+							}
+							else
+							{
+								p->etat = DEBOUT;
+								p->hud->nb_monstres_tues = 0;
+							}
 						}
 					}
 					else
@@ -3245,7 +3290,8 @@ void lateral_move(perso *p, keystate *k, Uint32 t)
 							if(k->precedent[BAS] && k->actuel[BAS])
 								p->etat = SAUT_BAISSE_CARAPACE;
 						}
-						else {
+						else
+						{
 							p->etat = DEBOUT_CARAPACE;
 							p->hud->nb_monstres_tues = 0;
 						}
@@ -3254,18 +3300,14 @@ void lateral_move(perso *p, keystate *k, Uint32 t)
 			}
 
 			if((!k->actuel[DROITE] && !k->actuel[GAUCHE])
-				|| k->actuel[BAS])
+				|| (k->actuel[BAS] && p->environnement == SOL_DUR))
 				frottements(p, t);
 		}
 		else
 		{
-			if(p->vitesse.x > 0)
-				p->vitesse.x = p->accel * t;
-			else
-				p->vitesse.x = p->accel * t;
-
+			p->vitesse.x = p->accel * t;
 		}
-	}
+	//}
 }
 
 void find_angle_height_with_phys(int phys_bloc, carre* bloc)

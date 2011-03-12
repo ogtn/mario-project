@@ -199,7 +199,7 @@ monstre *charger_monstre(char* nom){
 	char nom_texture[TAILLE_NOM_TEXTURE];
 	FILE *mstr_file;
 	monstre* m = new_monstre();
-	int nb = 0, nb_1 = 0, nb_2 = 0, nb_3 = 0, nb_lignes = 0;
+	int nb = 0, nb_1 = INT_MAX, nb_2 = INT_MAX, nb_3 = INT_MAX, nb_lignes = 0;
 
 	// Chargement de la texture 
 	strcpy(nom_texture, "textures/monstres/");
@@ -237,7 +237,8 @@ monstre *charger_monstre(char* nom){
 	fscanf(mstr_file, "nb_sprites_carapace : %d\n", &nb);
 	m->nb_sprites[M_RETRACTE] = nb;
 	
-	if(nb){
+	if(nb)
+	{
 		nb_lignes++;
 		nb_2 = m->taille.x / nb;
 	}
@@ -245,7 +246,8 @@ monstre *charger_monstre(char* nom){
 	fscanf(mstr_file, "nb_sprites_sort_carapace : %d\n", &nb);
 	m->nb_sprites[M_SORT_CARAPACE] = nb;
 	
-	if(nb){
+	if(nb)
+	{
 		nb_lignes++;
 		nb_3 = m->taille.x / nb;
 	}
