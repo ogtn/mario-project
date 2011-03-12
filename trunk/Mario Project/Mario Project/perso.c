@@ -38,6 +38,7 @@ perso *init_perso(perso *p)
 		p->vitesse.y = 0;
 
 		p->est_invincible = 0;
+		p->peut_grimper = 0;
 		p->checkpoint = -1;
 		p->est_invincible_etoile = 0;
 		p->monstre_porte = NULL;
@@ -149,8 +150,8 @@ perso* free_copy_perso(perso *p)
 	return NULL;
 }
 
-int nb_etats_absents(data_texture *d){
-
+int nb_etats_absents(data_texture *d)
+{
 	int i, cpt = 0;
 
 	for(i = 0; i < NB_ETATS_TEXTURE; i++){
@@ -165,7 +166,7 @@ void charger_perso(char *nom, perso* p){
 
 	char nom_texture[TAILLE_NOM_TEXTURE];
 	FILE *perso_file;
-	int nb_1 = 0, nb_2 = 0, nb_3 = 0, nb_4 = 0, nb_5 = 0, nb_6 = 0, nb_7 = 0, nb_8 = 0, nb_lignes = 0;
+	int nb_1 = 0, nb_2 = 0, nb_3 = 0, nb_4 = 0, nb_5 = 0, nb_6 = 0, nb_7 = 0, nb_8 = 0, nb_9 = 0, nb_lignes = 0;
 
 	/* Si le nom du fichier contient la chaine 'mario', alors c'est Mario */
 	if(strstr(nom, "mario"))
@@ -228,46 +229,57 @@ void charger_perso(char *nom, perso* p){
 	fscanf(perso_file, "nb_sprites_verticaux : %d\n", &nb_4);
 	p->texture_act->nb_sprites[DEBOUT] = nb_4;
 
-	if(nb_4){
+	if(nb_4)
+	{
 		nb_lignes++;
 		nb_4 = p->taille.x / nb_4;
 	}
 
-	fscanf(perso_file, "nb_sprites_marche_carapace : %d\n", &nb_5);
-	p->texture_act->nb_sprites[MARCHE_CARAPACE] = nb_5;
+	fscanf(perso_file, "nb_sprites_echelle : %d\n", &nb_5);
+	p->texture_act->nb_sprites[MONTE_ECHELLE] = nb_5;
 
-	if(nb_5){
+	if(nb_5)
+	{
 		nb_lignes++;
 		nb_5 = p->taille.x / nb_5;
 	}
 
-	fscanf(perso_file, "nb_sprites_carapace : %d\n", &nb_6);
-	p->texture_act->nb_sprites[POUSSE_CARAPACE] = nb_6;
+	fscanf(perso_file, "nb_sprites_marche_carapace : %d\n", &nb_6);
+	p->texture_act->nb_sprites[MARCHE_CARAPACE] = nb_6;
 
 	if(nb_6){
 		nb_lignes++;
 		nb_6 = p->taille.x / nb_6;
 	}
 
-	fscanf(perso_file, "nb_sprites_attaque : %d\n", &nb_7);
-	p->texture_act->nb_sprites[ATTAQUE] = nb_7;
+	fscanf(perso_file, "nb_sprites_carapace : %d\n", &nb_7);
+	p->texture_act->nb_sprites[POUSSE_CARAPACE] = nb_7;
 
-	if(nb_7){
+	if(nb_7)
+	{
 		nb_lignes++;
+		nb_7 = p->taille.x / nb_7;
 	}
-	else nb_7 = 1000; // au cas où il n'y a pas de sprites pour cet état
 
-	fscanf(perso_file, "nb_sprites_attaque_speciale : %d\n", &nb_8);
-	p->texture_act->nb_sprites[ATTAQUE_SPECIALE] = nb_8;
+	fscanf(perso_file, "nb_sprites_attaque : %d\n", &nb_8);
+	p->texture_act->nb_sprites[ATTAQUE] = nb_8;
 
 	if(nb_8){
 		nb_lignes++;
-		nb_8 = p->taille.x / nb_8;
 	}
-	else nb_8 = 1000; // au cas où il n'y a pas de sprites pour cet état
+	else nb_8 = INT_MAX; // au cas où il n'y a pas de sprites pour cet état
+
+	fscanf(perso_file, "nb_sprites_attaque_speciale : %d\n", &nb_9);
+	p->texture_act->nb_sprites[ATTAQUE_SPECIALE] = nb_9;
+
+	if(nb_9){
+		nb_lignes++;
+		nb_9 = p->taille.x / nb_9;
+	}
+	else nb_9 = INT_MAX; // au cas où il n'y a pas de sprites pour cet état
 
 	/* Donne le nombre de sprites maximal sur une ligne */
-	p->texture_act->nb_sprites_max = max(p->texture_act->nb_sprites[ATTAQUE], max(p->texture_act->nb_sprites[DEBOUT], max(p->texture_act->nb_sprites[ATTAQUE_SPECIALE], p->texture_act->nb_sprites[POUSSE_CARAPACE])));
+	p->texture_act->nb_sprites_max = max(p->texture_act->nb_sprites[ATTAQUE], max(p->texture_act->nb_sprites[DEBOUT], max(p->texture_act->nb_sprites[ATTAQUE_SPECIALE], max(p->texture_act->nb_sprites[POUSSE_CARAPACE], p->texture_act->nb_sprites[MONTE_ECHELLE]))));
 
 	// Cas particulier où il n'y a qu'un seul sprite pour un état
 	if(nb_7 == 1) // -> ATTAQUE

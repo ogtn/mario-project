@@ -176,6 +176,11 @@ void draw_perso(perso *perso, Uint32 duree)
 		haut = (float) (nb_etats - 2) / nb_etats;
 		bas = (float) (nb_etats - 3) / nb_etats;
 		break;
+	
+	case MONTE_ECHELLE :
+		haut = (float) (nb_etats - 4) / nb_etats;
+		bas = (float) (nb_etats - 5) / nb_etats;
+		break;
 
 	case REGARDE_HAUT:
 		gauche = (float) 2 / data->nb_sprites_max;
@@ -288,6 +293,18 @@ void draw_perso(perso *perso, Uint32 duree)
 		}
 	}
 
+	/* Animation de l'attaque de base si le niveau de transformation de Mario est assez haut */
+	if(perso->etat == MONTE_ECHELLE)
+	{
+		if(!perso->tps_transformation)
+		{
+			phase = (duree % data->v_anim[DEBOUT]) / (data->v_anim[DEBOUT] / (data->nb_sprites[MONTE_ECHELLE]));
+		
+			gauche += phase * (float)1 / data->nb_sprites_max;
+			droite += phase * (float)1 / data->nb_sprites_max;
+		}
+	}
+
 	/* Animation de l'attaque spéciale si le niveau de transformation de Mario est assez haut */
 	if(perso->etat == ATTAQUE_SPECIALE && (perso->transformation == FIRE_MARIO || perso->transformation == SUPER_FIRE_MARIO)){
 
@@ -319,6 +336,8 @@ void draw_perso(perso *perso, Uint32 duree)
 			}	
 		}
 	}
+
+	
 
 
 	if(perso->cote == COTE_GAUCHE)
@@ -529,6 +548,8 @@ void draw_HUD(perso* p)
 	screen_printf_dbg("Nombre de pieces : %d\n", p->hud->nb_pieces);
 	screen_printf_dbg("Score : %d\n", p->hud->score);
 	screen_printf_dbg("Temps restant : %d\n", p->hud->time);
+	screen_printf_dbg("Environnement : %s\n", chaines_environement[p->environnement]);
+	screen_printf_dbg("Etat : %s\n", chaines_etats_perso[p->etat]);
 }
 
 

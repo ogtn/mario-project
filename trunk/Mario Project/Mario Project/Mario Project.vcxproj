@@ -157,6 +157,7 @@
     <ClInclude Include="particules.h" />
     <ClInclude Include="perso.h" />
     <ClInclude Include="projectile.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="sprite.h" />
     <ClInclude Include="texte.h" />

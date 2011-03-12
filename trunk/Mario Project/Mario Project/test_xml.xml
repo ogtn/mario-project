@@ -4,45 +4,36 @@
     <checkpoint img="checkpoint" pos="180:64"/>
   </checkpoints> 
 	<backgrounds nb="1">
-    <background img="SnowHills"/>
+    <background img="forest"/>
 	</backgrounds>
 	<background_generators nb="0"/>
   <foregrounds nb="0"/>
 	<foreground_generators nb="0"/>
 	<objects nb="0"/>
-  <finishes nb="1">
-    <finish img="big_castle" pos="400:64"/>
-  </finishes>
+  <finishes nb="0"/>
 	<projectiles nb="2">
 		<projectile img="debris"/>
 		<projectile img="fireball"/>
 	</projectiles>
 	<items nb="3">
 		<item img="piece" type="0" nb="3">
-			<occ_item actual="0" pos="416:192"/>
-			<occ_item actual="0" pos="384:192"/>
-			<occ_item actual="0" pos="352:192"/>
+			<occ_item actual="0" pos="1316:192"/>
+			<occ_item actual="0" pos="1284:192"/>
+			<occ_item actual="0" pos="1252:192"/>
 		</item>
 		<item img="champignon" type="1" nb="0"/>
 		<item img="fleur" type="2" nb="0"/>
 	</items>
-	<monsters nb="2">
-		<monster name="goomba" nb="2">
-			<occ actual="0" pos="400:192"/>
-      <occ actual="0" pos="433:192"/>
-		</monster>
-    <monster name="koopa" nb="1">
-      <occ actual="1" pos="300:192"/>
-    </monster>
-	</monsters>
+	<monsters nb="0"/>
 	<pipes nb="1">
 		<pipe img="green_pipe" sens="2" length="2" pos="0:20" state="1" destination_pipe="0" level_destination="(null)" monster="-1"/>
 	</pipes>
-	<blocs nb_textures="4" nb_models="20" bloc_size="32:32">
+	<blocs nb_textures="5" nb_models="21" bloc_size="32:32">
 		<textures img="classiques/Grass.png"/>
 		<textures img="speciaux/cassables/Overworld.png"/>
 		<textures img="speciaux/incassables/[Q]/Overworld.png"/>
 		<textures img="speciaux/incassables/[Q]/Overworld2.png"/>
+    <textures img="speciaux/incassables/interaction/plante.png"/>
 		<bloc texture="0" coord_sprite="1:2" type_bloc="8388608"/>
 		<bloc texture="0" coord_sprite="1:0" type_bloc="8388608"/>
 		<bloc texture="0" coord_sprite="2:1" type_bloc="8388608"/>
@@ -63,17 +54,18 @@
 		<bloc texture="2" coord_sprite="0:0" type_bloc="0"/>
 		<bloc texture="1" coord_sprite="0:0" type_bloc="10485760"/>
 		<bloc texture="3" coord_sprite="0:0" type_bloc="8388608"/>
-		<layers nb="1">
+    <bloc texture="4" coord_sprite="0:0" type_bloc="25165824"/>
+    <layers nb="1">
 			<layer index="0">
 				<occ_block actual="2" alt="-1" item="-1"/>
 				<occ_block actual="0" alt="-1" item="-1"/>
-				<occ_block actual="2" alt="-1" item="-1"/>
-				<occ_block actual="2" alt="-1" item="-1"/>
-				<occ_block actual="2" alt="-1" item="-1"/>
-				<occ_block actual="2" alt="-1" item="-1"/>
-				<occ_block actual="2" alt="-1" item="-1"/>
-				<occ_block actual="2" alt="-1" item="-1"/>
-				<occ_block actual="2" alt="-1" item="-1"/>
+				<occ_block actual="20" alt="-1" item="-1"/>
+				<occ_block actual="20" alt="-1" item="-1"/>
+				<occ_block actual="20" alt="-1" item="-1"/>
+				<occ_block actual="20" alt="-1" item="-1"/>
+				<occ_block actual="20" alt="-1" item="-1"/>
+				<occ_block actual="20" alt="-1" item="-1"/>
+				<occ_block actual="17" alt="19" item="-1"/>
 				<occ_block actual="2" alt="-1" item="-1"/>
 				<occ_block actual="2" alt="-1" item="-1"/>
 				<occ_block actual="2" alt="-1" item="-1"/>
