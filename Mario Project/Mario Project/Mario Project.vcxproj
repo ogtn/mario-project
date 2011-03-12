@@ -177,6 +177,8 @@
     </None>
     <None Include="textures\blocs\classiques\classiques.cfg" />
     <None Include="textures\blocs\speciaux\cassables\cassables.cfg" />
+    <None Include="textures\blocs\speciaux\incassables\interaction\interaction.cfg" />
+    <None Include="textures\blocs\speciaux\incassables\interaction\plante.png" />
     <None Include="textures\blocs\speciaux\incassables\[Q]\[Q].cfg" />
     <None Include="to do list.txt" />
   </ItemGroup>
