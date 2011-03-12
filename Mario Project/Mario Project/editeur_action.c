@@ -472,6 +472,37 @@ void ac_add_to_favorites(action *a)
         eb->favoris[eb->selected_favorite].texture_id = charger_texture_bis(eb->favoris[eb->selected_favorite].texture_name, NULL);
         eb->favoris[eb->selected_favorite].blocs_offset = e->world->niveau->nb_blocs;
 
+
+
+
+
+
+
+        // nouveau code pour les blocs refaits
+        {
+            texture text;
+            charger_texture_bloc(eb->favoris[eb->selected_favorite].texture_name + strlen("./textures/blocs/"), &text, e->world->niveau->taille_blocs);
+        
+            for(i = 0; i < 27; i++)
+            {
+                eb->favoris[eb->selected_favorite].blocs[i].texture; // à remplir lors de l'insertion dans le niveau
+                eb->favoris[eb->selected_favorite].blocs[i].phys = text.phys[i];
+                eb->favoris[eb->selected_favorite].blocs[i].tps_piece = 0;
+                eb->favoris[eb->selected_favorite].blocs[i].type_bloc = EST_VIDE;
+
+                eb->favoris[eb->selected_favorite].blocs[i].coord_sprite.x = i % text.taille_sprite.x;
+                eb->favoris[eb->selected_favorite].blocs[i].coord_sprite.y = i / text.taille_sprite.y;
+            }
+        }
+
+
+
+
+
+
+
+
+
         /* Ajouter le favoris au niveau */                                                                                              // OMGWTFBBQ§§§§
         {
             // ajout de la texture au niveau

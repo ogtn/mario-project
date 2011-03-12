@@ -219,5 +219,8 @@
     <None Include="textures\persos\small_mario.png">
       <Filter>Fichiers de ressources</Filter>
     </None>
+    <None Include="icone.ico">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
   </ItemGroup>
 </Project>

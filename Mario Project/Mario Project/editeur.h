@@ -260,16 +260,6 @@ enum select_types
     TYPE_SELECT =	COLOR_YELLOW
 };
 
-
-/* Structure destinee a contenir les tableaux de la structure niveau sous forme
-de listes chainees, pour rendre l'editeur plus souple */
-typedef struct niveau_editeur
-{
-    liste_texture textures;		    /* Liste des textures */
-    liste_bloc blocs;				/* liste des blocs */
-} niveau_editeur;
-
-
 /* L'outil magique, destiné au remplissage d'ensembles de blocs */
 typedef struct outil_3x3
 {
@@ -284,6 +274,10 @@ typedef struct favori
     char texture_name[MAX_PATH];
     GLuint texture_id;
     int blocs_offset;
+
+    /* ajouts pour la nouvelle version des blocs */
+    bloc blocs[27]; // moche mais temporaire, taille variable après
+    texture *text;
 } favori;
 
 

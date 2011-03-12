@@ -4,7 +4,7 @@
     <checkpoint img="checkpoint" pos="180:64"/>
   </checkpoints> 
 	<backgrounds nb="1">
-    <background img="forest"/>
+    <background img="SnowHills"/>
 	</backgrounds>
 	<background_generators nb="0"/>
   <foregrounds nb="0"/>
