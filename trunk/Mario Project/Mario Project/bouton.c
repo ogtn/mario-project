@@ -345,6 +345,16 @@ void draw_bouton(bouton *b, coordi pos)
     if(b == NULL)
         return;
 
+    /* On affiche le label si il existe */
+    if(b->label[0] != '\0')
+    {
+        coordi label_pos;
+        label_pos.x = b->pos.x + b->label_pos.x;
+        label_pos.y = b->pos.y + b->label_pos.y;
+
+        //screen_printf(label_pos, NULL, COLOR_WHITE, b->label);
+    }
+
     /* Type radio: on ne dessine que les sous boutons */
     if(b->type == RADIO)
     {
@@ -356,16 +366,6 @@ void draw_bouton(bouton *b, coordi pos)
     /* Pour les autres on dessine le bouton */
     else
     {
-        /* On affiche le label si il existe */
-        if(b->label[0] != '\0')
-        {
-            coordi label_pos;
-            label_pos.x = b->pos.x + b->label_pos.x;
-            label_pos.y = b->pos.y + b->label_pos.y;
-
-            screen_printf(label_pos, NULL, COLOR_WHITE, b->label);
-        }
-
         if(b->enabled == 0)
         {
             draw_sprite(&b->sprite_inactif);
@@ -377,8 +377,8 @@ void draw_bouton(bouton *b, coordi pos)
         else if(b->survole)
         {
             /* On affiche l'aide si elle existe */
-            if(b->aide[0] != '\0')
-                screen_printf(pos, NULL, COLOR_WHITE, b->aide);
+            //if(b->aide[0] != '\0')
+                //screen_printf(pos, NULL, COLOR_WHITE, b->aide);
 
             if(b->etat_actuel == RELEVE)
                 draw_sprite(&b->sprite_survole);

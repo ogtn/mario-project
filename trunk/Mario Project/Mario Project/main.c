@@ -106,8 +106,8 @@ int main(int argc, char *argv[])
     //jouer();
     //choix = main_menu(k);
     //}
-    jouer(NULL);
-    //main_editeur();
+    //jouer(NULL);
+    main_editeur();
  
     // Astuce pour que le compilo ne dise pas que ces deux parametres ne sont pas
     //utilisés. On peut eventuellement les utiliser pour un mode debug,
@@ -266,6 +266,7 @@ void jouer(world *w_)
 
 			screen_flush();
 			SDL_GL_SwapBuffers();
+            my_sleep(2);
 		}
 
 		/* Si on veut quitter le jeu */

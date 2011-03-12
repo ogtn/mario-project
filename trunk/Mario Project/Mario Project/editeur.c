@@ -54,7 +54,7 @@ static const table_actions_editeur action_master_table[NB_ACTIONS] =
 void main_editeur(void)
 {
     int continuer = VRAI;
-    UINT32 start, end, total = 0;
+    Uint32 start, end, total = 0;
     int nb_frames = 0;
     editeur e;
 

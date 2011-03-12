@@ -256,6 +256,7 @@ static char const *chaines_environement[] =
 #include <string.h>
 #include <math.h>
 #include <errno.h>
+#include <limits.h>
 #include "vectors.h"
 #include "alloc_free.h"
 
