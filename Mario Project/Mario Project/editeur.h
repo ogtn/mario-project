@@ -276,7 +276,7 @@ typedef struct favori
     int blocs_offset;
 
     /* ajouts pour la nouvelle version des blocs */
-    bloc blocs[27]; // moche mais temporaire, taille variable après
+    bloc blocs[36]; // moche mais temporaire, taille variable après
     texture *text;
 } favori;
 

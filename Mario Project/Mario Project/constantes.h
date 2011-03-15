@@ -245,6 +245,7 @@ static char const *chaines_environement[] =
 
 #ifdef linux
 #include <unistd.h>
+#include <limits.h>
 #endif
 
 #include <SDL/SDL.h>

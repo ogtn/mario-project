@@ -36,10 +36,7 @@ niveau* init_niveau(niveau *n)
 		n->nom[i] = '\0';
 	}
 
-	for(i = 0; i < TAILLE_TITRE_MUSIQUE; i++)
-	{
-		n->titre_zik[i] = '\0';
-	}
+	n->musique = NULL;
 
 	/* Points clés */
 	n->taille.x = 0;
@@ -275,10 +272,25 @@ niveau *free_niveau(niveau *n)
 
 void balise_level(niveau *n, const char **attrs)
 {
+	int i, j;
     strcpy(n->nom, attrs[1]);
     n->taille.x = atoi(attrs[3]);
     n->taille.y = atoi(strchr(attrs[3], ':') + 1);
-	strcpy(n->titre_zik, attrs[5]);
+	n->musique = charger_musique(attrs[5], 255, 1);
+	n->occ_blocs = malloc(n->taille.x * sizeof(occ_bloc***));
+
+	for(i = 0; i < n->taille.x; i++)
+	{
+		n->occ_blocs[i] = malloc(n->taille.y * sizeof(occ_bloc**));
+	}
+
+	for(i = 0; i < n->taille.x; i++)
+	{
+		for(j = 0; j < n->taille.y; j++)
+		{
+			n->occ_blocs[i][j] = NULL;
+		}
+	}
 }
 
 
@@ -488,20 +500,12 @@ void balise_pipe(niveau *n, const char **attrs)
 
 void balise_blocs(niveau *n, const char **attrs)
 {
-    int i;
-
     n->nb_textures = atoi(attrs[1]);
 	n->textures = malloc(n->nb_textures * sizeof(texture));
 	n->nb_blocs = atoi(attrs[3]);
 	n->blocs = malloc(n->nb_blocs * sizeof(bloc));
     n->taille_blocs.x = atoi(attrs[5]);
 	n->taille_blocs.y = atoi(strchr(attrs[5], ':') + 1);
-    n->occ_blocs = malloc(n->taille.x * sizeof(occ_bloc***));
-
-	for(i = 0; i < n->taille.x; i++)
-	{
-		n->occ_blocs[i] = malloc(n->taille.y * sizeof(occ_bloc**));
-	}
 }
 
 
@@ -543,17 +547,24 @@ void balise_layer(niveau *n, const char **attrs)
 void balise_occ_block(niveau *n, const char **attrs)
 {
 	static int i = 0, j = 0;
-	n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, atoi(attrs[1]), atoi(attrs[3]), atoi(attrs[5]));
+	//n->occ_blocs[atoi(attrs[1]) / n->taille_blocs.x][atoi(strchr(attrs[1], ':') + 1) / n->taille_blocs.y] = new_occ_bloc(atoi(attrs[1]), atoi(strchr(attrs[1], ':') + 1), atoi(attrs[3]), atoi(attrs[5]), atoi(attrs[7]));
+
+	/*if(atoi(attrs[1]) == -1 && atoi(attrs[3]) == -1 && atoi(attrs[5]) == -1)
+		n->occ_blocs[i][j] = NULL;
+	else*/
+		n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, atoi(attrs[1]), atoi(attrs[3]), atoi(attrs[5]));
+
 	if(j == n->taille.y - 1)
-	{
-		j %= n->taille.y - 1;
-		i++;
-		i %= n->taille.x;
-	}
-	else
-	{
-		j++;
-	}
+        {
+                j %= n->taille.y - 1;
+                i++;
+                i %= n->taille.x;
+        }
+        else
+        {
+                j++;
+        }
+
 }
 
 void debut_element(void *user_data, const xmlChar *name, const xmlChar **attrs) 
@@ -719,7 +730,6 @@ void sauver_niveau(char *nom, niveau *n)
     open_element(fic, "level");
     add_attrib(fic, "name", "%s", n->nom);
     add_attrib(fic, "size", "%d:%d", n->taille.x, n->taille.y);
-	add_attrib(fic, "music", "%s", n->titre_zik);
     end_element(fic);
 
     /* Spawn */
@@ -1048,11 +1058,15 @@ void sauver_niveau(char *nom, niveau *n)
 		{
             for(k = 0; k < n->taille.y; k++)
 			{
-				open_element(fic, "occ_block");
-				add_attrib(fic, "actual", "%d", n->occ_blocs[j][k]->bloc_actuel);
-                add_attrib(fic, "alt", "%d", n->occ_blocs[j][k]->bloc_alternatif);
-				add_attrib(fic, "item", "%d", n->occ_blocs[j][k]->item);
-				close_element_short(fic);
+				if(n->occ_blocs[j][k] != NULL)
+				{
+					open_element(fic, "occ_block");
+					add_attrib(fic, "pos", "%d:%d", n->occ_blocs[j][k]->position.x, n->occ_blocs[j][k]->position.y);
+					add_attrib(fic, "actual", "%d", n->occ_blocs[j][k]->bloc_actuel);
+					add_attrib(fic, "alt", "%d", n->occ_blocs[j][k]->bloc_alternatif);
+					add_attrib(fic, "item", "%d", n->occ_blocs[j][k]->item);
+					close_element_short(fic);
+				}
 			}
 		}
         close_element(fic, "layer");
@@ -1540,23 +1554,26 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
         {
             occ = n->occ_blocs[i][j];
 			
+			if(occ == NULL)
+				continue;
+
 			if(occ->bloc_actuel >= 0)
-            {
+			{
 				text_id = n->blocs[occ->bloc_actuel].texture;
-                sprite.taille.x = n->textures[text_id].taille_sprite.x;
-                sprite.taille.y = n->textures[text_id].taille_sprite.y;
+				sprite.taille.x = n->textures[text_id].taille_sprite.x;
+				sprite.taille.y = n->textures[text_id].taille_sprite.y;
 
-                if(sprite.taille.x != 0 && sprite.taille.y != 0)
-                {
-                    sprite.text_id = n->textures[text_id].id_text;
+				if(sprite.taille.x != 0 && sprite.taille.y != 0)
+				{
+					sprite.text_id = n->textures[text_id].id_text;
 
-                    nb_sprites.x = n->textures[text_id].taille.x / sprite.taille.x;
-                    nb_sprites.y = n->textures[text_id].taille.y / sprite.taille.y;
+					nb_sprites.x = n->textures[text_id].taille.x / sprite.taille.x;
+					nb_sprites.y = n->textures[text_id].taille.y / sprite.taille.y;
 
 					if(nb_sprites.x > 1 && nb_sprites.y == 1)
 					{
 						phase = (duree % V_ANIM_BLOC_SPEC) / (V_ANIM_BLOC_SPEC / nb_sprites.x);
-						
+
 						sprite.point_bg.x = (float)1 / nb_sprites.x * (n->blocs[occ->bloc_actuel].coord_sprite.x + phase);
 						sprite.point_bg.y = (float)1 / nb_sprites.y * n->blocs[occ->bloc_actuel].coord_sprite.y;
 						sprite.point_hd.x = (float)1 / nb_sprites.x * (n->blocs[occ->bloc_actuel].coord_sprite.x + phase + 1);
@@ -1600,19 +1617,18 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
 					if(occ->compteur_etat == 0)
 						occ->etat = IMMOBILE;
 
-                    n->last_texture = text_id;
+					n->last_texture = text_id;
 				}
 
 				/* Réduction du temps */
 				if((n->blocs[occ->bloc_actuel].type_bloc & DISTRIBUTEUR_PIECE) && n->blocs[occ->bloc_actuel].tps_piece > 0)
- 					n->blocs[occ->bloc_actuel].tps_piece -= duree / 150;
-            }
+					n->blocs[occ->bloc_actuel].tps_piece -= duree / 150;
+			}
 
 			if(occ->etat != IMMOBILE && occ->compteur_etat == 0)
 			{
 				occ->etat = IMMOBILE;
-			}
-			
+			}			
         }
     }
 }

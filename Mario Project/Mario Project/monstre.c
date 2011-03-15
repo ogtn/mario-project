@@ -95,6 +95,7 @@ occ_monstre*  init_occ_monstre(occ_monstre *m, float position_x, float position_
 
 		m->type_monstre = type_monstre;
 		m->tps_retracte = 0;
+		m->est_gele = 0;
 	}
 	return m;
 }

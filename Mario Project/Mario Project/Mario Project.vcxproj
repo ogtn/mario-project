@@ -172,7 +172,6 @@
     <ResourceCompile Include="ressources.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="icone.ico" />
     <None Include="level_design_log.txt" />
     <None Include="test_xml.xml">
       <SubType>Designer</SubType>
@@ -180,10 +179,7 @@
     <None Include="textures\blocs\classiques\classiques.cfg" />
     <None Include="textures\blocs\speciaux\cassables\cassables.cfg" />
     <None Include="textures\blocs\speciaux\incassables\interaction\interaction.cfg" />
-    <None Include="textures\blocs\speciaux\incassables\interaction\plante.png" />
     <None Include="textures\blocs\speciaux\incassables\[Q]\[Q].cfg" />
-    <None Include="textures\persos\small_mario.perso" />
-    <None Include="textures\persos\small_mario.png" />
     <None Include="to do list.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

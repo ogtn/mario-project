@@ -79,6 +79,8 @@ typedef struct data_texture
 	int nb_sprites[NB_ETATS_TEXTURE];		/* tableau contenant le nombre de sprites de chacun des états du personnage */
 	int nb_sprites_max;						/* indique le nombre maximum de sprites en largeur dans la texture du personnage */
 	int v_anim[NB_ETATS_TEXTURE];			/* tableau contenant la vitesse d'animation de chacun des états du personnage */
+	int phase_prec;							/* indique la phase précéndente dans la texture */
+	int use_phase_prec;						/* indique s'il daut utiliser la phase précédente plutôt que la phase actuelle */
 }data_texture;
 
 

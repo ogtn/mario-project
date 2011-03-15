@@ -210,17 +210,5 @@
     <None Include="textures\blocs\speciaux\incassables\interaction\interaction.cfg">
       <Filter>Fichiers de ressources</Filter>
     </None>
-    <None Include="textures\blocs\speciaux\incassables\interaction\plante.png">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="textures\persos\small_mario.perso">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="textures\persos\small_mario.png">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="icone.ico">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
   </ItemGroup>
 </Project>

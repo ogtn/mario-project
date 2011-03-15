@@ -160,10 +160,10 @@ vectf *lim_vitesse(vectf *v);
 void jump_perso(perso* p);
 
 /* Gére les transformations de Mario quand il est touché par un ennemi */
-void touche_perso(perso* p);
+void touche_perso(perso* p, niveau* n);
 
 /* Gére les transformations de Mario quand il prend un item */
-void prend_item(perso* p, int item);
+void prend_item(perso* p, int item, niveau* n);
 
 /* Determine l'acceleration du perso en fonction de l'etat des touches et de l'environement */
 void solve_acc(perso *p, keystate *k);

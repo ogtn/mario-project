@@ -56,6 +56,7 @@ typedef struct occ_monstre {
 	coordf vitesse;							/* la vitesse du monstre */
 	int etat;								/* l'etat actuel du monstre */
 	int cote;								/* indique le cote vers lequel est tourné le monstre */
+	int est_gele;							/* indique si le monstre est actuellement gelé */
 	struct monstre* type_monstre;			/* pointeur sur le monstre général */
 	int tps_disparition;					/* Temps restant au monstre avant de disparaitre */
 	int tps_sortie_tuyau;					/* Temps restant au monstre avant de sortir du tuyau */
