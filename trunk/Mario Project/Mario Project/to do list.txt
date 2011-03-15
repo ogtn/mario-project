@@ -129,6 +129,8 @@ _editeur de niveau de base:
 	
 _reglages de bugs à faire :
 	* On ne peut pas sauter quand on descend une pente
+
+_debugger l'éditeur : ajout de blocs puis ajout ennemis.
 	
 _Verification de la validité du XML
 
@@ -174,6 +176,10 @@ _editeur de niveau le plus complet possible
 	*un systeme d'info bulle pour les boutons
 	
 _pouvoir courrir sans tomber sur un sol qui comporte un trou d'un bloc (une approximation identique existe sur l'autre axe)
+
+_pouvoir incorporer les ressources dans le exe
+
+_faire appel à un forum de graphistes pour les boutons de l'éditeur.
 
 
 /*============================================================================*/

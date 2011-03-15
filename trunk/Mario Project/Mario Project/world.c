@@ -112,6 +112,110 @@ world *free_world(world *w)
 	return NULL;
 }
 
+void modifier_niveau_SMB(niveau* n)
+{
+	int i, j;
+
+	for(i = 0; i < n->taille.x; i++)
+	{
+		for(j = 0; j < n->taille.y; j++)
+		{
+			if(((i >= 130 && i <= 133) || (i >= 136 && i <= 139) || (i >= 144 && i <= 148) || (i >= 151 && i <= 154) || (i >= 177 && i <= 181)) && j == 2)
+			{
+				n->occ_blocs[i][j]->bloc_actuel = 20; // incassable
+			}
+			else if(((i >= 131 && i <= 133) || (i >= 136 && i <= 138) || (i >= 145 && i <= 148) || (i >= 151 && i <= 153) || (i >= 178 && i <= 181)) && j == 3)
+			{
+				n->occ_blocs[i][j]->bloc_actuel = 20; // incassable
+			}
+			else if(((i >= 132 && i <= 133) || (i >= 136 && i <= 137) || (i >= 146 && i <= 148) || (i >= 151 && i <= 152) || (i >= 179 && i <= 181)) && j == 4)
+			{
+				n->occ_blocs[i][j]->bloc_actuel = 20; // incassable
+			}
+			else if(((i == 133) || (i == 136) || (i >= 147 && i <= 148) || i == 151 || (i >= 180 && i <= 181)) && j == 5)
+			{
+				n->occ_blocs[i][j]->bloc_actuel = 20; // incassable
+			}
+			else if ((i == 63 || i == 81) && j == 1)
+			{
+				n->occ_blocs[i][j]->bloc_actuel = 4; // coin haut à droite
+			}
+			else if ((i == 63 || i == 81) && j == 0)
+			{
+				n->occ_blocs[i][j]->bloc_actuel = 2; // mur à gauche
+			}
+			else if ((i == 66 || i == 85) && j == 1)
+			{
+				n->occ_blocs[i][j]->bloc_actuel = 5; // coin haut à gauche
+			}
+			else if ((i == 66 || i == 85) && j == 0)
+			{
+				n->occ_blocs[i][j]->bloc_actuel = 3; // mur à droite
+			}
+			else if((i < 63 || (i >= 66 && i <= 80) || (i >= 86 && i <= 148) || (i >= 151 && i <= 200)) && j == 0)
+			{
+				n->occ_blocs[i][j]->bloc_actuel = 8; // bloc plein
+			}
+			else if((i < 63 || (i >= 66 && i <= 80) || (i >= 86 && i <= 148) || (i >= 151 && i <= 200)) && j == 1)
+			{
+				n->occ_blocs[i][j]->bloc_actuel = 0; // sol
+			}
+			else if ((i == 14 || i == 70) && j == 5)
+			{
+				// ? avec item en fonction de transformation actuelle
+                n->occ_blocs[i][j]->bloc_actuel = 17;
+				n->occ_blocs[i][j]->bloc_alternatif = 20;
+			}
+			else if (i == 106 && j == 9)
+			{
+				// ? avec item en fonction de transformation actuelle
+                n->occ_blocs[i][j]->bloc_actuel = 17;
+				n->occ_blocs[i][j]->bloc_alternatif = 20;
+			}
+			else if ((i == 10 || i == 14 || i == 16 || i == 103 || i == 106 || i == 109 || i == 166) && j == 5)
+			{
+				// ? avec piece
+                n->occ_blocs[i][j]->bloc_actuel = 17;
+				n->occ_blocs[i][j]->bloc_alternatif = 20;
+				n->occ_blocs[i][j]->item = 0;
+			}
+			else if ((i == 15 || i == 90 || i == 126 || i == 127) && j == 9)
+			{
+				// ? avec piece
+                n->occ_blocs[i][j]->bloc_actuel = 17;
+				n->occ_blocs[i][j]->bloc_alternatif = 20;
+				n->occ_blocs[i][j]->item = 0; 
+			}
+			else if ((i == 13 || i == 15 || i == 17 || i == 69 || i == 71 || i == 97 || i == 115 || i == 126 || i == 127 || i == 164 || i == 165 || i == 167) && j == 5)
+			{
+				n->occ_blocs[i][j]->bloc_actuel = 18; // bloc cassable
+			}
+			else if (i == 90 && j == 5)
+			{
+				n->occ_blocs[i][j]->bloc_actuel = 19; // bloc cassable  distributeur de piece
+				n->occ_blocs[i][j]->bloc_alternatif = 20;
+				n->occ_blocs[i][j]->item = 0;
+			}
+			else if (i == 98 && j == 5)
+			{
+				n->occ_blocs[i][j]->bloc_actuel = 19; // bloc cassable  avec étoile
+				n->occ_blocs[i][j]->bloc_alternatif = 20;
+				n->occ_blocs[i][j]->item = 3;
+			}
+			else if (((i >= 72 && i <= 83) || (i >= 87 && i <= 89) || (i >= 118 && i <= 120) || i == 125 || i == 128) && j == 9)
+			{
+				n->occ_blocs[i][j]->bloc_actuel = 18; // bloc cassable
+			}
+			else
+			{	// RIEN !!
+				n->occ_blocs[i][j]->bloc_actuel = -1;
+				n->occ_blocs[i][j]->bloc_alternatif = -1;
+				n->occ_blocs[i][j]->item = -1;
+			}
+			
+		}
+	}
+}
 
 void load_world(world *w)
 {
@@ -120,12 +224,13 @@ void load_world(world *w)
 	FILE* wldFile = fopen("world1.wld", "r");
 	if(wldFile == NULL)
 	{
-		printf("Le fichier est introuvable !\n");
+		printf("Le fichier est world1.wld introuvable !\n");
 	}
 
 	fscanf(wldFile, "nb_niveaux : %d", &w->nb_niveaux);
 	w->liste_niveaux = malloc(sizeof(char*) * w->nb_niveaux);
 
+	/* Enregistrement de tous les niveaux compris dans le monde */
 	for(i = 0; i < w->nb_niveaux; i++)
 	{
 		w->liste_niveaux[i] = malloc(sizeof(char) * TAILLE_NOM_NIVEAU);
@@ -134,7 +239,12 @@ void load_world(world *w)
 
     w->niveau = new_niveau();
     charger_niveau(w->liste_niveaux[w->num_niveau], w->niveau);
+	modifier_niveau_SMB(w->niveau);
+	//sauver_niveau("test.xml", w->niveau);
+
 }
+
+
 
 
 void begin_level(world *w, int persos_tous_morts)
@@ -173,7 +283,7 @@ void begin_level(world *w, int persos_tous_morts)
 	}
 	
 	/* Lancement de la musique */
-	FSOUND_Stream_Play(FSOUND_FREE, charger_musique(w->niveau->titre_zik, 255, 1)); 
+	FSOUND_Stream_Play(1, w->niveau->musique); 
 }
 
 

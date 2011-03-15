@@ -194,6 +194,9 @@ void charger_perso(char *nom, perso* p){
         return;
     }
 
+	p->texture_act->phase_prec = 0;
+	p->texture_act->use_phase_prec = 0;
+
 	/* Chargement des constantes pour le calcul des collisions */
 	fscanf(perso_file, "abscisse_bas : %d\n", &nb_1);
 	p->texture_act->abscisse_bas = nb_1;
@@ -357,6 +360,10 @@ void transforme_perso(int transformation_future, perso* p){
 		case FIRE_MARIO :
 			charger_perso("fire_mario", p);
 			p->transformation = FIRE_MARIO;
+			break;
+		case ICE_MARIO :
+			charger_perso("ice_mario", p);
+			p->transformation = ICE_MARIO;
 			break;
 		default : break;
 	}

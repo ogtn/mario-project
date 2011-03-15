@@ -197,6 +197,8 @@ void jouer(world *w_)
 	{
 		begin_level(w, persos_tous_morts);
 
+		//affichage HUD avant début niveau
+
 		/* Boucle principale du programme à modifier pour qu'elle soit plus "intelligente"
 		il faut que lorsque l'on presse echap le menu pause s'ouvre, et qu'on retourne dans
 		la boucle en quittant le menu (sauf si on decide d'arreter de jouer) */
@@ -238,7 +240,7 @@ void jouer(world *w_)
 			
 			if(gagne)
 			{
-				FSOUND_PlaySound(1, w->persos[0]->sons[SND_PTS_FINAL]);
+				FSOUND_PlaySound(2, w->persos[0]->sons[SND_PTS_FINAL]);
 				while(calc_finish_points(w->persos, w->nb_persos))
 				{
 					draw_main(w->niveau, w->persos, w->ecran, w->temps_actuel);
@@ -246,7 +248,7 @@ void jouer(world *w_)
 					screen_flush();
 					SDL_GL_SwapBuffers();
 				}
-				FSOUND_StopSound(1);
+				FSOUND_StopSound(2);
 			}
 			else
                 draw_main(w->niveau, w->persos, w->ecran, w->temps_actuel);

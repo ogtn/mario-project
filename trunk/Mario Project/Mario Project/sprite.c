@@ -206,42 +206,42 @@ void draw_perso(perso *perso, Uint32 duree)
 	case DEBOUT_CARAPACE :
 		gauche = 0;
 		droite = (float) 1 / data->nb_sprites_max;
-		haut = (float) (nb_etats - 4) / nb_etats;
-		bas = (float) (nb_etats - 5) / nb_etats;
+		haut = (float) (nb_etats - 5) / nb_etats;
+		bas = (float) (nb_etats - 6) / nb_etats;
 		break;
 
 	case MARCHE_CARAPACE :
 		v_anim = V_ANIM_MARCHE;
-		haut = (float) (nb_etats - 4) / nb_etats;
-		bas = (float) (nb_etats - 5) / nb_etats;
+		haut = (float) (nb_etats - 5) / nb_etats;
+		bas = (float) (nb_etats - 6) / nb_etats;
 		break;
 
 	case SAUT_CARAPACE :
 		gauche = (float) (data->nb_sprites[MARCHE_CARAPACE] - 1) / data->nb_sprites_max;
 		droite = (float) (data->nb_sprites[MARCHE_CARAPACE]) / data->nb_sprites_max;
-		haut = (float) (nb_etats - 4) / nb_etats;
-		bas = (float) (nb_etats - 5) / nb_etats;
+		haut = (float) (nb_etats - 5) / nb_etats;
+		bas = (float) (nb_etats - 6) / nb_etats;
 		break;
 
 	case POUSSE_CARAPACE : 
 		gauche = 0;
 		droite = (float) 1 / data->nb_sprites_max;
-		haut = (float) (nb_etats - 5) / nb_etats;
-		bas = (float) (nb_etats - 6) / nb_etats;
+		haut = (float) (nb_etats - 6) / nb_etats;
+		bas = (float) (nb_etats - 7) / nb_etats;
 		break;
 
 	case BAISSE_CARAPACE : case SAUT_BAISSE_CARAPACE:
 		gauche = (float) 1 / data->nb_sprites_max;
 		droite = (float) 2 / data->nb_sprites_max;
-		haut = (float) (nb_etats - 5) / nb_etats;
-		bas = (float) (nb_etats - 6) / nb_etats;
+		haut = (float) (nb_etats - 6) / nb_etats;
+		bas = (float) (nb_etats - 7) / nb_etats;
 		break;
 
 	case REGARDE_HAUT_CARAPACE :
 		gauche = (float) 2 / data->nb_sprites_max;
 		droite = (float) 3 / data->nb_sprites_max;
-		haut = (float) (nb_etats - 5) / nb_etats;
-		bas = (float) (nb_etats - 6) / nb_etats;
+		haut = (float) (nb_etats - 6) / nb_etats;
+		bas = (float) (nb_etats - 7) / nb_etats;
 		break;
 
 	case ASSIS:
@@ -259,8 +259,8 @@ void draw_perso(perso *perso, Uint32 duree)
 		break;
 
 	case ATTAQUE:
-		haut = (float) (nb_etats - 6) / nb_etats;
-		bas = (float) (nb_etats - 7) / nb_etats;
+		haut = (float) (nb_etats - 7) / nb_etats;
+		bas = (float) (nb_etats - 8) / nb_etats;
 		break;
 
 	case ATTAQUE_SPECIALE:
@@ -284,7 +284,8 @@ void draw_perso(perso *perso, Uint32 duree)
 		|| perso->etat == RENTRE_TUYAU_HORIZONTAL)
 	{
 		/* Si le perso n'est pas en train de se transformer, on l'anime */
-		if(!perso->tps_transformation){
+		if(!perso->tps_transformation)
+		{
 			phase = (duree % v_anim) / (v_anim / (data->nb_sprites[MARCHE] - 1));
 		
 			gauche += phase * (float)1 / data->nb_sprites_max;
@@ -298,7 +299,13 @@ void draw_perso(perso *perso, Uint32 duree)
 	{
 		if(!perso->tps_transformation)
 		{
-			phase = (duree % data->v_anim[DEBOUT]) / (data->v_anim[DEBOUT] / (data->nb_sprites[MONTE_ECHELLE]));
+			if(perso->vitesse.y == 0 && perso->vitesse.x == 0)
+				phase = data->phase_prec;
+			else
+			{
+				phase = (duree % data->v_anim[DEBOUT]) / (data->v_anim[DEBOUT] / (data->nb_sprites[MONTE_ECHELLE]));
+				data->phase_prec = phase;
+			}
 		
 			gauche += phase * (float)1 / data->nb_sprites_max;
 			droite += phase * (float)1 / data->nb_sprites_max;
@@ -308,7 +315,8 @@ void draw_perso(perso *perso, Uint32 duree)
 	/* Animation de l'attaque spéciale si le niveau de transformation de Mario est assez haut */
 	if(perso->etat == ATTAQUE_SPECIALE && (perso->transformation == FIRE_MARIO || perso->transformation == SUPER_FIRE_MARIO)){
 
-		if(!perso->tps_transformation){
+		if(!perso->tps_transformation)
+		{
 			phase = data->v_anim[ATTAQUE_SPECIALE] - perso->tps_attaque_speciale / data->nb_sprites[ATTAQUE_SPECIALE];
 
 			for(i = 0; i <= data->nb_sprites[ATTAQUE_SPECIALE]; i++){
@@ -437,10 +445,17 @@ void draw_monstre(occ_monstre *monstre, Uint32 duree)
 		|| monstre->etat == M_SORT_DU_TUYAU 
 		|| ((monstre->etat == M_RETRACTE || monstre->etat == M_RETRACTE_RETOURNE) && monstre->vitesse.x != 0))
 	{
-		if(monstre->etat == M_RETRACTE || monstre->etat == M_RETRACTE_RETOURNE)
-			phase = (duree % monstre->type_monstre->v_anim[M_RETRACTE]) / (monstre->type_monstre->v_anim[M_RETRACTE] / (monstre->type_monstre->nb_sprites[M_RETRACTE] - 1));
+		if(monstre->est_gele)
+		{
+			phase = 0;
+		}
 		else
-			phase = (duree % monstre->type_monstre->v_anim[M_MARCHE]) / (monstre->type_monstre->v_anim[M_MARCHE] / (monstre->type_monstre->nb_sprites[M_MARCHE]));
+		{
+			if(monstre->etat == M_RETRACTE || monstre->etat == M_RETRACTE_RETOURNE)
+				phase = (duree % monstre->type_monstre->v_anim[M_RETRACTE]) / (monstre->type_monstre->v_anim[M_RETRACTE] / (monstre->type_monstre->nb_sprites[M_RETRACTE] - 1));
+			else
+				phase = (duree % monstre->type_monstre->v_anim[M_MARCHE]) / (monstre->type_monstre->v_anim[M_MARCHE] / (monstre->type_monstre->nb_sprites[M_MARCHE]));
+		}
 
 		gauche += phase * (float)1 / monstre->type_monstre->nb_sprites_max;
 		droite += phase * (float)1 / monstre->type_monstre->nb_sprites_max;
@@ -468,6 +483,24 @@ void draw_monstre(occ_monstre *monstre, Uint32 duree)
 		
     /* Dessin */
     draw_sprite(&s);
+
+	//if(monstre->est_gele)
+	//{
+	//	s.position.x = (int)monstre->position.x;
+	//	s.position.y = (int)monstre->position.y;
+	//	s.text_id = charger_texture_bis("textures/blocs/speciaux/incassables/icecube.png", NULL);
+	//	s.taille = monstre->type_monstre->taille;
+	//	s.point_bg.x = 0;
+	//	s.point_bg.y = 0;
+	//	s.point_hd.x = 1;
+	//	s.point_hd.y = 1;
+
+	//	if(monstre->etat == M_RETRACTE_RETOURNE)
+ //       s.taille.y = monstre->type_monstre->taille.y / 2;
+	//	
+	//	/* Dessin */
+	//	draw_sprite(&s);
+	//}
 }
 
 
