@@ -100,8 +100,8 @@ typedef struct perso
 	int peut_grimper;						/* indique si le perso peut grimper à une échelle */
 	float accel;							/* accélération actuelle du personnage */
 	occ_monstre* monstre_porte;				/* pointeur sur l'occurrence du monstre porté par le personnage */
-	Uint32 est_invincible;					/* indique le temps qu'il reste au personnage avant qu'il ne redevienne vulnérable */
-	Uint32 est_invincible_etoile;			/* indique le temps qu'il reste au personnage avant qu'il ne redevienne vulnérable */
+	Uint32 tps_invincible;					/* indique le temps qu'il reste au personnage avant qu'il ne redevienne vulnérable */
+	Uint32 tps_invincible_etoile;			/* indique le temps qu'il reste au personnage avant qu'il ne redevienne vulnérable */
 	Uint32 tps_transformation;				/* indique le temps restant au personnage pour se transformer */
 	Uint32 tps_attaque;						/* indique le temps restant au personnage pour qu'il reste en état d'attaque */
 	Uint32 tps_attaque_speciale;			/* indique le temps restant au personnage pour qu'il reste en état d'attaque spéciale */

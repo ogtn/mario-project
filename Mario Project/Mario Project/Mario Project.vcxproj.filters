@@ -210,5 +210,11 @@
     <None Include="textures\blocs\speciaux\incassables\interaction\interaction.cfg">
       <Filter>Fichiers de ressources</Filter>
     </None>
+    <None Include="world1.wld">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="smb.xml">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
   </ItemGroup>
 </Project>

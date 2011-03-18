@@ -281,7 +281,8 @@ void MAJ_tuyau(niveau* n, tuyau *t, Uint32 duree)
 	}
 }
 
-void MAJ_HUD(perso *p, Uint32 duree, ecran e) {
+void MAJ_HUD(perso *p, Uint32 duree, ecran e)
+{
 
 	file_pts* file;
 	coordi position;
@@ -582,17 +583,17 @@ void MAJ_collision_perso(perso *perso, niveau* lvl, keystate* keystate, Uint32 d
 		}
 
 		/* Si Mario est invincible, on décrémente son temps d'invincibilité */
-		if(perso->est_invincible > 0){
-			perso->est_invincible -= duree;
-			if(perso->est_invincible > pow(2, 31))
-				perso->est_invincible = 0;
+		if(perso->tps_invincible > 0){
+			perso->tps_invincible -= duree;
+			if(perso->tps_invincible > pow(2, 31))
+				perso->tps_invincible = 0;
 		}
 
 		/* Si Mario est invincible, on décrémente son temps d'invincibilité */
-		if(perso->est_invincible_etoile > 0){
-			perso->est_invincible_etoile -= duree;
-			if(perso->est_invincible_etoile > pow(2, 31)) {
-				perso->est_invincible_etoile = 0;
+		if(perso->tps_invincible_etoile > 0){
+			perso->tps_invincible_etoile -= duree;
+			if(perso->tps_invincible_etoile > pow(2, 31)) {
+				perso->tps_invincible_etoile = 0;
 				FSOUND_StopSound(SND_INVINCIBLE);
 				FSOUND_SetVolume(1, 255);
 			}
@@ -1072,7 +1073,6 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 									occ_item *item;
 
 									vitesse.x = 0;
-									
 
 									n->occ_blocs[i][j]->etat = POUSSE_PAR_LE_HAUT;
 									/* Si le bloc ne contient pas un pointeur sur un item,
@@ -1370,7 +1370,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 
 					determinate_collision(perso, monstre, &collision);
 
-					if(p->est_invincible_etoile == 0)
+					if(p->tps_invincible_etoile == 0)
 					{
 						/* Cas spécial où le personnage lache le monstre qu'il porte */
 						if(!keystate->actuel[RUN] && keystate->precedent[RUN] && p->monstre_porte == mstr_actuel->occ_monstre)
@@ -1516,7 +1516,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 						}
 
 						/* Si le premier carré est touché c'est-à-dire le personnage */
-						if(collision.carre1_est_touche && !p->est_invincible && p->monstre_porte != mstr_actuel->occ_monstre 
+						if(collision.carre1_est_touche && !p->tps_invincible && p->monstre_porte != mstr_actuel->occ_monstre 
 							&& p->etat != POUSSE_CARAPACE && mstr_actuel->occ_monstre->etat != M_MORT_PAR_PROJ 
 							&& mstr_actuel->occ_monstre->etat != M_MORT_PAR_SAUT)
 							touche_perso(p, n);
@@ -1534,6 +1534,18 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 							compte_points(p, mstr_actuel->occ_monstre, 0);
 
 							FSOUND_PlaySound(FSOUND_FREE, mstr_actuel->occ_monstre->type_monstre->sons[SND_PROJ_ON]);
+						}
+
+						/* Si le perso porte un monstre alors qu'il est invincible */
+						if(p->monstre_porte != NULL)
+						{
+							/* Le monstre touché meurt */
+							p->monstre_porte->etat = M_MORT_PAR_PROJ;
+							p->monstre_porte->vitesse.y = VITESSE_Y_EJECTION;
+
+							// Comptage des points
+							compte_points(p, p->monstre_porte, 0);
+							p->monstre_porte = NULL;
 						}
 					}
 			}
@@ -1571,7 +1583,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 				determinate_collision(perso, projectile, &collision);
 
 				/* Si le premier carré est touché c'est-à-dire le perso */
-				if(collision.carre1_est_touche && !p->est_invincible)
+				if(collision.carre1_est_touche && !p->tps_invincible)
 					touche_perso(p, n);
 			}
 
@@ -1640,6 +1652,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 
 		if(collision.carre1_est_touche || collision.carre2_est_touche)
 		{
+			/* S'il est au niveau du milieu du chateau, il nous fait signe */
 			if(perso.position.x + perso.taille.x / 2 >= finish.position.x + finish.taille.x / 2)
 			{
 				p->position.x = finish.position.x + finish.taille.x / 2 - perso.taille.x / 2 - p->texture_act->abscisse_bas;
@@ -1648,6 +1661,9 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 
 			if(p->etat != FINISH && p->etat != FINISH_CHATEAU)
 			{
+				/* S'il est invincible, il ne l'est plus */
+				p->tps_invincible_etoile = 0;
+
 				/* On tue tous les monstres à l'écran */
 				kill_monster_finish(n, p);
 
@@ -1747,7 +1763,7 @@ void solve_collisions_monstre(occ_monstre* m, perso* p, niveau* n, Uint32 duree)
 		{
 			for(j = bloc_bg.y; j <= bloc_hd.y; j++)
 			{
-				if (i >= 0 && j >= 0)
+				if (i >= 0 && j >= 0 && n->occ_blocs[i][j] != NULL)
 				{
 					/* Cas où Super Mario casse un bloc sous le monstre */
 					if(n->occ_blocs[i][j]->bloc_actuel < 0 && n->occ_blocs[i][j]->etat == POUSSE_PAR_LE_HAUT)
@@ -2196,10 +2212,18 @@ void solve_collisions_monstre(occ_monstre* m, perso* p, niveau* n, Uint32 duree)
 						if((m->etat == M_RETRACTE || m->etat == M_RETRACTE_RETOURNE) && m->vitesse.x != 0)
 						{
 
+							/* Le monstre touché meurt */
+							mstr_actuel->occ_monstre->etat = M_MORT_PAR_PROJ;
+							mstr_actuel->occ_monstre->vitesse.y = VITESSE_Y_EJECTION;
+							FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_PROJ_ON]);
+
+							// Comptage des points
+							compte_points(p, m, 0);
+
 							if((mstr_actuel->occ_monstre->etat == M_RETRACTE || mstr_actuel->occ_monstre->etat == M_RETRACTE_RETOURNE)
 								&& mstr_actuel->occ_monstre->vitesse.x != 0)
 							{							
-								/* Le monstre touché meurt */
+								/* Le monstre actuel meurt */
 								m->etat = M_MORT_PAR_PROJ;
 								m->vitesse.y = VITESSE_Y_EJECTION;
 
@@ -2207,14 +2231,6 @@ void solve_collisions_monstre(occ_monstre* m, perso* p, niveau* n, Uint32 duree)
 								compte_points(p, mstr_actuel->occ_monstre, 0);
 								p->hud->nb_monstres_tues_carapace = 0;
 							}
-
-							/* Le monstre touché meurt */
-							mstr_actuel->occ_monstre->etat = M_MORT_PAR_PROJ;
-							mstr_actuel->occ_monstre->vitesse.y = VITESSE_Y_EJECTION;
-							FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_PROJ_ON]);
-
-							// Comptage des points
-							compte_points(p, mstr_actuel->occ_monstre, 0);
 						}
 
 
@@ -2235,7 +2251,7 @@ void solve_collisions_monstre(occ_monstre* m, perso* p, niveau* n, Uint32 duree)
 
 					}
 
-					/* Cas où deux monstres se touchent */
+					/* Cas où deux monstres se rencontrent */
 					if(m->etat != M_RETRACTE && m->etat != M_RETRACTE_RETOURNE)
 					{ 
 						if(m->cote == COTE_DROIT)
@@ -2363,6 +2379,9 @@ void solve_collisions_projectile(occ_projectile* p, niveau *n)
 			/************ COLLISIONS PROJECTILES <=> NIVEAU ***************/
 			for(i = bloc_bg.x; i <= bloc_hd.x; i++){
 				for(j = bloc_bg.y; j <= bloc_hd.y; j++){
+
+					if(n->occ_blocs[i][j] == NULL)
+						continue;
 
 					if(n->occ_blocs[i][j]->bloc_actuel >= 0)
 					{
@@ -2979,7 +2998,7 @@ void touche_perso(perso* p, niveau* n)
 {
 	if(p->transformation >= FIRE_MARIO) {
 		transforme_perso(SUPER_MARIO, p);
-		p->est_invincible = 2000;
+		p->tps_invincible = 2000;
 		p->tps_transformation = 1000;
 		FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_TOUCHE]);
 	}
@@ -2993,7 +3012,7 @@ void touche_perso(perso* p, niveau* n)
 	}
 	else {
 		transforme_perso(SMALL_MARIO, p);
-		p->est_invincible = 2000;
+		p->tps_invincible = 2000;
 		p->tps_transformation = 1000;
 		FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_TOUCHE]);
 	}
@@ -3051,11 +3070,11 @@ void prend_item(perso* p, int item, niveau* n) {
 		p->hud->nb_vies++;
 		break;
 	case CHAMPI_POISON :
-		if(!p->est_invincible_etoile)
+		if(!p->tps_invincible_etoile)
 			touche_perso(p, n);
 		break;
 	case ETOILE:
-		p->est_invincible_etoile = 10000;
+		p->tps_invincible_etoile = 10000;
 		FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_INVINCIBLE]);
 		FSOUND_SetVolume(1, 0);
 		break;
@@ -3234,6 +3253,7 @@ void lateral_move(perso *p, keystate *k, Uint32 t)
 											p->etat = COURSE_1;
 										else
 											p->etat = MARCHE;
+										p->hud->nb_monstres_tues = 0;
 									}
 								}
 							}
@@ -3274,6 +3294,7 @@ void lateral_move(perso *p, keystate *k, Uint32 t)
 											p->etat = COURSE_1;
 										else
 											p->etat = MARCHE;
+										p->hud->nb_monstres_tues = 0;
 									}
 								}
 							}
@@ -3449,9 +3470,18 @@ void compte_points(perso* p, occ_monstre* monstre, int is_finish)
 		}
 		else 
 		{
-			p->hud->file_points = add_file_pts(p->hud->file_points, p->hud->tab_points[p->hud->nb_monstres_tues], text_points);
-			p->hud->score += p->hud->tab_points[p->hud->nb_monstres_tues];
-			p->hud->nb_monstres_tues++;
+			if(monstre->etat == M_RETRACTE)
+			{
+				p->hud->file_points = add_file_pts(p->hud->file_points, p->hud->tab_points[p->hud->nb_monstres_tues_carapace], text_points);
+				p->hud->score += p->hud->tab_points[p->hud->nb_monstres_tues_carapace];
+				p->hud->nb_monstres_tues_carapace++;
+			}
+			else
+			{
+				p->hud->file_points = add_file_pts(p->hud->file_points, p->hud->tab_points[p->hud->nb_monstres_tues], text_points);
+				p->hud->score += p->hud->tab_points[p->hud->nb_monstres_tues];
+				p->hud->nb_monstres_tues++;
+			}
 		}
 	}
 }

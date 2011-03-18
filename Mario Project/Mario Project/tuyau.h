@@ -53,7 +53,7 @@ typedef struct tuyau
     int index_monstre;						/* Index du monstre qui sortira du tuyau */
 	int tps_sortie_monstre;
     int pipe_dest;							/* L'index du tuyau dans le tableau des tuyaux */
-    char *level_dest;						/* Le nom du niveau de sortie ou NULL */
+    char level_dest[TAILLE_NOM_NIVEAU];		/* Le nom du niveau de sortie ou NULL */
 } tuyau;
 
 

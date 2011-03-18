@@ -57,6 +57,7 @@ typedef struct finish
 typedef struct niveau
 {
 	char nom[TAILLE_NOM_NIVEAU];					/* le nom du niveau, il est affiché au chargement de celui-ci */
+	char titre_musique[TAILLE_TITRE_MUSIQUE];		/* Le nom de la musique */
 	FSOUND_STREAM* musique;							/* nom du fichier audio à lire pendant le niveau */
 	coordi taille;									/* la taille du niveau (en blocs) */
 	coordi spawn;									/* les coordonnées du spawn point (en bloc) */
