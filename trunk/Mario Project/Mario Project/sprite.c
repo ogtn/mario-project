@@ -356,14 +356,14 @@ void draw_perso(perso *perso, Uint32 duree)
 	}
 	
 	/* Si mario est invincible, il est transparent une fois sur deux */
-	if(perso->est_invincible && perso->est_invincible % 2 != 0)
+	if(perso->tps_invincible && perso->tps_invincible % 2 != 0)
 		glColor4f(1, 1, 1, 0.5);
 
 	/* Si mario a pris l'étoile, il clignote */
-	if(perso->est_invincible_etoile) {
-		if(perso->est_invincible_etoile % 3 == 0)
+	if(perso->tps_invincible_etoile) {
+		if(perso->tps_invincible_etoile % 3 == 0)
 			glColor4f(1, 0, 0, 1);
-		else if(perso->est_invincible_etoile % 3 == 1)
+		else if(perso->tps_invincible_etoile % 3 == 1)
 			glColor4f(0, 1, 0, 1);
 		else
 			glColor4f(0, 0, 1, 1);

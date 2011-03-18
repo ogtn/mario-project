@@ -32,7 +32,7 @@ tuyau* init_tuyau(tuyau* t, char* nom, SENS_SORTIE sens, int longueur, int posit
 		t->etat = etat;
 		t->index_monstre = index_monstre;
 		t->pipe_dest = pipe_dest;
-		t->level_dest = level_dest;
+		strcpy(t->level_dest, level_dest);
 		t->tps_sortie_monstre = TPS_SORTIE_MONSTRE;
 
 		strcpy(t->nom_text, nom);

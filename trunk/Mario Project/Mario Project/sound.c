@@ -18,7 +18,8 @@
 #include "sound.h"
 
 
-FSOUND_SAMPLE* charger_son(char *nom, int volume){
+FSOUND_SAMPLE* charger_son(char *nom, int volume)
+{
   FSOUND_SAMPLE *son = NULL;
 
   son = FSOUND_Sample_Load(FSOUND_FREE, nom, 0, 0, 0);
@@ -28,14 +29,19 @@ FSOUND_SAMPLE* charger_son(char *nom, int volume){
 }
 
 
-FSOUND_STREAM* charger_musique(char* nom, int volume, int isloop){
-  FSOUND_STREAM *zik = NULL;
-  
-  zik = FSOUND_Stream_Open(nom, FSOUND_LOOP_NORMAL, 0, 0);
-  FSOUND_SetVolume(FSOUND_FREE, volume);
+FSOUND_STREAM* charger_musique(char* nom, int volume, int isloop)
+{
+	char nom_musique[TAILLE_TITRE_MUSIQUE] = {'\0'};
+	FSOUND_STREAM *zik = NULL;
 
-  if(isloop)
-	  FSOUND_Stream_SetLoopCount(zik, -1);
-  
-  return zik;
+	strcpy(nom_musique, "musics/");
+	strcat(nom_musique, nom);
+
+	zik = FSOUND_Stream_Open(nom_musique, FSOUND_LOOP_NORMAL, 0, 0);
+	FSOUND_SetVolume(FSOUND_FREE, volume);
+
+	if(isloop)
+		FSOUND_Stream_SetLoopCount(zik, -1);
+
+	return zik;
 }

@@ -81,7 +81,6 @@ int main(int argc, char *argv[])
 {
     //int choix = 1;
     keystate *k = NULL;
-    //FSOUND_STREAM *musique = NULL;
     
     //Pour le module de surveillance des allocations
 #ifdef _DEBUG
@@ -93,8 +92,6 @@ int main(int argc, char *argv[])
     init_OpenGL(LARGEUR_FENETRE, HAUTEUR_FENETRE);
     FSOUND_Init(44100, 32, 0);
     init_text("fonts/consolas.fnt", 100, COLOR_RED);
-
-    //musique = charger_musique("musics/Ice Mario.mp3", 255, 1);
 
     // Menu Principal 
     k = new_keystate();
@@ -195,7 +192,7 @@ void jouer(world *w_)
 	/* Tant qu'on a pas passé le nombre de niveaux */
 	while(w->num_niveau < w->nb_niveaux && continuer)
 	{
-		begin_level(w, persos_tous_morts);
+		begin_level(w, &persos_tous_morts);
 
 		//affichage HUD avant début niveau
 
@@ -278,7 +275,7 @@ void jouer(world *w_)
 		/* Si tous les persos sont morts, on recommence */
 		if(persos_tous_morts)
 		{
-			persos_tous_morts = FAUX;
+			free_niveau(w->niveau);
 		}
 		else
 		{

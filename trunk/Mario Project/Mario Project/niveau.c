@@ -29,11 +29,17 @@ niveau* init_niveau(niveau *n)
 {
 	int i;
 
-	if(n == NULL) return n;
+	if(n == NULL)
+		return n;
 
 	for(i = 0; i < TAILLE_NOM_NIVEAU; i++)
 	{
 		n->nom[i] = '\0';
+	}
+
+	for(i = 0; i < TAILLE_TITRE_MUSIQUE; i++)
+	{
+		n->titre_musique[i] = '\0';
 	}
 
 	n->musique = NULL;
@@ -273,10 +279,17 @@ niveau *free_niveau(niveau *n)
 void balise_level(niveau *n, const char **attrs)
 {
 	int i, j;
+
+	/* Nom et taille du niveau */
     strcpy(n->nom, attrs[1]);
     n->taille.x = atoi(attrs[3]);
     n->taille.y = atoi(strchr(attrs[3], ':') + 1);
+
+	/* Musique */
+	strcpy(n->titre_musique, attrs[5]);
 	n->musique = charger_musique(attrs[5], 255, 1);
+
+	/* Allocation des blocs du niveau */
 	n->occ_blocs = malloc(n->taille.x * sizeof(occ_bloc***));
 
 	for(i = 0; i < n->taille.x; i++)
@@ -546,24 +559,24 @@ void balise_layer(niveau *n, const char **attrs)
 
 void balise_occ_block(niveau *n, const char **attrs)
 {
-	static int i = 0, j = 0;
-	//n->occ_blocs[atoi(attrs[1]) / n->taille_blocs.x][atoi(strchr(attrs[1], ':') + 1) / n->taille_blocs.y] = new_occ_bloc(atoi(attrs[1]), atoi(strchr(attrs[1], ':') + 1), atoi(attrs[3]), atoi(attrs[5]), atoi(attrs[7]));
+	//static int i = 0, j = 0;
+	n->occ_blocs[atoi(attrs[1]) / n->taille_blocs.x][atoi(strchr(attrs[1], ':') + 1) / n->taille_blocs.y] = new_occ_bloc(atoi(attrs[1]), atoi(strchr(attrs[1], ':') + 1), atoi(attrs[3]), atoi(attrs[5]), atoi(attrs[7]));
 
 	/*if(atoi(attrs[1]) == -1 && atoi(attrs[3]) == -1 && atoi(attrs[5]) == -1)
 		n->occ_blocs[i][j] = NULL;
-	else*/
+	else
 		n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, atoi(attrs[1]), atoi(attrs[3]), atoi(attrs[5]));
 
 	if(j == n->taille.y - 1)
-        {
-                j %= n->taille.y - 1;
-                i++;
-                i %= n->taille.x;
-        }
-        else
-        {
-                j++;
-        }
+	{
+		j %= n->taille.y - 1;
+		i++;
+		i %= n->taille.x;
+	}
+	else
+	{
+		j++;
+	}*/
 
 }
 
@@ -654,13 +667,18 @@ void caractere(void *ctx, const xmlChar *ch, int len)
 {
 }
 
+void erreur(void * ctx, const char * msg, ...)
+{
+	printf("error parsing XML : %s\n", msg);
+}
 
 void charger_niveau(char *nom, niveau *n)
 {
     xmlSAXHandler sh = {NULL};
     sh.startElement = debut_element;
     sh.characters = caractere;
-
+	sh.error = erreur;
+	
     if(xmlSAXUserParseFile(&sh, n, nom))
         puts("Il y a eu une couille");
 }
@@ -730,6 +748,7 @@ void sauver_niveau(char *nom, niveau *n)
     open_element(fic, "level");
     add_attrib(fic, "name", "%s", n->nom);
     add_attrib(fic, "size", "%d:%d", n->taille.x, n->taille.y);
+	add_attrib(fic, "music", "%s", n->titre_musique);
     end_element(fic);
 
     /* Spawn */
@@ -1009,7 +1028,12 @@ void sauver_niveau(char *nom, niveau *n)
 			add_attrib(fic, "pos", "%d:%d", t->position.x, t->position.y);
 			add_attrib(fic, "state", "%d", t->etat);
 			add_attrib(fic, "destination_pipe", "%d", t->pipe_dest);
-			add_attrib(fic, "level_destination", "%s", t->level_dest);
+			
+			if(t->level_dest != NULL)
+				add_attrib(fic, "level_destination", "%s", t->level_dest);
+			else
+				add_attrib(fic, "level_destination", "");
+
 			add_attrib(fic, "monster", "%d", t->index_monstre);
 
 			close_element_short(fic);

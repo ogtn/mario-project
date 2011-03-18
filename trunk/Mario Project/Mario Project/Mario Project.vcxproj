@@ -173,6 +173,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="level_design_log.txt" />
+    <None Include="smb.xml" />
     <None Include="test_xml.xml">
       <SubType>Designer</SubType>
     </None>
@@ -181,6 +182,7 @@
     <None Include="textures\blocs\speciaux\incassables\interaction\interaction.cfg" />
     <None Include="textures\blocs\speciaux\incassables\[Q]\[Q].cfg" />
     <None Include="to do list.txt" />
+    <None Include="world1.wld" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

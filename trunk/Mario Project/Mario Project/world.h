@@ -93,7 +93,7 @@ personnage du joueur, les sprites, les blocs etc... */
 void load_world(world *w);
 
 /* fonction qui prépare le début d'un niveau */
-void begin_level(world *w, int persos_tous_morts);
+void begin_level(world *w, int *persos_tous_morts);
 
 /* mise à jour des champs qui stockent notament le temps écoulé entre 
 deux images */
