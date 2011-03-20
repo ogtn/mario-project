@@ -234,7 +234,7 @@ void main_collisions(world *w)
 
 void MAJ_tuyau(niveau* n, tuyau *t, Uint32 duree)
 {
-	if(t->index_monstre > 0)
+	if(t->index_monstre >= 0)
 	{
 		if(t->tps_sortie_monstre <= 0) {
 			occ_monstre* occ_m = NULL;
@@ -919,10 +919,10 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 					{
 						if(n->occ_blocs[i][j] != NULL && n->occ_blocs[i][j]->bloc_actuel >= 0)
 						{
-							bloc bloc_actuel = n->blocs[n->occ_blocs[i][j]->bloc_actuel];
+							bloc *bloc_actuel = &n->blocs[n->occ_blocs[i][j]->bloc_actuel];
 
 							/* On récupère la physique du bloc */
-							phys_bloc_actuel = bloc_actuel.phys;
+							phys_bloc_actuel = bloc_actuel->phys;
 
 							block.position.x = (float)i * n->taille_blocs.x;
 							block.position.y = (float)j * n->taille_blocs.y;
@@ -1066,7 +1066,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 								p->vitesse.y = 0;
 								p->position.y = (float)block.position.y - ordonnee_haut - 1;
 
-								if(!(bloc_actuel.type_bloc & EST_VIDE) && p->etat != MONTE_ECHELLE)
+								if(!(bloc_actuel->type_bloc & EST_VIDE) && p->etat != MONTE_ECHELLE)
 								{
 									/* Ajout de l'occurence d'item */
 									coordf vitesse;
@@ -1075,11 +1075,13 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 									vitesse.x = 0;
 
 									n->occ_blocs[i][j]->etat = POUSSE_PAR_LE_HAUT;
-									/* Si le bloc ne contient pas un pointeur sur un item,
-									l'item sera en fonction de la transformation actuelle du personnage */
+									
 									if(n->occ_blocs[i][j]->item != 0)
 									{
 										int index;
+										
+										/* Si le bloc contient un indice d'item negatif,
+										l'item sera en fonction de la transformation actuelle du personnage */
 										if(n->occ_blocs[i][j]->item < 0)
 											index = (p->transformation == FIRE_MARIO)? p->transformation - 1: p->transformation;
 										else
@@ -1094,9 +1096,11 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 										vitesse.y =  VIT_SORTIE_BLOC * 4;
 										FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_PIECE]);
 										item = new_occ_item((float)n->occ_blocs[i][j]->position.x, (float)n->occ_blocs[i][j]->position.y, n->occ_blocs[i][j]->item, vitesse, SORT_DU_BLOC);
-										if((bloc_actuel.type_bloc & DISTRIBUTEUR_PIECE)	&& bloc_actuel.tps_piece == 0)
+										prend_item(p, PIECE, NULL);
+										
+										if((bloc_actuel->type_bloc & DISTRIBUTEUR_PIECE) && bloc_actuel->tps_piece == 0)
 										{
-											bloc_actuel.tps_piece = 50000;
+											bloc_actuel->tps_piece = 50000;
 										}
 									}
 
@@ -1105,15 +1109,15 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_UNBREAKABLE_BLOCK]);
 
 									/* Devient incassable si ce n'est pas un distributeur de pièce ou que son temps de distibution de pièces est écoulé */
-									if(!(bloc_actuel.type_bloc & DISTRIBUTEUR_PIECE) || bloc_actuel.tps_piece < 0)
+									if(!(bloc_actuel->type_bloc & DISTRIBUTEUR_PIECE) || bloc_actuel->tps_piece < 0)
 									{
-										bloc_actuel.tps_piece = 0;
+										bloc_actuel->tps_piece = 0;
 										n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif;
 										n->occ_blocs[i][j]->bloc_alternatif = -1;
 									}
 
 								}
-								else if((bloc_actuel.type_bloc & CASSABLE) && p->transformation >= SUPER_MARIO)
+								else if((bloc_actuel->type_bloc & CASSABLE) && p->transformation >= SUPER_MARIO)
 								{
 									/* Creation et ajout des 4 débris de blocs */
 									n->projectiles[DEBRIS]->occ_projectiles = ajout_projectile(n->projectiles[DEBRIS]->occ_projectiles, 
@@ -1138,7 +1142,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 								else 
 								{
 
-									if((bloc_actuel.type_bloc & CASSABLE) && p->transformation < SUPER_MARIO)
+									if((bloc_actuel->type_bloc & CASSABLE) && p->transformation < SUPER_MARIO)
 									{
 										n->occ_blocs[i][j]->etat = POUSSE_PAR_LE_HAUT;
 										n->occ_blocs[i][j]->id_perso = p->personnage;
@@ -1177,7 +1181,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 							}
 
 							/* Collision avec un bloc qu'on peut escalader */
-							peut_grimper |= (bloc_actuel.type_bloc & PEUT_GRIMPER);
+							peut_grimper |= (bloc_actuel->type_bloc & PEUT_GRIMPER);
 						}
 					}
 				}
@@ -1668,7 +1672,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 				kill_monster_finish(n, p);
 
 				/* On arrête la musiqeu du niveau et on lance celle de la fin */
-				FSOUND_Stream_Stop(n->musique);
+				FSOUND_Stream_Close(n->musique);
 				FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_CLEAR]);
 
 				/* Modification des états */
