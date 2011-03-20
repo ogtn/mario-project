@@ -216,5 +216,37 @@
     <None Include="smb.xml">
       <Filter>Fichiers de ressources</Filter>
     </None>
+    <None Include="textures\backgrounds\BlueHills.png">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="textures\backgrounds\skyBlueHills.png">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="textures\persos\fire_mario.perso">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="textures\persos\fire_mario.png">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="textures\persos\small_mario.perso">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="textures\persos\small_mario.png">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="textures\persos\super_mario.perso">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="textures\persos\super_mario.png">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="textures\backgrounds\BlueHills.obj">
+      <Filter>Fichiers de ressources</Filter>
+    </Object>
+    <Object Include="textures\backgrounds\skybluehills.obj">
+      <Filter>Fichiers de ressources</Filter>
+    </Object>
   </ItemGroup>
 </Project>

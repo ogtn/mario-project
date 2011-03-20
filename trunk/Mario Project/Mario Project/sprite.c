@@ -581,8 +581,6 @@ void draw_HUD(perso* p)
 	screen_printf_dbg("Nombre de pieces : %d\n", p->hud->nb_pieces);
 	screen_printf_dbg("Score : %d\n", p->hud->score);
 	screen_printf_dbg("Temps restant : %d\n", p->hud->time);
-	screen_printf_dbg("Environnement : %s\n", chaines_environement[p->environnement]);
-	screen_printf_dbg("Etat : %s\n", chaines_etats_perso[p->etat]);
 }
 
 

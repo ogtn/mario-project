@@ -289,7 +289,7 @@ void charger_perso(char *nom, perso* p){
 		nb_7 = p->taille.x / p->texture_act->nb_sprites_max;
 
 	/* Détermine la taille du personnage en abscisse ... */
-	p->taille.x = min(nb_7, min(nb_6, min(nb_5, min(nb_4, min(nb_3, min(nb_1, nb_2))))));
+	p->taille.x = min(nb_9, min(nb_7, min(nb_6, min(nb_5, min(nb_4, min(nb_3, min(nb_1, nb_2)))))));
 
 	/* ... et en ordonnee */
 	p->taille.y = p->taille.y / nb_lignes;

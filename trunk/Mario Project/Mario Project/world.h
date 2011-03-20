@@ -113,7 +113,7 @@ void check_finish(world *w, int* gagne);
 int perso_transforme_ou_meurt(world* w);
 
 /* Teste si un des personnages meurt */
-void persos_morts(world* w, int *persos_morts);
+void persos_morts(world* w, int *persos_morts, int* continuer);
 
 /* Fonctions de main.c, à placer ailleurs peut etre */
 void init_SDL(int x, int y);

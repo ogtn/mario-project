@@ -80,7 +80,7 @@ int main_bak(int argc, char *argv[])
 int main(int argc, char *argv[])
 {
     //int choix = 1;
-    keystate *k = NULL;
+    //keystate *k = NULL;
     
     //Pour le module de surveillance des allocations
 #ifdef _DEBUG
@@ -91,11 +91,10 @@ int main(int argc, char *argv[])
     init_SDL(LARGEUR_FENETRE, HAUTEUR_FENETRE);
     init_OpenGL(LARGEUR_FENETRE, HAUTEUR_FENETRE);
     FSOUND_Init(44100, 32, 0);
-    init_text("fonts/consolas.fnt", 100, COLOR_RED);
+    init_text("fonts/smb.fnt", 100, COLOR_RED);
 
     // Menu Principal 
-    k = new_keystate();
-    //FSOUND_Stream_Play(FSOUND_FREE, musique);
+    //k = new_keystate();    
     //choix = main_menu(k);
 
     //while(choix != QUITTER)
@@ -103,8 +102,8 @@ int main(int argc, char *argv[])
     //jouer();
     //choix = main_menu(k);
     //}
-    //jouer(NULL);
-    main_editeur();
+    jouer(NULL);
+    //main_editeur();
  
     // Astuce pour que le compilo ne dise pas que ces deux parametres ne sont pas
     //utilisés. On peut eventuellement les utiliser pour un mode debug,
@@ -113,10 +112,9 @@ int main(int argc, char *argv[])
     argv;
 
     // liberation de la memoire (à completer)
-//    FSOUND_Stream_Close(musique);
-    FSOUND_Close();
-    SDL_Quit();
     quit_text();
+	FSOUND_Close();
+    SDL_Quit();
 
 #ifdef _DEBUG
     affich_list();
@@ -211,7 +209,7 @@ void jouer(world *w_)
 			/* Test de collisions */
 			if(!perso_transforme_ou_meurt(w))
 			{
-				/* Mise à jour de toutes les positions des objets/enemis */
+				/* Mise à jour de toutes les positions des persos/objets/enemis */
 				main_collisions(w);
 			}
 			else
@@ -233,8 +231,9 @@ void jouer(world *w_)
 
 			/* Vérification du nombre vies restantes, fin de niveau, s'ils sont tous morts... */
 			check_finish(w, &gagne);
-			persos_morts(w, &persos_tous_morts);
+			persos_morts(w, &persos_tous_morts, &continuer);
 			
+			/* Si on a terminé le niveau, on continue à afficher tout en calculant les points */
 			if(gagne)
 			{
 				FSOUND_PlaySound(2, w->persos[0]->sons[SND_PTS_FINAL]);
@@ -255,8 +254,6 @@ void jouer(world *w_)
 			//affichage_debug(w);
 #endif
 
-			/* audio? */
-
 			/* Gestion du temps */
 			if(!perso_transforme_ou_meurt(w))
 			{
@@ -268,7 +265,7 @@ void jouer(world *w_)
             my_sleep(2);
 		}
 
-		/* Si on veut quitter le jeu */
+		/* Si on quitte le jeu */
 		if(!continuer)
 			break;
 

@@ -177,12 +177,24 @@
     <None Include="test_xml.xml">
       <SubType>Designer</SubType>
     </None>
+    <None Include="textures\backgrounds\BlueHills.png" />
+    <None Include="textures\backgrounds\skyBlueHills.png" />
     <None Include="textures\blocs\classiques\classiques.cfg" />
     <None Include="textures\blocs\speciaux\cassables\cassables.cfg" />
     <None Include="textures\blocs\speciaux\incassables\interaction\interaction.cfg" />
     <None Include="textures\blocs\speciaux\incassables\[Q]\[Q].cfg" />
+    <None Include="textures\persos\fire_mario.perso" />
+    <None Include="textures\persos\fire_mario.png" />
+    <None Include="textures\persos\small_mario.perso" />
+    <None Include="textures\persos\small_mario.png" />
+    <None Include="textures\persos\super_mario.perso" />
+    <None Include="textures\persos\super_mario.png" />
     <None Include="to do list.txt" />
     <None Include="world1.wld" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="textures\backgrounds\BlueHills.obj" />
+    <Object Include="textures\backgrounds\skybluehills.obj" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

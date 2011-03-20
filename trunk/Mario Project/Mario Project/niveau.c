@@ -119,6 +119,9 @@ niveau *free_niveau(niveau *n)
 	if(n == NULL) 
 		return NULL;
 
+	/* Fermeture de la musique du jeu */
+	FSOUND_Stream_Close(n->musique);
+
 	/* Libération items */
 	if(n->items != NULL)
 	{
@@ -188,8 +191,12 @@ niveau *free_niveau(niveau *n)
 		{
 			for(j = 0; j < n->taille.y; j++)
 			{
-				free(n->occ_blocs[i][j]);
+				if(n->occ_blocs[i][j] != NULL)
+				{
+					free(n->occ_blocs[i][j]);
+				}
 			}
+
 			free(n->occ_blocs[i]);
 		}
 		free(n->occ_blocs);
@@ -264,7 +271,7 @@ niveau *free_niveau(niveau *n)
 	if(n->textures != NULL)
 	{
 		for(i = 0; i < n->nb_textures; i++)
-				free(n->textures[i].phys);
+			free(n->textures[i].phys);
 
 		free(n->textures);
 	}
@@ -541,6 +548,7 @@ void balise_bloc(niveau *n, const char **attrs)
 	n->blocs[i].coord_sprite.y = atoi(strchr(attrs[3], ':') + 1);
 	n->blocs[i].type_bloc = atoi(attrs[5]);
 	n->blocs[i].phys = texture_bloc.phys[n->blocs[i].coord_sprite.x + n->blocs[i].coord_sprite.y * (texture_bloc.taille.x / texture_bloc.taille_sprite.x)];
+	n->blocs[i].tps_piece = 0;
 	i++;
 	i %= n->nb_blocs;
 }
@@ -1412,6 +1420,21 @@ void draw_main_options(niveau *lvl, ecran e, Uint32 duree, int bck, int blocs, i
     if(objets)
         draw_objects(lvl, duree);
 
+	/* Dessin des arrivées */
+	for(i = 0; i < lvl->nb_finish; i++)
+	{
+		finish f = lvl->finishes[i];
+        sprite s;
+        
+        s.point_bg.x = s.point_bg.y = 0;
+        s.point_hd.x = s.point_hd.y = 1;
+        s.position.x = (int)f.position.x;
+        s.position.y = (int)f.position.y;
+        s.taille = f.taille;
+        s.text_id = f.id_text;
+		draw_sprite(&s);
+	}
+
     /* Dessin des items */
 	for(i = 0; i < lvl->nb_items; i++)
 	{
@@ -1646,7 +1669,9 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
 
 				/* Réduction du temps */
 				if((n->blocs[occ->bloc_actuel].type_bloc & DISTRIBUTEUR_PIECE) && n->blocs[occ->bloc_actuel].tps_piece > 0)
+				{
 					n->blocs[occ->bloc_actuel].tps_piece -= duree / 150;
+				}
 			}
 
 			if(occ->etat != IMMOBILE && occ->compteur_etat == 0)

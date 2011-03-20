@@ -44,14 +44,14 @@
 		</monster>
 	</monsters>
 	<pipes nb="6">
-		<pipe img="green_pipe" sens="0" length="1" pos="20:2" state="1" destination_pipe="0" level_destination="" monster="0"/>
-		<pipe img="green_pipe" sens="0" length="2" pos="30:2" state="1" destination_pipe="0" level_destination="" monster="0"/>
-		<pipe img="green_pipe" sens="0" length="3" pos="38:2" state="1" destination_pipe="0" level_destination="" monster="0"/>
-		<pipe img="green_pipe" sens="0" length="3" pos="50:2" state="1" destination_pipe="0" level_destination="" monster="0"/>
-		<pipe img="green_pipe" sens="0" length="1" pos="159:2" state="1" destination_pipe="0" level_destination="" monster="0"/>
-		<pipe img="green_pipe" sens="0" length="1" pos="175:2" state="1" destination_pipe="0" level_destination="" monster="0"/>
+    <pipe img="green_pipe" sens="0" length="1" pos="20:2" state="1" destination_pipe="0" level_destination="" monster="-1"/>
+    <pipe img="green_pipe" sens="0" length="2" pos="30:2" state="1" destination_pipe="0" level_destination="" monster="-1"/>
+    <pipe img="green_pipe" sens="0" length="3" pos="38:2" state="1" destination_pipe="0" level_destination="" monster="-1"/>
+    <pipe img="green_pipe" sens="0" length="3" pos="50:2" state="1" destination_pipe="0" level_destination="" monster="-1"/>
+    <pipe img="green_pipe" sens="0" length="1" pos="159:2" state="1" destination_pipe="0" level_destination="" monster="-1"/>
+    <pipe img="green_pipe" sens="0" length="1" pos="175:2" state="1" destination_pipe="0" level_destination="" monster="-1"/>
 	</pipes>
-	<blocs nb_textures="4" nb_models="16" bloc_size="32:32">
+	<blocs nb_textures="4" nb_models="14" bloc_size="32:32">
 		<textures img="classiques/Grass.png"/>
 		<textures img="speciaux/cassables/Overworld.png"/>
 		<textures img="speciaux/incassables/[Q]/Overworld.png"/>
@@ -65,11 +65,9 @@
 		<bloc texture="0" coord_sprite="2:0" type_bloc="8388608"/>
 		<bloc texture="0" coord_sprite="2:1" type_bloc="8388608"/>
 		<bloc texture="0" coord_sprite="2:2" type_bloc="8388608"/>
-		<bloc texture="0" coord_sprite="5:2" type_bloc="8388608"/>
-		<bloc texture="0" coord_sprite="6:2" type_bloc="8388608"/>
-		<bloc texture="0" coord_sprite="6:1" type_bloc="8388608"/>
 		<bloc texture="1" coord_sprite="0:0" type_bloc="10485760"/>
 		<bloc texture="1" coord_sprite="0:0" type_bloc="4194304"/>
+    <bloc texture="1" coord_sprite="0:0" type_bloc="0"/>
 		<bloc texture="2" coord_sprite="0:0" type_bloc="0"/>
 		<bloc texture="3" coord_sprite="0:0" type_bloc="8388608"/>
 		<layers nb="1">
@@ -96,27 +94,27 @@
 				<occ_block pos="288:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="320:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="320:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="320:160" actual="14" alt="15" item="0"/>
+				<occ_block pos="320:160" actual="12" alt="13" item="0"/>
 				<occ_block pos="352:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="352:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="384:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="384:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="416:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="416:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="416:160" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="416:160" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="448:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="448:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="448:160" actual="14" alt="15" item="-1"/>
+				<occ_block pos="448:160" actual="12" alt="13" item="-1"/>
 				<occ_block pos="480:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="480:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="480:160" actual="12" alt="-1" item="-1"/>
-				<occ_block pos="480:288" actual="14" alt="15" item="0"/>
+				<occ_block pos="480:160" actual="9" alt="-1" item="-1"/>
+				<occ_block pos="480:288" actual="12" alt="13" item="0"/>
 				<occ_block pos="512:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="512:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="512:160" actual="14" alt="15" item="0"/>
+				<occ_block pos="512:160" actual="12" alt="13" item="0"/>
 				<occ_block pos="544:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="544:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="544:160" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="544:160" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="576:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="576:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="608:0" actual="4" alt="-1" item="-1"/>
@@ -217,62 +215,62 @@
 				<occ_block pos="2176:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="2208:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="2208:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="2208:160" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="2208:160" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="2240:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="2240:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="2240:160" actual="14" alt="15" item="-1"/>
+				<occ_block pos="2240:160" actual="12" alt="13" item="-1"/>
 				<occ_block pos="2272:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="2272:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="2272:160" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="2272:160" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="2304:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="2304:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="2304:288" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="2304:288" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="2336:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="2336:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="2336:288" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="2336:288" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="2368:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="2368:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="2368:288" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="2368:288" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="2400:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="2400:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="2400:288" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="2400:288" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="2432:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="2432:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="2432:288" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="2432:288" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="2464:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="2464:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="2464:288" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="2464:288" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="2496:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="2496:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="2496:288" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="2496:288" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="2528:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="2528:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="2528:288" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="2528:288" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="2560:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="2560:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="2560:288" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="2560:288" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="2592:0" actual="7" alt="-1" item="-1"/>
 				<occ_block pos="2592:32" actual="8" alt="-1" item="-1"/>
-				<occ_block pos="2592:288" actual="12" alt="-1" item="-1"/>
-				<occ_block pos="2624:288" actual="12" alt="-1" item="-1"/>
-				<occ_block pos="2656:288" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="2592:288" actual="9" alt="-1" item="-1"/>
+				<occ_block pos="2624:288" actual="9" alt="-1" item="-1"/>
+				<occ_block pos="2656:288" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="2720:0" actual="1" alt="-1" item="-1"/>
 				<occ_block pos="2720:32" actual="2" alt="-1" item="-1"/>
 				<occ_block pos="2752:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="2752:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="2784:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="2784:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="2784:288" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="2784:288" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="2816:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="2816:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="2816:288" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="2816:288" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="2848:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="2848:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="2848:288" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="2848:288" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="2880:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="2880:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="2880:160" actual="13" alt="15" item="0"/>
-				<occ_block pos="2880:288" actual="14" alt="15" item="0"/>
+				<occ_block pos="2880:160" actual="10" alt="13" item="0"/>
+				<occ_block pos="2880:288" actual="12" alt="13" item="0"/>
 				<occ_block pos="2912:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="2912:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="2944:0" actual="4" alt="-1" item="-1"/>
@@ -287,10 +285,10 @@
 				<occ_block pos="3072:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="3104:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="3104:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="3104:160" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="3104:160" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="3136:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="3136:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="3136:160" actual="13" alt="15" item="3"/>
+				<occ_block pos="3136:160" actual="11" alt="13" item="3"/>
 				<occ_block pos="3168:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="3168:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="3200:0" actual="4" alt="-1" item="-1"/>
@@ -301,22 +299,22 @@
 				<occ_block pos="3264:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="3296:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="3296:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="3296:160" actual="14" alt="15" item="0"/>
+				<occ_block pos="3296:160" actual="12" alt="13" item="0"/>
 				<occ_block pos="3328:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="3328:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="3360:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="3360:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="3392:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="3392:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="3392:160" actual="14" alt="15" item="0"/>
-				<occ_block pos="3392:288" actual="14" alt="15" item="-1"/>
+				<occ_block pos="3392:160" actual="12" alt="13" item="0"/>
+				<occ_block pos="3392:288" actual="12" alt="13" item="-1"/>
 				<occ_block pos="3424:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="3424:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="3456:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="3456:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="3488:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="3488:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="3488:160" actual="14" alt="15" item="0"/>
+				<occ_block pos="3488:160" actual="12" alt="13" item="0"/>
 				<occ_block pos="3520:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="3520:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="3552:0" actual="4" alt="-1" item="-1"/>
@@ -329,20 +327,20 @@
 				<occ_block pos="3648:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="3680:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="3680:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="3680:160" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="3680:160" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="3712:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="3712:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="3744:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="3744:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="3776:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="3776:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="3776:288" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="3776:288" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="3808:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="3808:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="3808:288" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="3808:288" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="3840:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="3840:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="3840:288" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="3840:288" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="3872:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="3872:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="3904:0" actual="4" alt="-1" item="-1"/>
@@ -353,60 +351,60 @@
 				<occ_block pos="3968:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="4000:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4000:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="4000:288" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="4000:288" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="4032:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4032:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="4032:160" actual="12" alt="-1" item="-1"/>
-				<occ_block pos="4032:288" actual="14" alt="15" item="0"/>
+				<occ_block pos="4032:160" actual="9" alt="-1" item="-1"/>
+				<occ_block pos="4032:288" actual="12" alt="13" item="0"/>
 				<occ_block pos="4064:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4064:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="4064:160" actual="12" alt="-1" item="-1"/>
-				<occ_block pos="4064:288" actual="14" alt="15" item="0"/>
+				<occ_block pos="4064:160" actual="9" alt="-1" item="-1"/>
+				<occ_block pos="4064:288" actual="12" alt="13" item="0"/>
 				<occ_block pos="4096:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4096:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="4096:288" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="4096:288" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="4128:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4128:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="4160:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4160:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="4160:64" actual="15" alt="-1" item="-1"/>
+				<occ_block pos="4160:64" actual="13" alt="-1" item="-1"/>
 				<occ_block pos="4192:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4192:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="4192:64" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4192:96" actual="15" alt="-1" item="-1"/>
+				<occ_block pos="4192:64" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4192:96" actual="13" alt="-1" item="-1"/>
 				<occ_block pos="4224:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4224:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="4224:64" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4224:96" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4224:128" actual="15" alt="-1" item="-1"/>
+				<occ_block pos="4224:64" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4224:96" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4224:128" actual="13" alt="-1" item="-1"/>
 				<occ_block pos="4256:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4256:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="4256:64" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4256:96" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4256:128" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4256:160" actual="15" alt="-1" item="-1"/>
+				<occ_block pos="4256:64" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4256:96" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4256:128" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4256:160" actual="13" alt="-1" item="-1"/>
 				<occ_block pos="4288:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4288:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="4320:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4320:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="4352:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4352:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="4352:64" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4352:96" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4352:128" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4352:160" actual="15" alt="-1" item="-1"/>
+				<occ_block pos="4352:64" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4352:96" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4352:128" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4352:160" actual="13" alt="-1" item="-1"/>
 				<occ_block pos="4384:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4384:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="4384:64" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4384:96" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4384:128" actual="15" alt="-1" item="-1"/>
+				<occ_block pos="4384:64" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4384:96" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4384:128" actual="13" alt="-1" item="-1"/>
 				<occ_block pos="4416:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4416:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="4416:64" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4416:96" actual="15" alt="-1" item="-1"/>
+				<occ_block pos="4416:64" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4416:96" actual="13" alt="-1" item="-1"/>
 				<occ_block pos="4448:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4448:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="4448:64" actual="15" alt="-1" item="-1"/>
+				<occ_block pos="4448:64" actual="13" alt="-1" item="-1"/>
 				<occ_block pos="4480:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4480:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="4512:0" actual="4" alt="-1" item="-1"/>
@@ -417,46 +415,46 @@
 				<occ_block pos="4576:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="4608:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4608:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="4608:64" actual="15" alt="-1" item="-1"/>
+				<occ_block pos="4608:64" actual="13" alt="-1" item="-1"/>
 				<occ_block pos="4640:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4640:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="4640:64" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4640:96" actual="15" alt="-1" item="-1"/>
+				<occ_block pos="4640:64" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4640:96" actual="13" alt="-1" item="-1"/>
 				<occ_block pos="4672:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4672:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="4672:64" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4672:96" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4672:128" actual="15" alt="-1" item="-1"/>
+				<occ_block pos="4672:64" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4672:96" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4672:128" actual="13" alt="-1" item="-1"/>
 				<occ_block pos="4704:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4704:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="4704:64" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4704:96" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4704:128" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4704:160" actual="15" alt="-1" item="-1"/>
+				<occ_block pos="4704:64" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4704:96" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4704:128" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4704:160" actual="13" alt="-1" item="-1"/>
 				<occ_block pos="4736:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4736:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="4736:64" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4736:96" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4736:128" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4736:160" actual="15" alt="-1" item="-1"/>
+				<occ_block pos="4736:64" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4736:96" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4736:128" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4736:160" actual="13" alt="-1" item="-1"/>
 				<occ_block pos="4832:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4832:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="4832:64" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4832:96" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4832:128" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4832:160" actual="15" alt="-1" item="-1"/>
+				<occ_block pos="4832:64" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4832:96" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4832:128" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4832:160" actual="13" alt="-1" item="-1"/>
 				<occ_block pos="4864:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4864:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="4864:64" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4864:96" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4864:128" actual="15" alt="-1" item="-1"/>
+				<occ_block pos="4864:64" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4864:96" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4864:128" actual="13" alt="-1" item="-1"/>
 				<occ_block pos="4896:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4896:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="4896:64" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="4896:96" actual="15" alt="-1" item="-1"/>
+				<occ_block pos="4896:64" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="4896:96" actual="13" alt="-1" item="-1"/>
 				<occ_block pos="4928:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4928:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="4928:64" actual="15" alt="-1" item="-1"/>
+				<occ_block pos="4928:64" actual="13" alt="-1" item="-1"/>
 				<occ_block pos="4960:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="4960:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="4992:0" actual="4" alt="-1" item="-1"/>
@@ -477,16 +475,16 @@
 				<occ_block pos="5216:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="5248:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="5248:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="5248:160" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="5248:160" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="5280:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="5280:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="5280:160" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="5280:160" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="5312:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="5312:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="5312:160" actual="14" alt="15" item="0"/>
+				<occ_block pos="5312:160" actual="12" alt="13" item="0"/>
 				<occ_block pos="5344:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="5344:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="5344:160" actual="12" alt="-1" item="-1"/>
+				<occ_block pos="5344:160" actual="9" alt="-1" item="-1"/>
 				<occ_block pos="5376:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="5376:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="5408:0" actual="4" alt="-1" item="-1"/>
@@ -507,28 +505,28 @@
 				<occ_block pos="5632:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="5664:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="5664:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="5664:64" actual="15" alt="-1" item="-1"/>
+				<occ_block pos="5664:64" actual="13" alt="-1" item="-1"/>
 				<occ_block pos="5696:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="5696:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="5696:64" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="5696:96" actual="15" alt="-1" item="-1"/>
+				<occ_block pos="5696:64" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="5696:96" actual="13" alt="-1" item="-1"/>
 				<occ_block pos="5728:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="5728:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="5728:64" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="5728:96" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="5728:128" actual="15" alt="-1" item="-1"/>
+				<occ_block pos="5728:64" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="5728:96" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="5728:128" actual="13" alt="-1" item="-1"/>
 				<occ_block pos="5760:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="5760:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="5760:64" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="5760:96" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="5760:128" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="5760:160" actual="15" alt="-1" item="-1"/>
+				<occ_block pos="5760:64" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="5760:96" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="5760:128" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="5760:160" actual="13" alt="-1" item="-1"/>
 				<occ_block pos="5792:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="5792:32" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="5792:64" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="5792:96" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="5792:128" actual="15" alt="-1" item="-1"/>
-				<occ_block pos="5792:160" actual="15" alt="-1" item="-1"/>
+				<occ_block pos="5792:64" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="5792:96" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="5792:128" actual="13" alt="-1" item="-1"/>
+				<occ_block pos="5792:160" actual="13" alt="-1" item="-1"/>
 				<occ_block pos="5824:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="5824:32" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="5856:0" actual="4" alt="-1" item="-1"/>
