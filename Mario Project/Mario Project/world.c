@@ -338,7 +338,7 @@ void begin_level(world *w, int *persos_tous_morts)
 
 		/* Initialisation du nom et du temps dans le HUD pour chaque niveau chargé */
 		w->persos[i]->hud->nom_niveau = w->niveau->nom;
-		w->persos[i]->hud->time = 3000;
+		w->persos[i]->hud->time = 5000;
 	}
 	
 	/* Lancement de la musique */
@@ -375,8 +375,12 @@ void update_time(world *w)
 
 	for(i = 0; i < w->nb_persos; i++)
 	{
-		if(w->persos[i]->etat != FINISH && w->persos[i]->etat != FINISH_CHATEAU && w->persos[i]->etat != MORT)
+		if(w->persos[i]->etat != FINISH && w->persos[i]->etat != FINISH_CHATEAU && w->persos[i]->etat != MORT && w->persos[i]->hud->time > 0)
+		{
 			w->persos[i]->hud->time -= w->temps_ecoule / 10;
+			if(w->persos[i]->hud->time < 0)
+				w->persos[i]->hud->time = 0;
+		}
 	}
 	
 	w->frames_calculees++;
