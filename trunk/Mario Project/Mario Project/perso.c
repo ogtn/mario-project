@@ -352,10 +352,16 @@ void transforme_perso(int transformation_future, perso* p){
 		case SMALL_MARIO :
 			charger_perso("small_mario", p);
 			p->transformation = SMALL_MARIO;
+
+			/* Faire correspondre les deux coins bas_gauche de la hitbox */
+			p->position.x = p->position.x + (copy.abscisse_bas - p->texture_act->abscisse_bas);
 			break;
 		case SUPER_MARIO :
 			charger_perso("super_mario", p);
 			p->transformation = SUPER_MARIO;
+
+			/* Faire correspondre les deux coins bas_gauche de la hitbox */
+			p->position.x = p->position.x + (copy.abscisse_bas - p->texture_act->abscisse_bas);
 			break;
 		case FIRE_MARIO :
 			charger_perso("fire_mario", p);

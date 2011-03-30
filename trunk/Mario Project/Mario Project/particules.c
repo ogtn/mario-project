@@ -127,5 +127,4 @@ void update_particule_genenerator(particule_generator *generator, Uint32 duratio
 		res -= (1000 / generator->debit);
 		generator->temps_ecoule = res;
     }
-	//screen_printf_dbg("%d part/s\n", moyenne * 2);
 }

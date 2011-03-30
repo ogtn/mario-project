@@ -124,7 +124,7 @@ void charger_cfg_texture(char* nom_cfg, texture *t, coordi taille_blocs)
 	{
 		for(i = 0; i < nb_sprites; i++)
         {
-            fscanf(flux, "%x", &t->phys[i]);
+			fscanf(flux, "%x", &t->phys[i]);
         }
 	}
 	fclose(flux);

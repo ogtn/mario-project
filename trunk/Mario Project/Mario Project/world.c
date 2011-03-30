@@ -115,162 +115,94 @@ world *free_world(world *w)
 void modifier_niveau_SMB(niveau* n)
 {
 	int i, j;
+	coordf position = { 0, 768};
+	coordi taille = { 200 * 32, 0};
+
+	n->nb_foreground_generators = 1;
+	n->foreground_generators = malloc(sizeof(particule_generator) * n->nb_foreground_generators);
+	n->foreground_generators[0] = new_particule_generator(position, taille, 4000, 200, "snow_particle.png", 1, 0xFFFFFFFF, 0xFFFFFFFF);
+
+	n->nb_checkpoints = 1;
+	n->checkpoints = malloc(sizeof(checkpoint) * n->nb_checkpoints);
+	n->checkpoints[0] = charger_checkpoint("checkpoint");
+	n->checkpoints[0]->position.x = 3520;
+	n->checkpoints[0]->position.y = 160;
+	
 
 	for(i = 0; i < n->taille.x; i++)
 	{
 		for(j = 0; j < n->taille.y; j++)
 		{
-			if(((i == 35 || i == 41) && j == 12)
-				|| (i == 168 && j == 5))
+			if((i == 11 && j == 1)
+				|| (i == 61 && j == 6)
+				|| (i == 62 && j == 5)
+				|| (i == 63 && j == 4)
+				|| (i == 64 && j == 3))
 			{
-				// bord à droite
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 12, -1, -1);
+				// pente 45 gauche
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 22, -1, -1);
 			}
-			else if(((i == 39) && j == 12)
-				|| (i == 47 && j == 0))
+			else if((i == 32 && j == 0)
+				|| (i == 33 && j == 1)
+				|| (i == 34 && j == 2)
+				|| (i == 35 && j == 3)
+				|| (i == 36 && j == 4))
+			{
+				// pente 45 droite
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, -1, -1);
+			}
+			else if((i == 100 && j == 4))
 			{
 				// bord à gauche
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 10, -1, -1);
 			}
-			else if((i == 35 || i == 41) && j <= 11)
+			else if((i == 26 && j == 0)
+				|| (i == 73 && j == 2))
+			{
+				// bord à droite
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 12, -1, -1);
+			}
+			else if((i == 73 && j <= 1))
 			{
 				// mur à droite passable
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 11, -1, -1);
 			}
-			else if((i == 39 && j <= 11)
-				|| (i == 168 && j <= 4))
-			{
-				// mur à gauche passable
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 9, -1, -1);
-			}
-			else if((i == 20 && j == 10)
-				|| (i == 58 && j == 0))
-			{
-				// rattachement sol/mur haut gauche
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 13, -1, -1); 
-			}
-			else if(i == 58 && j == 3)
-			{
-				// rattachement sol/mur bas gauche
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 14, -1, -1); 
-			}
-			else if((i == 20 && j == 12)
-				|| (i == 48 && j == 13)
-				|| (i == 106 && j == 5)
-				|| (i == 124 && j == 8))
-			{
-				// coin haut à gauche
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 2, -1, -1);
-			}
-			else if((i == 8 && j == 39)
-				|| (i == 76 && j == 13)
-				|| (i == 134 && j == 8))
-			{
-				// coin haut à droite
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 8, -1, -1);
-			}
-			else if(i == 8 && j == 38)
-			{
-				// coin bas à droite
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 6, -1, -1);
-			}
-			else if(i == 48 && j == 3)
-			{
-				// coin bas à gauche
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 0, -1, -1);
-			}
-			else if((i == 20 && j == 11)
-				|| (i == 48 && j <= 12 && j >= 4)
-				|| (i == 58 && j >= 1 && j <= 2)
-				|| (i == 106 && j <= 4)
-				|| (i == 124 && j <= 7 && j >= 6))
+			else if((i == 46 && j == 5))
 			{
 				// mur à droite
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 1, -1, -1);
 			}
-			else if((i == 76 && j <= 13)
-				|| (i == 134 && j <= 7 && j >= 6))
+			else if((i == 46 && j == 6))
 			{
-				// mur à gauche
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 7, -1, -1);
+				// coin haut gauche
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 2, -1, -1);
 			}
-			else if((i < 35 && j <= 9)
-				|| ((i >= 20 && i < 35) && j <= 11)
-				|| (i == 40 && j <= 11)
-				|| (i >= 49 && i <= 58 && j <= 12 && j >= 4)
-				|| (i >= 59 && i <= 75 && j <= 12))
+			else if((i == 11 && j == 0))
+			{
+				// rattachements pente/sol
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 16, -1, -1);
+			}
+			else if((i == 46 && j == 4))
+			{
+				// rattachements mur/sol haut gauche
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 13, -1, -1);
+			}
+			else if((i <= 11 && j == 0))
 			{
 				// plein
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 4, -1, -1);
 			}
-			else if((i >= 49 && i <= 57 && j == 3)
-				|| (i >= 0 && i <= 7 && j == 38))
-			{
-				// plafond
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 3, -1, -1);
-			}
-			else if((i >= 48 && i <= 57 && j == 0)
-				|| (i < 20 && j == 10)
-				|| (((i >= 21 && i < 35) || i == 40) && j == 12)
-				|| ((i >= 49 && i <= 75) && j == 13)
-				|| (i >= 0 && i <= 7 && j == 39)
-				|| (i >= 107 && j == 5)
-				|| (i >= 125 && i <= 133 && j == 8))
+			else if((i <= 10 && j == 1)
+				|| (i >= 12 && i <= 25 && j == 0)
+				|| (i >= 37 && i <= 45 && j == 4)
+				|| (i >= 47 && i <= 60 && j == 6)
+				|| (i >= 65 && i <= 72 && j == 2)
+				|| (i >= 101 && i <= 150 && j == 4))
 			{
 				// sol
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 5, -1, -1);
 			}
-			else if(i >= 5 && i <= 6 && j == 43)
-			{
-				// Bloc ? avec champi vie
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, 18, 3); 
-			}
-			else if((i == 52 && j == 18)
-				|| (i == 129 && j == 11))
-			{
-				// Bloc ? avec item en fonction de la transformation
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, 18, -1); 
-			}
-			else if((i == 53 && j == 18)
-				|| (i == 72 && j == 17)
-				|| (i == 159 && j == 9)
-				|| (i == 161 && j == 9)
-				|| (i == 163 && j == 9))
-			{
-				// Bloc ? avec piece
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, 18, 0); 
-			}
-			else if((i == 69 && j == 17)
-				|| (i == 127 && j == 11))
-			{
-				// Bloc distributeur de piece
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 16, 18, 0); 
-			}
-			else if((i == 60 && j >= 14 && j <= 15)
-				|| (i >= 81 && i <= 84 && j == 15)
-				|| (i >= 89 && i <= 91 && j == 12)
-				|| (i >= 94 && i <= 95 && j == 13)
-				|| (i == 99 && j == 11)
-				|| (i == 103 && j == 9)
-				|| (i == 150 && j == 6)
-				|| (i == 151 && j <= 7 && j >= 6))
-			{
-				// Bloc incassable
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 18, -1, -1); 
-			}
-			else if((i == 128 && j == 11)
-				|| (i == 130 && j == 11)
-				|| (i == 158 && j == 9)
-				|| (i == 160 && j == 9)
-				|| (i == 162 && j == 9)
-				|| (i == 164 && j == 9)
-				|| (i == 159 && j == 12)
-				|| (i == 161 && j == 12)
-				|| (i == 163 && j == 12))
-			{
-				// Bloc cassable
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 15, -1, -1); 
-			}
+			
 		}
 	}
 }
@@ -297,8 +229,8 @@ void load_world(world *w)
 
     w->niveau = new_niveau();
     charger_niveau(w->liste_niveaux[w->num_niveau], w->niveau);
-	//modifier_niveau_SMB(w->niveau);
-	//sauver_niveau("smb.xml2", w->niveau);
+	modifier_niveau_SMB(w->niveau);
+	//sauver_niveau("smb2.xml", w->niveau);
 
 }
 

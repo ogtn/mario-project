@@ -216,17 +216,37 @@
     <None Include="smb.xml">
       <Filter>Fichiers de ressources</Filter>
     </None>
-    <None Include="textures\items\champivie.item">
+    <None Include="smb2.xml">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="textures\backgrounds\Underground.png">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="textures\backgrounds\Underground2.png">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="textures\blocs\classiques\underground.png">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="musics\underworld.ogg">
       <Filter>Fichiers de ressources</Filter>
     </None>
     <None Include="textures\items\champivie.png">
       <Filter>Fichiers de ressources</Filter>
     </None>
-    <None Include="textures\items\etoile.item">
+    <None Include="textures\items\champivie.item">
       <Filter>Fichiers de ressources</Filter>
     </None>
-    <None Include="textures\items\etoile.png">
+    <None Include="textures\tuyaux\blue_pipe.png">
       <Filter>Fichiers de ressources</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="textures\backgrounds\Underground.obj">
+      <Filter>Fichiers de ressources</Filter>
+    </Object>
+    <Object Include="textures\backgrounds\Underground2.obj">
+      <Filter>Fichiers de ressources</Filter>
+    </Object>
   </ItemGroup>
 </Project>
