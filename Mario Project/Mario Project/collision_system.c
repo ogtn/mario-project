@@ -351,7 +351,7 @@ void MAJ_collision_monstre(occ_monstre* monstre, ecran e, Uint32 duree) {
 
 	pause_monstre(monstre, e);
 
-	if(monstre->actif)
+	if(monstre->actif || monstre->etat == M_MORT_PAR_PROJ)
 	{
 
 		if(monstre->etat == M_SORT_DU_TUYAU)
@@ -368,7 +368,7 @@ void MAJ_collision_monstre(occ_monstre* monstre, ecran e, Uint32 duree) {
 			if(monstre->tps_sortie_tuyau < 0) {
 				monstre->tps_sortie_tuyau = 0;
 				monstre->etat = M_MARCHE;
-				monstre->vitesse.x = (monstre->vitesse.x < 0)?-M_V_MARCHE:M_V_MARCHE;
+				monstre->vitesse.x = (monstre->vitesse.x <= 0) ? -M_V_MARCHE : M_V_MARCHE;
 			}
 		}
 		else if((monstre->etat == M_RETRACTE || monstre->etat == M_SORT_CARAPACE)
@@ -915,9 +915,10 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 			{
 				for(j = bloc_bg.y; j <= bloc_hd.y; j++)
 				{
-					if(i >= 0 && j >= 0)
+					if(i >= 0 && j >= 0 
+						&& j <= n->taille.y && i <= n->taille.x && n->occ_blocs[i][j] != NULL)
 					{
-						if(n->occ_blocs[i][j] != NULL && n->occ_blocs[i][j]->bloc_actuel >= 0)
+						if(n->occ_blocs[i][j]->bloc_actuel >= 0)
 						{
 							bloc *bloc_actuel = &n->blocs[n->occ_blocs[i][j]->bloc_actuel];
 
@@ -1330,7 +1331,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 					else 
 					{
 						p->vitesse.x = 0;
-						p->position.x = (float) tuyau.position.x - p->taille.x + p->texture_act->abscisse_bas;
+						p->position.x = (float) tuyau.position.x - p->taille.x + p->texture_act->abscisse_bas - 1;
 
 						// MAJ du carré perso
 						perso.position.x = p->position.x + p->texture_act->abscisse_bas;
@@ -1767,7 +1768,8 @@ void solve_collisions_monstre(occ_monstre* m, perso* p, niveau* n, Uint32 duree)
 		{
 			for(j = bloc_bg.y; j <= bloc_hd.y; j++)
 			{
-				if (i >= 0 && j >= 0 && n->occ_blocs[i][j] != NULL)
+				if (i >= 0 && j >= 0 && i < n->taille.x && j < n->taille.y 
+					&& n->occ_blocs[i][j] != NULL)
 				{
 					/* Cas où Super Mario casse un bloc sous le monstre */
 					if(n->occ_blocs[i][j]->bloc_actuel < 0 && n->occ_blocs[i][j]->etat == POUSSE_PAR_LE_HAUT)

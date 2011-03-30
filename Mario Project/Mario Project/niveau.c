@@ -1368,7 +1368,7 @@ void draw_main(niveau *lvl, perso **persos, ecran e, Uint32 duree)
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);
 	glBegin(GL_QUADS);
-	glColor4f(0, 1, 0, 0.5);
+	glColor4f(0, 0, 1, 0.5);
 
 	glVertex3f((GLfloat)persos[0]->position.x + persos[0]->texture_act->abscisse_bas, (GLfloat)persos[0]->position.y, -1);
 	glVertex2f((GLfloat)persos[0]->position.x + persos[0]->texture_act->abscisse_bas, (GLfloat)persos[0]->position.y + persos[0]->texture_act->ordonnee_haut);
@@ -1448,6 +1448,12 @@ void draw_main_options(niveau *lvl, ecran e, Uint32 duree, int bck, int blocs, i
 
     if(blocs)
         draw_blocs(lvl, e, duree);
+
+	/* Dessin des checkpoints */
+	for(i = 0; i < lvl->nb_checkpoints; i++)
+	{
+		draw_checkpoint(lvl->checkpoints[i], duree);
+	}
 
     /* Dessin des monstres */
 	for(i = 0; i < lvl->nb_monstres; i++)

@@ -73,7 +73,7 @@ typedef struct texture
 	GLuint id_text;
 	coordi taille;
 	coordi taille_sprite;
-	id *phys;
+	int *phys;
 } texture;
 
 
