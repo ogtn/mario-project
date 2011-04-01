@@ -345,9 +345,6 @@ void draw_perso(perso *perso, Uint32 duree)
 		}
 	}
 
-	
-
-
 	if(perso->cote == COTE_GAUCHE)
 	{
 		temp = gauche;
@@ -539,8 +536,10 @@ void draw_projectile(occ_projectile* proj, Uint32 duree)
 		s.point_hd.y = haut;
 		draw_sprite(&s);
 	}
-	else if(proj->tps_disparition && !proj->tps_vie)
+	// si le projectile meurt et qu'il possède des sprites où il meurt, on l'affiche
+	else if(proj->tps_disparition && !proj->tps_vie && proj->type_projectile->nb_sprites_mort > 0)
 	{
+		
 		phase = proj->tps_disparition / proj->type_projectile->nb_sprites_mort;
 
 		haut = 0.5;

@@ -23,7 +23,7 @@ perso *init_perso(perso *p)
 
 	if(p != NULL)
 	{
-		p->etat = 0;
+		p->etat = DEBOUT;
 		p->transformation = SMALL_MARIO;
 
 		p->personnage = 0;

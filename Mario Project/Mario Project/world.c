@@ -133,7 +133,11 @@ void modifier_niveau_SMB(niveau* n)
 	{
 		for(j = 0; j < n->taille.y; j++)
 		{
-			if((i == 11 && j == 1)
+			if(i == 0)
+			{
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 27, -1, -1);
+			}
+			else if((i == 11 && j == 1)
 				|| (i == 61 && j == 6)
 				|| (i == 62 && j == 5)
 				|| (i == 63 && j == 4)
@@ -229,12 +233,10 @@ void load_world(world *w)
 
     w->niveau = new_niveau();
     charger_niveau(w->liste_niveaux[w->num_niveau], w->niveau);
-	modifier_niveau_SMB(w->niveau);
+	//modifier_niveau_SMB(w->niveau);
 	//sauver_niveau("smb2.xml", w->niveau);
 
 }
-
-
 
 
 void begin_level(world *w, int *persos_tous_morts)
@@ -248,6 +250,15 @@ void begin_level(world *w, int *persos_tous_morts)
         charger_niveau(w->liste_niveaux[w->num_niveau], w->niveau);
 		*persos_tous_morts = FAUX;
     }
+
+	/* Présentation du niveau */
+	presentation_niveau(w);
+
+	/* initialisations (temporaires?) de l'ecran */
+    w->ecran.taille.x = LARGEUR_FENETRE;
+    w->ecran.taille.y = HAUTEUR_FENETRE;
+    w->ecran.origine.x = 0;
+    w->ecran.origine.y = 0;
 
 	for(i = 0; i < w->nb_persos; i++)
 	{
@@ -266,15 +277,56 @@ void begin_level(world *w, int *persos_tous_morts)
 		}
 
 		w->persos[i]->position_prec = w->persos[i]->position;
-		w->persos[i]->etat = DEBOUT;
 
 		/* Initialisation du nom et du temps dans le HUD pour chaque niveau chargé */
 		w->persos[i]->hud->nom_niveau = w->niveau->nom;
 		w->persos[i]->hud->time = 5000;
 	}
-	
+
 	/* Lancement de la musique */
 	FSOUND_Stream_Play(1, w->niveau->musique); 
+}
+
+void presentation_niveau(world *w)
+{
+	int i;
+	vecti pos_text;
+
+	while(!w->keystate->actuel[ENTRER])
+	{
+		maj_keystate(w->keystate, NULL);
+
+		for(i = 0; i < w->nb_persos; i++)
+		{
+			w->persos[i]->position.x = LARGEUR_FENETRE / 4 + i * LARGEUR_BLOC;
+			w->persos[i]->position.y = HAUTEUR_FENETRE / 4 * 3 + LARGEUR_BLOC / 2;
+
+			pos_text.x = LARGEUR_FENETRE / 4 + (i + 1) * LARGEUR_BLOC;
+			pos_text.y = w->persos[i]->position.y;
+
+			screen_printf(pos_text, NULL, COLOR_WHITE, "x%d", w->persos[i]->hud->nb_vies);
+
+			draw_perso(w->persos[i], 0);
+		}
+
+		w->ecran.origine.x = LARGEUR_FENETRE / 4;
+		w->ecran.origine.y = HAUTEUR_FENETRE / 4;
+
+		w->ecran.taille.x = LARGEUR_FENETRE / 2;
+		w->ecran.taille.y = HAUTEUR_FENETRE / 2;
+
+		draw_main_options(w->niveau, w->ecran, 0, 1, 1, 1);
+
+		w->ecran.origine.x -= 5;
+		w->ecran.origine.y -= 5;
+		w->ecran.taille.x += 10;
+		w->ecran.taille.y += 10;
+		draw_cadre(w->ecran.origine, w->ecran.taille, charger_texture_bis("textures/cadre3.png", NULL), 10);
+
+		screen_flush();
+		SDL_GL_SwapBuffers();
+		my_sleep(2);
+	}
 }
 
 

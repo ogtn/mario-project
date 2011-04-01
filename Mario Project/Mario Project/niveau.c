@@ -1209,6 +1209,9 @@ void charger_objet_background(background* b, int is_object)
 	else
 		b->v_anim = 0;
 
+	fscanf(back_file, "repetition_verticale : %d\n", &nb_1);
+	b->repetition_verticale = nb_1;
+
 	fclose(back_file);
 
 	/* Chargement de la texture */
@@ -1536,15 +1539,15 @@ void draw_background(niveau *n, ecran e, Uint32 duree)
     decallage.x = (float)e.scroll.x / 5000;
     decallage.y = (float)e.scroll.y / 20000;
 
-    s.position.x = 0;
-    s.position.y = 0;
+	s.position.x = 0;
+	s.position.y = 0;
     s.taille.x = e.taille.x;
-    s.taille.y = e.taille.y;
 
     for(i = 0; i < n->nb_backgrounds; i++)
     {
         s.point_bg.x = decallage.x;
-        s.point_bg.y = decallage.y;
+        s.point_bg.y = decallage.y;		
+
         text_coord.x  = (float)e.taille.x / n->backgrounds[i].taille.x;
         text_coord.y  = (float)e.taille.y / n->backgrounds[i].taille.y;
 
@@ -1561,8 +1564,18 @@ void draw_background(niveau *n, ecran e, Uint32 duree)
 
         /* Dessin */
         s.text_id = n->backgrounds[i].id_text[phase];
-        s.point_hd.x = decallage.x + text_coord.x,
-        s.point_hd.y = decallage.y + text_coord.y;
+        s.point_hd.x = decallage.x + text_coord.x;
+
+		if(n->backgrounds[i].repetition_verticale)
+		{
+			s.point_hd.y = text_coord.y + decallage.y;
+			s.taille.y = e.taille.y;
+		}
+		else
+		{
+			s.point_hd.y = 1;
+			s.taille.y = n->backgrounds[i].taille.y;
+		}
         draw_sprite(&s);
 
         decallage.x *= 2;

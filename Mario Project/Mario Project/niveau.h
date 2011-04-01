@@ -42,6 +42,7 @@ typedef struct objet
 	coordi taille;							/* taille de l'objet (en pixel) */
 	int nb_sprites;							/* nombre de sprites */
 	int v_anim;								/* vitesse d'animation */
+	int repetition_verticale;				/* indique si ça se répète verticalement */
 } objet, background, foreground;
 
 /* Structure finish */
