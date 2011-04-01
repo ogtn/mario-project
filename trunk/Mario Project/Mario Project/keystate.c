@@ -79,7 +79,12 @@ void maj_keystate(keystate *keystate, int *continuer)
 
 	if(event.type == SDL_QUIT 
 		|| (keystate->actuel[ECHAP] && !keystate->precedent[ECHAP]))
-		*continuer = 0;
+	{
+		if(continuer != NULL)
+		{
+			*continuer = 0;
+		}
+	}
 
 	if(event.type == SDL_VIDEORESIZE)
 	{

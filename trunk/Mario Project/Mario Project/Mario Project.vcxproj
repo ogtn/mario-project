@@ -173,28 +173,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="level_design_log.txt" />
-    <None Include="musics\underworld.ogg" />
     <None Include="smb.xml" />
     <None Include="smb2.xml" />
     <None Include="test_xml.xml">
       <SubType>Designer</SubType>
     </None>
-    <None Include="textures\backgrounds\Underground.png" />
-    <None Include="textures\backgrounds\Underground2.png" />
     <None Include="textures\blocs\classiques\classiques.cfg" />
-    <None Include="textures\blocs\classiques\underground.png" />
     <None Include="textures\blocs\speciaux\cassables\cassables.cfg" />
     <None Include="textures\blocs\speciaux\incassables\interaction\interaction.cfg" />
     <None Include="textures\blocs\speciaux\incassables\[Q]\[Q].cfg" />
-    <None Include="textures\items\champivie.item" />
-    <None Include="textures\items\champivie.png" />
-    <None Include="textures\tuyaux\blue_pipe.png" />
     <None Include="to do list.txt" />
     <None Include="world1.wld" />
-  </ItemGroup>
-  <ItemGroup>
-    <Object Include="textures\backgrounds\Underground.obj" />
-    <Object Include="textures\backgrounds\Underground2.obj" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

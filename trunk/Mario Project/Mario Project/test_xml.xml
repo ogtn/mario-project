@@ -1,8 +1,9 @@
 <level name="==Ceci est un niveau test==" size="200:45" music="Snowland.mp3">
-	<spawn pos="64:352"/>
-	<backgrounds nb="2">
-    <background img="SnowHills"/>
-    <background img="SnowHills2"/>
+	<spawn pos="64:64"/>
+	<backgrounds nb="3">
+    <background img="sky"/>
+    <background img="mountains"/>
+    <background img="sapins"/>
 	</backgrounds>
 	<background_generators nb="0"/>
   <foregrounds nb="0"/>
@@ -31,11 +32,12 @@
     <pipe img="cyan_pipe" sens="0" length="3" pos="92:0" state="1" destination_pipe="0" level_destination="" monster="-1"/>
     <pipe img="cyan_pipe" sens="0" length="3" pos="94:0" state="1" destination_pipe="0" level_destination="" monster="-1"/>
   </pipes>
-	<blocs nb_textures="4" nb_models="27" bloc_size="32:32">
+	<blocs nb_textures="5" nb_models="28" bloc_size="32:32">
 		<textures img="classiques/Snow.png"/>
 		<textures img="speciaux/cassables/Overworld.png"/>
 		<textures img="speciaux/incassables/[Q]/Overworld.png"/>
     <textures img="speciaux/incassables/[Q]/Overworld2.png"/>
+    <textures img="speciaux/incassables/interaction/blue_plant.png"/>
     <bloc texture="0" coord_sprite="0:0" type_bloc="8388608"/> <!-- coin bas gauche -->
     <bloc texture="0" coord_sprite="0:1" type_bloc="8388608"/>
     <bloc texture="0" coord_sprite="0:2" type_bloc="8388608"/>
@@ -63,6 +65,7 @@
     <bloc texture="1" coord_sprite="0:0" type_bloc="4194304"/>
     <bloc texture="2" coord_sprite="0:0" type_bloc="0"/> <!-- bloc '?' -->
     <bloc texture="3" coord_sprite="0:0" type_bloc="8388608"/>
+    <bloc texture="4" coord_sprite="0:0" type_bloc="25165824"/>
     <layers nb="1">
 			<layer index="0">
 			</layer>

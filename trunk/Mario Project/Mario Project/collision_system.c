@@ -916,7 +916,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 				for(j = bloc_bg.y; j <= bloc_hd.y; j++)
 				{
 					if(i >= 0 && j >= 0 
-						&& j <= n->taille.y && i <= n->taille.x && n->occ_blocs[i][j] != NULL)
+						&& j < n->taille.y && i < n->taille.x && n->occ_blocs[i][j] != NULL)
 					{
 						if(n->occ_blocs[i][j]->bloc_actuel >= 0)
 						{
@@ -1731,9 +1731,14 @@ void solve_collisions_monstre(occ_monstre* m, perso* p, niveau* n, Uint32 duree)
 	/* Collision de base avec les bords du niveau */
 	if(m->position.x + m->type_monstre->taille.x < 0
 		|| m->position.y + m->type_monstre->taille.y < 0
-		|| (m->position.x  > n->taille.x * n->taille_blocs.x && (m->etat != M_RETRACTE_PORTED || m->etat != M_MARCHE))) {
+		|| (m->position.x  > n->taille.x * n->taille_blocs.x && m->etat != M_RETRACTE_PORTED))
+	{
 			m->etat = M_MORT;
-			p->hud->nb_monstres_tues_carapace = 0;
+
+			if(m->etat == M_RETRACTE || m->etat == M_RETRACTE_RETOURNE)
+			{
+				p->hud->nb_monstres_tues_carapace = 0;
+			}
 	}
 
 	/* Initialisation des blocs sur lequels se trouve le personnage */
@@ -2224,6 +2229,7 @@ void solve_collisions_monstre(occ_monstre* m, perso* p, niveau* n, Uint32 duree)
 							FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_PROJ_ON]);
 
 							// Comptage des points
+							p->hud->nb_monstres_tues_carapace = 0;
 							compte_points(p, m, 0);
 
 							if((mstr_actuel->occ_monstre->etat == M_RETRACTE || mstr_actuel->occ_monstre->etat == M_RETRACTE_RETOURNE)
@@ -2234,8 +2240,8 @@ void solve_collisions_monstre(occ_monstre* m, perso* p, niveau* n, Uint32 duree)
 								m->vitesse.y = VITESSE_Y_EJECTION;
 
 								// Comptage des points
-								compte_points(p, mstr_actuel->occ_monstre, 0);
 								p->hud->nb_monstres_tues_carapace = 0;
+								compte_points(p, mstr_actuel->occ_monstre, 0);
 							}
 						}
 
@@ -2313,6 +2319,8 @@ void solve_collisions_monstre(occ_monstre* m, perso* p, niveau* n, Uint32 duree)
 
 							/* Comptage des points */
 							compte_points(p, m, 0);
+							if(m->etat == M_RETRACTE || m->etat == M_RETRACTE_RETOURNE)
+								p->hud->nb_monstres_tues_carapace = 0;
 						}
 
 						if(m->type_monstre->est_tuable_par_boule_feu)
