@@ -2,8 +2,8 @@
 	<spawn pos="64:64"/>
 	<checkpoints nb="0"/>
 	<backgrounds nb="2">
-		<background img="skyBlueHills"/>
-		<background img="BlueHills"/>
+		<background img="skybluehills"/>
+		<background img="bluehills"/>
 	</backgrounds>
 	<background_generators nb="0"/>
 	<foregrounds nb="0"/>
