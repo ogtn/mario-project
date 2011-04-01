@@ -1,223 +1,267 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Fichiers sources">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Fichiers d%27en-tête">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="Fichiers de ressources">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="action.c">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="alloc_free.c">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="bouton.c">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="browser.c">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="collision_system.c">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="editeur.c">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="editeur_action.c">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="group_box.c">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="items.c">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="keystate.c">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="main.c">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="menus.c">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="monstre.c">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="my_dirent.c">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="niveau.c">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="perso.c">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="projectile.c">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="sound.c">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="sprite.c">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="texte.c">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="texture.c">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="tuyau.c">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="vectors.c">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="world.c">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="particules.c">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="bloc.c">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bouton.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="browser.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="checkpoint.c">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="collision_system.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="editeur.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="editeur_action.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="group_box.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="items.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="keystate.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="menus.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="monstre.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="my_dirent.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="niveau.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="particules.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="perso.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="projectile.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="texture.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sound.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sprite.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="texte.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tuyau.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vectors.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="world.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="action.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="alloc_free.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="bouton.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="browser.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="collision_system.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="constantes.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="editeur.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="group_box.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="items.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="keystate.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="menus.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="monstre.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="my_dirent.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="niveau.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="perso.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="projectile.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="sound.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="sprite.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="texte.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="texte_interface.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="texture.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="tuyau.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="vectors.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="world.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="particules.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="bloc.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bouton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="browser.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="checkpoint.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="collision_system.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="constantes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="editeur.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="group_box.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="items.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="keystate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="monstre.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="niveau.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="menus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="my_dirent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="particules.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="perso.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="projectile.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="sound.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sprite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="texte.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="texte_interface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tuyau.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="world.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vectors.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="textures\blocs\speciaux\incassables\[Q]\[Q].cfg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="textures\backgrounds\bluehills.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="textures\blocs\speciaux\cassables\cassables.cfg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="textures\blocs\classiques\classiques.cfg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="textures\blocs\classiques\grass.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="textures\blocs\speciaux\incassables\interaction\interaction.cfg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="level_design_log.txt">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="textures\blocs\speciaux\incassables\[Q]\overworld.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="textures\blocs\speciaux\cassables\overworld.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="textures\blocs\speciaux\incassables\[Q]\overworld2.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="textures\backgrounds\skybluehills.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="smb.xml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="smb2.xml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="test_xml.xml">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="to do list.txt">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="textures\blocs\classiques\underground.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="textures\backgrounds\underground.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="textures\backgrounds\underground2.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="musics\underworld.ogg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="world1.wld">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="textures\objects\castle.png">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="textures\backgrounds\bluehills.obj">
+      <Filter>Resource Files</Filter>
+    </Object>
+    <Object Include="textures\backgrounds\skybluehills.obj">
+      <Filter>Resource Files</Filter>
+    </Object>
+    <Object Include="textures\backgrounds\underground.obj">
+      <Filter>Resource Files</Filter>
+    </Object>
+    <Object Include="textures\backgrounds\underground2.obj">
+      <Filter>Resource Files</Filter>
+    </Object>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{436cc685-d869-4cb5-8a89-6aefb8c76c58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{6f9b3042-c75d-490b-b0ce-d99347db7972}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{2dbfa226-2f76-4c77-b627-80804a0bc618}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ressources.rc">
-      <Filter>Fichiers de ressources</Filter>
+      <Filter>Resource Files</Filter>
     </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="level_design_log.txt">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="to do list.txt">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="textures\blocs\classiques\classiques.cfg">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="textures\blocs\speciaux\cassables\cassables.cfg">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="textures\blocs\speciaux\incassables\[Q]\[Q].cfg">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="test_xml.xml">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="textures\blocs\speciaux\incassables\interaction\interaction.cfg">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="world1.wld">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="smb.xml">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
-    <None Include="smb2.xml">
-      <Filter>Fichiers de ressources</Filter>
-    </None>
   </ItemGroup>
 </Project>
