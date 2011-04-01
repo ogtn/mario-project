@@ -1,3 +1,7 @@
+<<<<<<< .mine
+nb_niveaux : 1
+test_xml.xml
+smb2.xml=======
 nb_niveaux : 2
 smb.xml
-smb2.xml
+smb2.xml>>>>>>> .r113
