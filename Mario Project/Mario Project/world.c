@@ -133,8 +133,9 @@ void modifier_niveau_SMB(niveau* n)
 	{
 		for(j = 0; j < n->taille.y; j++)
 		{
-			if(i == 0)
+			if(i == 119 && j >= 5 && j <= 20)
 			{
+				// blue plant
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 27, -1, -1);
 			}
 			else if((i == 11 && j == 1)
@@ -161,25 +162,56 @@ void modifier_niveau_SMB(niveau* n)
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 10, -1, -1);
 			}
 			else if((i == 26 && j == 0)
-				|| (i == 73 && j == 2))
+				|| (i == 73 && j == 2)
+				|| (i == 119 && j == 4))
 			{
 				// bord à droite
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 12, -1, -1);
 			}
-			else if((i == 73 && j <= 1))
+			else if((i == 73 && j <= 1)
+				|| (i == 119 && j <= 3))
 			{
-				// mur à droite passable
+				// mur à gauche passable
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 11, -1, -1);
 			}
-			else if((i == 46 && j == 5))
+			else if((i == 46 && j == 5)
+				|| (i == 120 && j <= 16)
+				|| (i == 106 && j == 25))
 			{
 				// mur à droite
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 1, -1, -1);
 			}
-			else if((i == 46 && j == 6))
+			else if((i >= 107 && i <= 109 && j == 24))
+			{
+				// plafond
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 3, -1, -1);
+			}
+			else if((i == 110 && j == 25))
+			{
+				// mur à gauche
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 7, -1, -1);
+			}
+			else if((i == 46 && j == 6)
+				|| (i == 120 && j == 17)
+				|| (i == 106 && j == 26))
 			{
 				// coin haut gauche
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 2, -1, -1);
+			}
+			else if((i == 106 && j == 24))
+			{
+				// coin bas gauche
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 0, -1, -1);
+			}
+			else if((i == 110 && j == 26))
+			{
+				// coin haut droit
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 8, -1, -1);
+			}
+			else if((i == 110 && j == 24))
+			{
+				// coin bas droit
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 6, -1, -1);
 			}
 			else if((i == 11 && j == 0))
 			{
@@ -201,7 +233,9 @@ void modifier_niveau_SMB(niveau* n)
 				|| (i >= 37 && i <= 45 && j == 4)
 				|| (i >= 47 && i <= 60 && j == 6)
 				|| (i >= 65 && i <= 72 && j == 2)
-				|| (i >= 101 && i <= 150 && j == 4))
+				|| (i >= 101 && i <= 118 && j == 4)
+				|| (i >= 107 && i <= 109 && j == 26)
+				|| (i >= 121 && i <= 135 && j == 17))
 			{
 				// sol
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 5, -1, -1);
@@ -210,6 +244,7 @@ void modifier_niveau_SMB(niveau* n)
 		}
 	}
 }
+
 
 void load_world(world *w)
 {
@@ -233,13 +268,13 @@ void load_world(world *w)
 
     w->niveau = new_niveau();
     charger_niveau(w->liste_niveaux[w->num_niveau], w->niveau);
-	//modifier_niveau_SMB(w->niveau);
-	//sauver_niveau("smb2.xml", w->niveau);
+	modifier_niveau_SMB(w->niveau);
+	//sauver_niveau("smb3.xml", w->niveau);
 
 }
 
 
-void begin_level(world *w, int *persos_tous_morts)
+void begin_level(world *w, int *persos_tous_morts, int* continuer)
 {
 	int i;
 
@@ -252,7 +287,7 @@ void begin_level(world *w, int *persos_tous_morts)
     }
 
 	/* Présentation du niveau */
-	presentation_niveau(w);
+	presentation_niveau(w, continuer);
 
 	/* initialisations (temporaires?) de l'ecran */
     w->ecran.taille.x = LARGEUR_FENETRE;
@@ -262,7 +297,8 @@ void begin_level(world *w, int *persos_tous_morts)
 
 	for(i = 0; i < w->nb_persos; i++)
 	{
-		transforme_perso(SMALL_MARIO, w->persos[i]);
+		if(w->num_niveau == 0)
+			transforme_perso(SMALL_MARIO, w->persos[i]);
 
 		/* Initialisation de la position des persos */
 		if(persos_tous_morts && w->persos[i]->checkpoint >= 0)
@@ -287,17 +323,24 @@ void begin_level(world *w, int *persos_tous_morts)
 	FSOUND_Stream_Play(1, w->niveau->musique); 
 }
 
-void presentation_niveau(world *w)
+void presentation_niveau(world *w, int *continuer)
 {
 	int i;
 	vecti pos_text;
+	w->ecran.scroll.x = w->ecran.scroll.y = 0;
 
-	while(!w->keystate->actuel[ENTRER])
+	while(!w->keystate->actuel[ENTRER] && !w->keystate->actuel[ECHAP])
 	{
-		maj_keystate(w->keystate, NULL);
+		glEnd();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glBegin(GL_QUADS);
+
+		maj_keystate(w->keystate, continuer);
 
 		for(i = 0; i < w->nb_persos; i++)
 		{
+			w->persos[i]->etat = DEBOUT;
+			w->persos[i]->cote = COTE_DROIT;
 			w->persos[i]->position.x = LARGEUR_FENETRE / 4 + i * LARGEUR_BLOC;
 			w->persos[i]->position.y = HAUTEUR_FENETRE / 4 * 3 + LARGEUR_BLOC / 2;
 

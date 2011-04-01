@@ -102,8 +102,8 @@ int main(int argc, char *argv[])
     //jouer();
     //choix = main_menu(k);
     //}
-    jouer(NULL);
-    //main_editeur();
+    //jouer(NULL);
+    main_editeur();
  
     // Astuce pour que le compilo ne dise pas que ces deux parametres ne sont pas
     //utilisés. On peut eventuellement les utiliser pour un mode debug,
@@ -184,7 +184,7 @@ void jouer(world *w_)
 	/* Tant qu'on a pas passé le nombre de niveaux */
 	while(w->num_niveau < w->nb_niveaux && continuer)
 	{
-		begin_level(w, &persos_tous_morts);
+		begin_level(w, &persos_tous_morts, &continuer);
 
 		/* Boucle principale du programme à modifier pour qu'elle soit plus "intelligente"
 		il faut que lorsque l'on presse echap le menu pause s'ouvre, et qu'on retourne dans
