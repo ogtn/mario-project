@@ -268,7 +268,7 @@ void load_world(world *w)
 
     w->niveau = new_niveau();
     charger_niveau(w->liste_niveaux[w->num_niveau], w->niveau);
-	modifier_niveau_SMB(w->niveau);
+	//modifier_niveau_SMB(w->niveau);
 	//sauver_niveau("smb3.xml", w->niveau);
 
 }
@@ -287,7 +287,7 @@ void begin_level(world *w, int *persos_tous_morts, int* continuer)
     }
 
 	/* Présentation du niveau */
-	presentation_niveau(w, continuer);
+	//presentation_niveau(w, continuer);
 
 	/* initialisations (temporaires?) de l'ecran */
     w->ecran.taille.x = LARGEUR_FENETRE;
@@ -326,32 +326,19 @@ void begin_level(world *w, int *persos_tous_morts, int* continuer)
 void presentation_niveau(world *w, int *continuer)
 {
 	int i;
-	vecti pos_text;
+	vecti pos_text_vie, pos_text_nom_niveau;
 	w->ecran.scroll.x = w->ecran.scroll.y = 0;
 
 	while(!w->keystate->actuel[ENTRER] && !w->keystate->actuel[ECHAP])
 	{
 		glEnd();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glColor4f(1.f, 1.f, 1.f, 1.f);
 		glBegin(GL_QUADS);
 
-		maj_keystate(w->keystate, continuer);
+		maj_keystate(w->keystate, continuer);		
 
-		for(i = 0; i < w->nb_persos; i++)
-		{
-			w->persos[i]->etat = DEBOUT;
-			w->persos[i]->cote = COTE_DROIT;
-			w->persos[i]->position.x = LARGEUR_FENETRE / 4 + i * LARGEUR_BLOC;
-			w->persos[i]->position.y = HAUTEUR_FENETRE / 4 * 3 + LARGEUR_BLOC / 2;
-
-			pos_text.x = LARGEUR_FENETRE / 4 + (i + 1) * LARGEUR_BLOC;
-			pos_text.y = w->persos[i]->position.y;
-
-			screen_printf(pos_text, NULL, COLOR_WHITE, "x%d", w->persos[i]->hud->nb_vies);
-
-			draw_perso(w->persos[i], 0);
-		}
-
+		/* Affiche l'aperçu du niveau */
 		w->ecran.origine.x = LARGEUR_FENETRE / 4;
 		w->ecran.origine.y = HAUTEUR_FENETRE / 4;
 
@@ -360,11 +347,34 @@ void presentation_niveau(world *w, int *continuer)
 
 		draw_main_options(w->niveau, w->ecran, 0, 1, 1, 1);
 
+		/* Affiche le cadre autour de l'aperçu */
 		w->ecran.origine.x -= 5;
 		w->ecran.origine.y -= 5;
 		w->ecran.taille.x += 10;
 		w->ecran.taille.y += 10;
-		draw_cadre(w->ecran.origine, w->ecran.taille, charger_texture_bis("textures/cadre3.png", NULL), 10);
+		draw_cadre(w->ecran.origine, w->ecran.taille, charger_texture_bis("textures/cadre3.png", NULL), 5);
+
+		/* Affiche le nom du niveau */
+		pos_text_nom_niveau.x = w->ecran.origine.x;
+		pos_text_nom_niveau.y =  w->ecran.origine.y - LARGEUR_BLOC;
+
+		screen_printf(pos_text_nom_niveau, NULL, COLOR_WHITE, "%s", w->niveau->nom);
+
+		/* Affiche chaque perso et leur nombre de vies retantes */
+		for(i = 0; i < w->nb_persos; i++)
+		{
+			w->persos[i]->etat = DEBOUT;
+			w->persos[i]->cote = COTE_DROIT;
+			w->persos[i]->position.x = LARGEUR_FENETRE / 4 + i * LARGEUR_BLOC;
+			w->persos[i]->position.y = HAUTEUR_FENETRE / 4 * 3 + LARGEUR_BLOC / 2;
+
+			pos_text_vie.x = LARGEUR_FENETRE / 4 + (i + 1) * LARGEUR_BLOC;
+			pos_text_vie.y = w->persos[i]->position.y;
+
+			screen_printf(pos_text_vie, NULL, COLOR_WHITE, "x%d", w->persos[i]->hud->nb_vies);
+
+			draw_perso(w->persos[i], 0);
+		}
 
 		screen_flush();
 		SDL_GL_SwapBuffers();
