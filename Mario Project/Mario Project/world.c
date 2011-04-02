@@ -300,6 +300,8 @@ void begin_level(world *w, int *persos_tous_morts, int* continuer)
 		if(w->num_niveau == 0)
 			transforme_perso(SMALL_MARIO, w->persos[i]);
 
+		w->persos[i]->etat = DEBOUT;
+
 		/* Initialisation de la position des persos */
 		if(persos_tous_morts && w->persos[i]->checkpoint >= 0)
 		{
@@ -313,6 +315,7 @@ void begin_level(world *w, int *persos_tous_morts, int* continuer)
 		}
 
 		w->persos[i]->position_prec = w->persos[i]->position;
+
 
 		/* Initialisation du nom et du temps dans le HUD pour chaque niveau chargé */
 		w->persos[i]->hud->nom_niveau = w->niveau->nom;
