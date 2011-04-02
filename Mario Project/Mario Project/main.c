@@ -25,10 +25,10 @@
 /*================================[PROTOTYPES]================================*/
 /******************************************************************************/
 
-/* Initialisation de la SDL en mode OpenGL, on fournit la resolution desirÈe */
+/* Initialisation de la SDL en mode OpenGL, on fournit la resolution desir√©e */
 void init_SDL(int x, int y);
 
-/* Initialisation de OpenGL, on fournit la resolution desirÈe Ègalement */
+/* Initialisation de OpenGL, on fournit la resolution desir√©e √©galement */
 void init_OpenGL(int x, int y);
 
 /* Lance une partie */
@@ -42,7 +42,7 @@ void affichage_debug(world *w);
 /******************************************************************************/
 
 
-/* on garde de cotÈ au cas ou...
+/* on garde de cot√© au cas ou...
 void print_time(void)
 {
     static LARGE_INTEGER freq = {0, 0};
@@ -102,16 +102,16 @@ int main(int argc, char *argv[])
     //jouer();
     //choix = main_menu(k);
     //}
-    //jouer(NULL);
-    main_editeur();
+    jouer(NULL);
+    //main_editeur();
  
     // Astuce pour que le compilo ne dise pas que ces deux parametres ne sont pas
-    //utilisÈs. On peut eventuellement les utiliser pour un mode debug,
+    //utilis√©s. On peut eventuellement les utiliser pour un mode debug,
     //ou fenetre/plein ecran par la suite 
     argc;
     argv;
 
-    // liberation de la memoire (‡ completer)
+    // liberation de la memoire (√† completer)
     quit_text();
 	FSOUND_Close();
     SDL_Quit();
@@ -181,12 +181,12 @@ void jouer(world *w_)
         w = w_;
     }
 
-	/* Tant qu'on a pas passÈ le nombre de niveaux */
+	/* Tant qu'on a pas pass√© le nombre de niveaux */
 	while(w->num_niveau < w->nb_niveaux && continuer)
 	{
 		begin_level(w, &persos_tous_morts, &continuer);
 
-		/* Boucle principale du programme ‡ modifier pour qu'elle soit plus "intelligente"
+		/* Boucle principale du programme √† modifier pour qu'elle soit plus "intelligente"
 		il faut que lorsque l'on presse echap le menu pause s'ouvre, et qu'on retourne dans
 		la boucle en quittant le menu (sauf si on decide d'arreter de jouer) */
 		while(continuer && !gagne && !persos_tous_morts)
@@ -196,13 +196,13 @@ void jouer(world *w_)
 			glColor4f(1.f, 1.f, 1.f, 1.f);
 			glBegin(GL_QUADS);
 
-			/* Mise ‡ jour de l'etat des touches du clavier */
+			/* Mise √† jour de l'etat des touches du clavier */
 			maj_keystate(w->keystate, &continuer);
 
 			/* Test de collisions */
 			if(!perso_transforme_ou_meurt(w))
 			{
-				/* Mise ‡ jour de toutes les positions des persos/objets/enemis */
+				/* Mise √† jour de toutes les positions des persos/objets/enemis */
 				main_collisions(w);
 			}
 			else
@@ -216,17 +216,17 @@ void jouer(world *w_)
 					w->persos[0]->tps_mort = 0;
 			}
 
-			/* Mise ‡ jour de la position de l'ecran (en fonction de celle du perso) */
+			/* Mise √† jour de la position de l'ecran (en fonction de celle du perso) */
 			update_screen(w);
 
-			/* Mise ‡ jour des positions des particules */
+			/* Mise √† jour des positions des particules */
 			MAJ_particules(w->niveau, w->temps_ecoule);
 
-			/* VÈrification du nombre vies restantes, fin de niveau, s'ils sont tous morts... */
+			/* V√©rification du nombre vies restantes, fin de niveau, s'ils sont tous morts... */
 			check_finish(w, &gagne);
 			persos_morts(w, &persos_tous_morts, &continuer);
 			
-			/* Si on a terminÈ le niveau, on continue ‡ afficher tout en calculant les points */
+			/* Si on a termin√© le niveau, on continue √† afficher tout en calculant les points */
 			if(gagne)
 			{
 				FSOUND_PlaySound(2, w->persos[0]->sons[SND_PTS_FINAL]);
@@ -269,7 +269,7 @@ void jouer(world *w_)
 		}
 		else
 		{
-			/* teste s'il y a un autre niveau aprËs celui-ci */
+			/* teste s'il y a un autre niveau apr√®s celui-ci */
 			if(w->num_niveau < w->nb_niveaux - 1)
 			{
 				free_niveau(w->niveau);
@@ -306,7 +306,7 @@ void affichage_debug(world *w)
     /* Position du personnage principal */
     screen_printf_dbg("pos_x: %f, pos_y: %f\n", w->persos[0]->position.x, w->persos[0]->position.y);
 
-    /* Position prÈcÈdente du personnage */
+    /* Position pr√©c√©dente du personnage */
     screen_printf_dbg("pos_prec_x: %f, pos_prec_y: %f\n", w->persos[0]->position_prec.x, w->persos[0]->position_prec.y);
 
     /* Vitesse du personnage principal */
@@ -321,10 +321,10 @@ void affichage_debug(world *w)
     /* Transformation actuelle du personnage */
     screen_printf_dbg("transformation: %s\n", chaines_transformations[w->persos[0]->transformation]);
 
-    /* CoordonnÈes du milieu du bas de mario */
+    /* Coordonn√©es du milieu du bas de mario */
     screen_printf_dbg("pos_milieu_x : %f, pos_milieu_y : %f\n", w->persos[0]->position.x + w->persos[0]->taille.x / 2, w->persos[0]->position.y);
 
-    /* Bloc o˘ il ya collision en dessous du bas du perso */
+    /* Bloc o√π il ya collision en dessous du bas du perso */
     {
         coordi bloc;
         bloc.x = (int) (w->persos[0]->position.x + w->persos[0]->texture_act->abscisse_bas + (w->persos[0]->taille.x - 2 * w->persos[0]->texture_act->abscisse_bas) / 2) / w->niveau->taille_blocs.x;
@@ -360,7 +360,7 @@ void affichage_debug(world *w)
 /*
  * http://www.jb.man.ac.uk/~slowe/cpp/itoa.html
  * C++ version 0.4 char* style "itoa":
- * Written by Luk·s Chmela
+ * Written by Luk√°s Chmela
  * Released under GPLv3.
  */
  #ifdef linux
