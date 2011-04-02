@@ -52,10 +52,10 @@
     <pipe img="green_pipe" sens="0" length="1" pos="175:2" state="1" destination_pipe="0" level_destination="" monster="-1"/>
 	</pipes>
 	<blocs nb_textures="4" nb_models="14" bloc_size="32:32">
-		<textures img="classiques/Grass.png"/>
-		<textures img="speciaux/cassables/Overworld.png"/>
-		<textures img="speciaux/incassables/[Q]/Overworld.png"/>
-		<textures img="speciaux/incassables/[Q]/Overworld2.png"/>
+		<textures img="classiques/grass.png"/>
+		<textures img="speciaux/cassables/overworld.png"/>
+		<textures img="speciaux/incassables/[Q]/overworld.png"/>
+		<textures img="speciaux/incassables/[Q]/overworld2.png"/>
 		<bloc texture="0" coord_sprite="0:0" type_bloc="8388608"/>
 		<bloc texture="0" coord_sprite="0:1" type_bloc="8388608"/>
 		<bloc texture="0" coord_sprite="0:2" type_bloc="8388608"/>
