@@ -17,44 +17,44 @@
 		<projectile img="fireball"/>
 	</projectiles>
 	<items nb="4">
-		<item img="piece" type="0" nb="16">
-			<occ_item actual="0" pos="2592:512"/>
-			<occ_item actual="0" pos="2624:512"/>
-			<occ_item actual="0" pos="2656:512"/>
-			<occ_item actual="0" pos="2688:512"/>
-			<occ_item actual="0" pos="2848:416"/>
-			<occ_item actual="0" pos="2880:416"/>
-			<occ_item actual="0" pos="2912:416"/>
-			<occ_item actual="0" pos="3008:448"/>
-			<occ_item actual="0" pos="3040:448"/>
-			<occ_item actual="0" pos="3168:384"/>
-			<occ_item actual="0" pos="3296:320"/>
-			<occ_item actual="0" pos="5568:224"/>
-			<occ_item actual="0" pos="5600:224"/>
-			<occ_item actual="0" pos="5728:256"/>
-			<occ_item actual="0" pos="5760:256"/>
-			<occ_item actual="0" pos="5920:256"/>
+		<item img="piece" type="0">
+			<occ_item pos="5920:256"/>
+			<occ_item pos="5760:256"/>
+			<occ_item pos="5728:256"/>
+			<occ_item pos="5600:224"/>
+			<occ_item pos="5568:224"/>
+			<occ_item pos="3296:320"/>
+			<occ_item pos="3168:384"/>
+			<occ_item pos="3040:448"/>
+			<occ_item pos="3008:448"/>
+			<occ_item pos="2912:416"/>
+			<occ_item pos="2880:416"/>
+			<occ_item pos="2848:416"/>
+			<occ_item pos="2688:512"/>
+			<occ_item pos="2656:512"/>
+			<occ_item pos="2624:512"/>
+			<occ_item pos="2592:512"/>
 		</item>
-		<item img="champignon" type="1" nb="0"/>
-		<item img="fleur" type="2" nb="0"/>
-		<item img="champivie" type="7" nb="0"/>
+		<item img="champignon" type="1"/>
+		<item img="fleur" type="2"/>
+		<item img="champivie" type="7"/>
 	</items>
 	<monsters nb="2">
-		<monster name="goomba" nb="8">
-			<occ actual="0" pos="352:128"/>
-			<occ actual="0" pos="768:416"/>
-			<occ actual="0" pos="816:416"/>
-			<occ actual="0" pos="864:416"/>
-			<occ actual="0" pos="2048:448"/>
-			<occ actual="0" pos="4640:192"/>
-			<occ actual="0" pos="4688:192"/>
-			<occ actual="0" pos="5088:320"/>
+		<monster name="goomba">
+			<occ pos="5088:320"/>
+			<occ pos="4688:192"/>
+			<occ pos="4640:192"/>
+			<occ pos="2048:448"/>
+			<occ pos="864:416"/>
+			<occ pos="816:416"/>
+			<occ pos="768:416"/>
+			<occ pos="352:128"/>
 		</monster>
-		<monster name="koopa" nb="4">
-			<occ actual="1" pos="1856:448"/>
-			<occ actual="1" pos="3744:192"/>
-			<occ actual="1" pos="5120:192"/>
-			<occ actual="1" pos="5184:192"/>
+		<monster name="koopa">
+			<occ pos="5184:192"/>
+			<occ pos="5120:192"/>
+			<occ pos="3744:192"/>
+			<occ pos="1856:448"/>
 		</monster>
 	</monsters>
 	<pipes nb="6">
@@ -66,10 +66,10 @@
 		<pipe img="blue_pipe" sens="2" length="3" pos="135:6" state="1" destination_pipe="0" level_destination="" monster="-1"/>
 	</pipes>
 	<blocs nb_textures="4" nb_models="19" bloc_size="32:32">
-		<textures img="classiques/Underground.png"/>
-		<textures img="speciaux/cassables/Overworld.png"/>
-		<textures img="speciaux/incassables/[Q]/Overworld.png"/>
-		<textures img="speciaux/incassables/[Q]/Overworld2.png"/>
+		<textures img="classiques/underground.png"/>
+		<textures img="speciaux/cassables/overworld.png"/>
+		<textures img="speciaux/incassables/[Q]/overworld.png"/>
+		<textures img="speciaux/incassables/[Q]/overworld2.png"/>
 		<bloc texture="0" coord_sprite="0:0" type_bloc="8388608"/>
 		<bloc texture="0" coord_sprite="0:1" type_bloc="8388608"/>
 		<bloc texture="0" coord_sprite="0:2" type_bloc="8388608"/>
@@ -134,7 +134,6 @@
 				<occ_block pos="192:96" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="192:1216" actual="3" alt="-1" item="-1"/>
 				<occ_block pos="192:1248" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="192:1376" actual="17" alt="18" item="3"/>
 				<occ_block pos="224:0" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="224:32" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="224:64" actual="4" alt="-1" item="-1"/>

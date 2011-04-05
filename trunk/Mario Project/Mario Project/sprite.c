@@ -82,13 +82,13 @@ void draw_sprite_d(sprite *s, layer depth)
 
 void draw_sprite_r(sprite *s, angle a)
 {
-    draw_sprite_dr(s, 0, a);
+	draw_sprite_dr(s, LAYER_BLOC_1, a);
 }
 
 
 void draw_sprite(sprite *s)
 {
-    draw_sprite_dr(s, 0, ANGLE_0);
+    draw_sprite_dr(s, LAYER_BLOC_1, ANGLE_0);
 }
 
 
@@ -580,6 +580,7 @@ void draw_HUD(perso* p)
 	screen_printf_dbg("Nombre de pieces : %d\n", p->hud->nb_pieces);
 	screen_printf_dbg("Score : %d\n", p->hud->score);
 	screen_printf_dbg("Temps restant : %d\n", p->hud->time);
+	screen_printf_dbg("Dimensions hitbox (%d,%d)\n", p->taille.x - 2 * p->texture_act->abscisse_bas, p->texture_act->ordonnee_haut);
 }
 
 
@@ -607,7 +608,7 @@ void draw_item(item* model, occ_item* item, Uint32 duree)
         s.point_hd.x = droite;
 	}
 
-    draw_sprite(&s);
+    draw_sprite_d(&s, LAYER_ITEM);
 }
 
 void draw_pipe(tuyau* t)

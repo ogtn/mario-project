@@ -30,7 +30,8 @@ void main_collisions(world *w)
 	{
 		elem_projectile *proj_actuel = w->niveau->projectiles[i]->occ_projectiles->projectile, *proj_prec;
 
-		while(proj_actuel != NULL){
+		while(proj_actuel != NULL)
+		{
 
 			/* Si le projectile a fini son animation de mort, on le supprime */
 			if(proj_actuel->occ_projectile->tps_disparition == 0) {
@@ -44,31 +45,35 @@ void main_collisions(world *w)
 
 				MAJ_collision_projectile(proj_bis, w->ecran, w->temps_ecoule);
 
-				solve_collisions_projectile(proj_bis, w->niveau);
-
-				diff_x = abs((int)proj_bis->position_prec.x - (int)proj_bis->position.x);
-				diff_y = abs((int)proj_bis->position_prec.y - (int)proj_bis->position.y);
-
-				/* Teste si il y a plus de pixels d'écart entre les 2 positions */
-				if(diff_x < w->niveau->taille_blocs.x && diff_y < w->niveau->taille_blocs.y)
+				/* S'il est hors de l'écran, on ne calcul pas les collisions */
+				if(proj_bis->actif)
 				{
-					/* Si non, on laisse comme c'était */
-					*proj_actuel->occ_projectile = *proj_bis;
+					solve_collisions_projectile(proj_bis, w->niveau);
 
-				}
-				else
-				{
+					diff_x = abs((int)proj_bis->position_prec.x - (int)proj_bis->position.x);
+					diff_y = abs((int)proj_bis->position_prec.y - (int)proj_bis->position.y);
 
-					/* Si oui, on stocke la différence */
-					nb_images_inter = max(diff_x / w->niveau->taille_blocs.x, diff_y / w->niveau->taille_blocs.y);
-
-					/* Pour chaque image intermédiaire de chaque perso, on teste si il n'y a pas eu de collision entre temps */
-					for(j = 0; j <= nb_images_inter; j++)
+					/* Teste si il y a plus de pixels d'écart entre les 2 positions */
+					if(diff_x < w->niveau->taille_blocs.x && diff_y < w->niveau->taille_blocs.y)
 					{
-						MAJ_collision_projectile(proj_actuel->occ_projectile, w->ecran, w->temps_ecoule / (nb_images_inter + 1));
+						/* Si non, on laisse comme c'était */
+						*proj_actuel->occ_projectile = *proj_bis;
 
-						/* Fonction résolvant les collisions */
-						solve_collisions_projectile(proj_actuel->occ_projectile, w->niveau);
+					}
+					else
+					{
+
+						/* Si oui, on stocke la différence */
+						nb_images_inter = max(diff_x / w->niveau->taille_blocs.x, diff_y / w->niveau->taille_blocs.y);
+
+						/* Pour chaque image intermédiaire de chaque perso, on teste si il n'y a pas eu de collision entre temps */
+						for(j = 0; j <= nb_images_inter; j++)
+						{
+							MAJ_collision_projectile(proj_actuel->occ_projectile, w->ecran, w->temps_ecoule / (nb_images_inter + 1));
+
+							/* Fonction résolvant les collisions */
+							solve_collisions_projectile(proj_actuel->occ_projectile, w->niveau);
+						}
 					}
 				}
 
@@ -145,32 +150,36 @@ void main_collisions(world *w)
 				if(m_bis->etat != M_RETRACTE_PORTED)
 					MAJ_collision_monstre(m_bis, w->ecran, w->temps_ecoule);
 
-				/* Fonction résolvant les collisions sur la copie du monstre */
-				if(m_bis->etat != M_MORT_PAR_PROJ)
-					solve_collisions_monstre(m_bis, w->persos[0], w->niveau, w->temps_ecoule);
-
-				diff_x = abs((int)m_bis->position_prec.x - (int)m_bis->position.x);
-				diff_y = abs((int)m_bis->position_prec.y - (int)m_bis->position.y);
-
-				/* Teste si il y a plus de pixels d'écart entre les 2 positions */
-				if(diff_x < w->niveau->taille_blocs.x && diff_y < w->niveau->taille_blocs.y)
+				/* S'il est hors de l'écran, on ne calcul pas les collisions */
+				if(m_bis->actif)
 				{
-					/* Si non, on laisse comme c'était */
-					*mstr_actuel->occ_monstre = *m_bis;
-				}
-				else
-				{
-					/* Si oui, on stocke la différence */
-					nb_images_inter = max(diff_x / w->niveau->taille_blocs.x, diff_y / w->niveau->taille_blocs.y);
+					/* Fonction résolvant les collisions sur la copie du monstre */
+					if(m_bis->etat != M_MORT_PAR_PROJ)
+						solve_collisions_monstre(m_bis, w->persos[0], w->niveau, w->temps_ecoule);
 
-					/* Pour chaque image intermédiaire de chaque perso, on teste si il n'y a pas eu de collision entre temps */
-					for(j = 0; j <= nb_images_inter; j++)
+					diff_x = abs((int)m_bis->position_prec.x - (int)m_bis->position.x);
+					diff_y = abs((int)m_bis->position_prec.y - (int)m_bis->position.y);
+
+					/* Teste si il y a plus de pixels d'écart entre les 2 positions */
+					if(diff_x < w->niveau->taille_blocs.x && diff_y < w->niveau->taille_blocs.y)
 					{
-						MAJ_collision_monstre(mstr_actuel->occ_monstre, w->ecran, w->temps_ecoule / (nb_images_inter + 1));
+						/* Si non, on laisse comme c'était */
+						*mstr_actuel->occ_monstre = *m_bis;
+					}
+					else
+					{
+						/* Si oui, on stocke la différence */
+						nb_images_inter = max(diff_x / w->niveau->taille_blocs.x, diff_y / w->niveau->taille_blocs.y);
 
-						/* Fonction résolvant les collisions */
-						if(mstr_actuel->occ_monstre->etat != M_MORT_PAR_PROJ)
-							solve_collisions_monstre(mstr_actuel->occ_monstre, w->persos[0], w->niveau, w->temps_ecoule);
+						/* Pour chaque image intermédiaire de chaque perso, on teste si il n'y a pas eu de collision entre temps */
+						for(j = 0; j <= nb_images_inter; j++)
+						{
+							MAJ_collision_monstre(mstr_actuel->occ_monstre, w->ecran, w->temps_ecoule / (nb_images_inter + 1));
+
+							/* Fonction résolvant les collisions */
+							if(mstr_actuel->occ_monstre->etat != M_MORT_PAR_PROJ)
+								solve_collisions_monstre(mstr_actuel->occ_monstre, w->persos[0], w->niveau, w->temps_ecoule);
+						}
 					}
 				}
 				mstr_actuel = mstr_actuel->suivant;
@@ -197,31 +206,34 @@ void main_collisions(world *w)
 			}
 			else
 			{
-				solve_collisions_item(i_bis, w->persos, w->niveau, w->temps_ecoule);
-
-				diff_x = abs((int)i_bis->position_prec.x - (int)i_bis->position.x);
-				diff_y = abs((int)i_bis->position_prec.y - (int)i_bis->position.y);
-
-				/* Teste si il y a beaucoup de pixels d'écart entre les 2 positions */
-				if(diff_x < w->niveau->taille_blocs.x && diff_y < w->niveau->taille_blocs.y)
+				/* S'il est hors de l'écran, on ne calcul pas les collisions */
+				if(i_bis->actif)
 				{
-					/* Si non, on laisse comme c'était */
-					*item_actuel->occ_item = *i_bis;
+					solve_collisions_item(i_bis, w->persos, w->niveau, w->temps_ecoule);
 
-				}
-				else
-				{
+					diff_x = abs((int)i_bis->position_prec.x - (int)i_bis->position.x);
+					diff_y = abs((int)i_bis->position_prec.y - (int)i_bis->position.y);
 
-					/* Si oui, on stocke la différence */
-					nb_images_inter = max(diff_x / w->niveau->taille_blocs.x, diff_y / w->niveau->taille_blocs.y);
-
-					/* Pour chaque image intermédiaire de chaque perso, on teste si il n'y a pas eu de collision entre temps */
-					for(j = 0; j <= nb_images_inter; j++)
+					/* Teste si il y a beaucoup de pixels d'écart entre les 2 positions */
+					if(diff_x < w->niveau->taille_blocs.x && diff_y < w->niveau->taille_blocs.y)
 					{
-						MAJ_collision_item(w->niveau, item_actuel->occ_item, w->ecran, w->temps_ecoule / (nb_images_inter + 1));
+						/* Si non, on laisse comme c'était */
+						*item_actuel->occ_item = *i_bis;
 
-						/* Fonction résolvant les collisions */
-						solve_collisions_item(item_actuel->occ_item, w->persos, w->niveau, w->temps_ecoule);
+					}
+					else
+					{
+						/* Si oui, on stocke la différence */
+						nb_images_inter = max(diff_x / w->niveau->taille_blocs.x, diff_y / w->niveau->taille_blocs.y);
+
+						/* Pour chaque image intermédiaire de chaque perso, on teste si il n'y a pas eu de collision entre temps */
+						for(j = 0; j <= nb_images_inter; j++)
+						{
+							MAJ_collision_item(w->niveau, item_actuel->occ_item, w->ecran, w->temps_ecoule / (nb_images_inter + 1));
+
+							/* Fonction résolvant les collisions */
+							solve_collisions_item(item_actuel->occ_item, w->persos, w->niveau, w->temps_ecoule);
+						}
 					}
 				}
 			}
@@ -934,7 +946,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 							block.taille.x = n->taille_blocs.x;
 							block.taille.y = n->taille_blocs.y;
 
-							find_angle_height_with_phys(phys_bloc_actuel, &block);
+							find_angle_height_with_phys(n, phys_bloc_actuel, &block);
 
 							block.est_bloc_pente = (block.angle_pente != 0);
 
@@ -979,19 +991,10 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 							}
 
 							/* Collision avec les pentes */
-							if((phys_bloc_actuel == PENTE_15_DROITE_16
-								|| phys_bloc_actuel == PENTE_15_GAUCHE_16
-								|| phys_bloc_actuel == PENTE_15_DROITE_12
-								|| phys_bloc_actuel == PENTE_15_GAUCHE_12
-								|| phys_bloc_actuel == PENTE_15_DROITE_8
-								|| phys_bloc_actuel == PENTE_15_GAUCHE_8
-								|| phys_bloc_actuel == PENTE_15_DROITE_4
-								|| phys_bloc_actuel == PENTE_15_GAUCHE_4
-
-								|| phys_bloc_actuel == PENTE_30_DROITE_0
-								|| phys_bloc_actuel == PENTE_30_DROITE_8
-								|| phys_bloc_actuel == PENTE_30_GAUCHE_8
+							if((phys_bloc_actuel == PENTE_30_DROITE_0
+								|| phys_bloc_actuel == PENTE_30_DROITE_16
 								|| phys_bloc_actuel == PENTE_30_GAUCHE_16
+								|| phys_bloc_actuel == PENTE_30_GAUCHE_32
 								|| phys_bloc_actuel == PENTE_45_DROITE
 								|| phys_bloc_actuel == PENTE_45_GAUCHE)
 								&& 
@@ -1023,33 +1026,8 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 									}
 								}
 
-								/* Calcul de la nouvelle ordonnée du personnage 
-								avec l'équation de la pente et en fonction du bloc */
-								if (phys_bloc_actuel == PENTE_45_GAUCHE)
-								{
-									hauteur = (float) (-(perso.position.x + perso.taille.x / 2.0F) * tan(deg_to_rad(135.0F)) + block.position.y + block.taille.y - LARGEUR_BLOC + block.position.x * tan(deg_to_rad(135.0F)));
-								}
-								else if(phys_bloc_actuel == PENTE_45_DROITE)
-								{
-									hauteur = (float) (-(perso.position.x + perso.taille.x / 2.0F) * tan(deg_to_rad(45.0F)) + block.position.y + block.taille.y + block.position.x * tan(deg_to_rad(45.0F)));
-								}
-								else if(phys_bloc_actuel == PENTE_30_GAUCHE_8)
-								{
-									hauteur = (float) (-(perso.position.x + perso.taille.x / 2.0F) * tan(deg_to_rad(180.0F - 26.5650512F)) + block.position.y + block.taille.y - 8 + block.position.x * tan(deg_to_rad(180.0F - 26.5650512F)));
-								}
-								else if(phys_bloc_actuel == PENTE_30_GAUCHE_16)
-								{
-									hauteur = (float) (-(perso.position.x + perso.taille.x / 2.0F) * tan(deg_to_rad(180.0F - 26.5650512F)) + block.position.y + block.taille.y - LARGEUR_BLOC + block.position.x * tan(deg_to_rad(180.0F - 26.5650512F)));
-								}
-								else if(phys_bloc_actuel == PENTE_30_DROITE_0)
-								{
-									hauteur = (float) (-(perso.position.x + perso.taille.x / 2.0F) * tan(deg_to_rad(26.5650512F)) + block.position.y + block.taille.y + block.position.x * tan(deg_to_rad(26.5650512F)));
-								}
-								else// if(phys_bloc_actuel == PENTE_30_DROITE_8)
-								{
-									hauteur = (float) (-(perso.position.x + perso.taille.x / 2.0F) * tan(deg_to_rad(26.5650512F)) + block.position.y + block.taille.y - 8 + block.position.x * tan(deg_to_rad(26.5650512F)));
-								}
-
+								/* Calcul de la nouvelle ordonnée du personnage avec l'équation de la pente et en fonction du bloc */
+								hauteur = (float) (-(perso.position.x + perso.taille.x / 2.0F) * tan(deg_to_rad(block.angle_pente)) + block.position.y + block.taille.y - block.hauteur_a_retirer + block.position.x * tan(deg_to_rad(block.angle_pente)));
 								p->position.y = hauteur;
 
 								p->environnement = SOL_DUR;
@@ -1773,38 +1751,16 @@ void solve_collisions_monstre(occ_monstre* m, perso* p, niveau* n, Uint32 duree)
 		{
 			for(j = bloc_bg.y; j <= bloc_hd.y; j++)
 			{
-				if (i >= 0 && j >= 0 && i < n->taille.x && j < n->taille.y 
-					&& n->occ_blocs[i][j] != NULL)
+				if (i >= 0 && j >= 0 && i < n->taille.x && j < n->taille.y)
 				{
-					/* Cas où Super Mario casse un bloc sous le monstre */
-					if(n->occ_blocs[i][j]->bloc_actuel < 0 && n->occ_blocs[i][j]->etat == POUSSE_PAR_LE_HAUT)
-					{
-						if(m->type_monstre->est_tuable_par_saut)
-						{
-							m->etat = M_MORT_PAR_PROJ;
-						}
-						else
-						{
-							m->etat = M_RETRACTE_RETOURNE;
-						}
-
-						m->vitesse.y = VITESSE_Y_EJECTION * 2;
-						if(m->position.x > n->occ_blocs[i][j]->position.x)
-							m->vitesse.x = VITESSE_X_EJECTION;
-						else
-							m->vitesse.x = -VITESSE_X_EJECTION;
-						FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_PROJ_ON]);
-
-						compte_points(p, m, 0);
-					}
-
+					
 					/* Cas où le monstre doit rester sur la plateforme */
 					if(m->type_monstre->reste_sur_plateforme && m->etat != M_RETRACTE && m->etat != M_RETRACTE_RETOURNE)
 					{
 						if(m->vitesse.x < 0 && i == bloc_bg.x && j == bloc_bg.y)
 						{
-							if((n->occ_blocs[i][j]->bloc_actuel < 0 || !(n->blocs[n->occ_blocs[i][j]->bloc_actuel].phys & SOL))
-								&& (n->occ_blocs[i + 1][j]->bloc_actuel > 0 && n->blocs[n->occ_blocs[i + 1][j]->bloc_actuel].phys & SOL))
+							if((n->occ_blocs[i][j] == NULL || !(n->blocs[n->occ_blocs[i][j]->bloc_actuel].phys & SOL))
+								&& (n->occ_blocs[i + 1][j] != NULL && n->blocs[n->occ_blocs[i + 1][j]->bloc_actuel].phys & SOL))
 							{
 								m->cote = COTE_DROIT;
 								m->vitesse.x *= -1;
@@ -1812,8 +1768,8 @@ void solve_collisions_monstre(occ_monstre* m, perso* p, niveau* n, Uint32 duree)
 						}
 						else if(m->vitesse.x > 0 && i == bloc_hd.x && j == bloc_bg.y)
 						{
-							if((n->occ_blocs[i][j]->bloc_actuel < 0 || !(n->blocs[n->occ_blocs[i][j]->bloc_actuel].phys & SOL))
-								&& (n->occ_blocs[i - 1][j]->bloc_actuel > 0 && n->blocs[n->occ_blocs[i - 1][j]->bloc_actuel].phys & SOL))
+							if((n->occ_blocs[i][j] == NULL || !(n->blocs[n->occ_blocs[i][j]->bloc_actuel].phys & SOL))
+								&& (n->occ_blocs[i - 1][j] != NULL && n->blocs[n->occ_blocs[i - 1][j]->bloc_actuel].phys & SOL))
 							{
 								m->cote = COTE_GAUCHE;
 								m->vitesse.x *= -1;
@@ -1821,291 +1777,281 @@ void solve_collisions_monstre(occ_monstre* m, perso* p, niveau* n, Uint32 duree)
 						}
 					}
 
-					if(n->occ_blocs[i][j]->bloc_actuel >= 0)
+					if(n->occ_blocs[i][j] != NULL)
 					{
-
-						bloc bloc_actuel = n->blocs[n->occ_blocs[i][j]->bloc_actuel];
-
-						/* On récupère la physique du bloc */
-						phys_bloc_actuel = bloc_actuel.phys;
-
-						/* Initialisation du carré bloc */
-						block.position.x = (float)i * n->taille_blocs.x;
-						block.position.y = (float)j * n->taille_blocs.y;
-
-						block.position_prec.x = block.position.x;
-						block.position_prec.y = block.position.y;
-
-						block.taille.x = n->taille_blocs.x;
-						block.taille.y = n->taille_blocs.y;
-
-						find_angle_height_with_phys(phys_bloc_actuel, &block);
-
-						block.est_bloc_pente = (block.angle_pente != 0);
-
-						determinate_collision(monstre, block, &collision);
-
-						/* Collision avec le sol */
-						if((phys_bloc_actuel & SOL)	&& collision.type_collision == PAR_LE_BAS)
+						/* Cas où Super Mario casse un bloc sous le monstre */
+						if(n->occ_blocs[i][j]->bloc_actuel < 0 && n->occ_blocs[i][j]->etat == POUSSE_PAR_LE_HAUT)
 						{
-
-							if(n->occ_blocs[i][j]->etat == POUSSE_PAR_LE_HAUT && !prec_collision_bloc)
+							if(m->type_monstre->est_tuable_par_saut)
 							{
-								if(m->type_monstre->est_tuable_par_saut)
-								{
-									m->etat = M_MORT_PAR_PROJ;
-								}
-								else
-								{
-									m->etat = M_RETRACTE_RETOURNE;
-									if(m->position.x > n->occ_blocs[i][j]->position.x)
-										m->vitesse.x = VITESSE_X_EJECTION;
-									else
-										m->vitesse.x = -VITESSE_X_EJECTION;
-								}
-
-								prec_collision_bloc = 1;
-								m->vitesse.y = VITESSE_Y_EJECTION * 2;
-								FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_PROJ_ON]);
-
-								compte_points(p, m, 0);
+								m->etat = M_MORT_PAR_PROJ;
 							}
 							else
 							{
-								if(!prec_collision_bloc)
+								m->etat = M_RETRACTE_RETOURNE;
+							}
+
+							m->vitesse.y = VITESSE_Y_EJECTION * 2;
+							if(m->position.x > n->occ_blocs[i][j]->position.x)
+								m->vitesse.x = VITESSE_X_EJECTION;
+							else
+								m->vitesse.x = -VITESSE_X_EJECTION;
+							FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_PROJ_ON]);
+
+							compte_points(p, m, 0);
+						}
+
+						if(n->occ_blocs[i][j]->bloc_actuel >= 0)
+						{
+
+							bloc bloc_actuel = n->blocs[n->occ_blocs[i][j]->bloc_actuel];
+
+							/* On récupère la physique du bloc */
+							phys_bloc_actuel = bloc_actuel.phys;
+
+							/* Initialisation du carré bloc */
+							block.position.x = (float)i * n->taille_blocs.x;
+							block.position.y = (float)j * n->taille_blocs.y;
+
+							block.position_prec.x = block.position.x;
+							block.position_prec.y = block.position.y;
+
+							block.taille.x = n->taille_blocs.x;
+							block.taille.y = n->taille_blocs.y;
+
+							find_angle_height_with_phys(n, phys_bloc_actuel, &block);
+
+							block.est_bloc_pente = (block.angle_pente != 0);
+
+							determinate_collision(monstre, block, &collision);
+
+							/* Collision avec le sol */
+							if((phys_bloc_actuel & SOL)	&& collision.type_collision == PAR_LE_BAS)
+							{
+
+								if(n->occ_blocs[i][j]->etat == POUSSE_PAR_LE_HAUT && !prec_collision_bloc)
 								{
-									if(m->vitesse.x == -VITESSE_X_EJECTION || m->vitesse.x == VITESSE_X_EJECTION)
-										m->vitesse.x = 0;
-									m->vitesse.y = 0;
-									m->position.y = (float)block.position.y + block.taille.y;
-								}
-							}
-
-
-							// MAJ du carré monstre
-							monstre.position.y = m->position.y;
-							determinate_collision(monstre, block, &collision);
-						}
-
-						/* Collision avec les pentes */
-						if((phys_bloc_actuel == PENTE_15_DROITE_16
-							|| phys_bloc_actuel == PENTE_15_GAUCHE_16
-							|| phys_bloc_actuel == PENTE_15_DROITE_12
-							|| phys_bloc_actuel == PENTE_15_GAUCHE_12
-							|| phys_bloc_actuel == PENTE_15_DROITE_8
-							|| phys_bloc_actuel == PENTE_15_GAUCHE_8
-							|| phys_bloc_actuel == PENTE_15_DROITE_4
-							|| phys_bloc_actuel == PENTE_15_GAUCHE_4
-
-							|| phys_bloc_actuel == PENTE_30_DROITE_0
-							|| phys_bloc_actuel == PENTE_30_DROITE_8
-							|| phys_bloc_actuel == PENTE_30_GAUCHE_8
-							|| phys_bloc_actuel == PENTE_30_GAUCHE_16
-							|| phys_bloc_actuel == PENTE_45_DROITE
-							|| phys_bloc_actuel == PENTE_45_GAUCHE)
-							&& 
-							(collision.type_collision == PENTE_PAR_LE_BAS
-							|| collision.type_collision == PENTE_PAR_LA_GAUCHE
-							|| collision.type_collision == PENTE_PAR_LA_DROITE))
-						{
-
-
-							/* Calcul de la nouvelle ordonnée du personnage 
-							avec l'équation de la pente et en fonction du bloc */
-							if(phys_bloc_actuel == PENTE_45_GAUCHE)
-							{
-								hauteur = (float) (-(monstre.position.x + monstre.taille.x / 2) * tan(deg_to_rad(135.0)) + block.position.y + block.taille.y - LARGEUR_BLOC + block.position.x * tan(deg_to_rad(135.0)));
-							}
-							else if(phys_bloc_actuel == PENTE_45_DROITE)
-							{
-								hauteur = (float) (-(monstre.position.x + monstre.taille.x / 2) * tan(deg_to_rad(45.0)) + block.position.y + block.taille.y + block.position.x * tan(deg_to_rad(45.0)));
-							}
-							else if(phys_bloc_actuel == PENTE_30_GAUCHE_8)
-							{
-								hauteur = (float) (-(monstre.position.x + monstre.taille.x / 2) * tan(deg_to_rad(180.0f - 26.5650512F)) + block.position.y + block.taille.y - 8 + block.position.x * tan(deg_to_rad(180.0F - 26.5650512F)));
-							}
-							else if(phys_bloc_actuel == PENTE_30_GAUCHE_16)
-							{
-								hauteur = (float) (-(monstre.position.x + monstre.taille.x / 2) * tan(deg_to_rad(180.0f - 26.5650512F)) + block.position.y + block.taille.y - LARGEUR_BLOC + block.position.x * tan(deg_to_rad(180.0F - 26.5650512F)));
-							}
-							else if(phys_bloc_actuel == PENTE_30_DROITE_0)
-							{
-								hauteur = (float) (-(monstre.position.x + monstre.taille.x / 2) * tan(deg_to_rad(26.5650512F)) + block.position.y + block.taille.y + block.position.x * tan(deg_to_rad(26.5650512F)));
-							}
-							else// if(phys_bloc_actuel == PENTE_30_DROITE_8)
-							{
-								hauteur = (float) (-(monstre.position.x + monstre.taille.x / 2) * tan(deg_to_rad(26.5650512F)) + block.position.y + block.taille.y - 8 + block.position.x * tan(deg_to_rad(26.5650512F)));
-							}
-
-							m->position.y = hauteur;
-
-							m->vitesse.y = 0;
-
-							// MAJ du carré monstre
-							monstre.position.y = m->position.y;
-							determinate_collision(monstre, block, &collision);
-						}
-
-						/* Collision avec le plafond */
-						if((phys_bloc_actuel & PLAFOND)	&& collision.type_collision == PAR_LE_HAUT)
-						{
-							m->vitesse.y = 0;
-							m->position.y = (float)block.position.y - block.taille.y - m->type_monstre->taille.y;
-
-							// MAJ du carré monstre
-							monstre.position.y = m->position.y;
-							determinate_collision(monstre, block, &collision);
-						}
-
-						/* Collision avec le mur à gauche du monstre */
-						if((phys_bloc_actuel & MUR_A_GAUCHE) && collision.type_collision == PAR_LA_GAUCHE)
-						{
-							m->vitesse.x = -m->vitesse.x;
-							m->cote = COTE_DROIT;
-							m->position.x += m->vitesse.x * duree + 2 * m->type_monstre->abscisse_bas;
-
-							if(m->etat == M_RETRACTE || m->etat == M_RETRACTE_RETOURNE)
-							{
-								if(!(bloc_actuel.type_bloc & EST_VIDE))
-								{
-									/* Ajout de l'occurence d'item */
-									coordf vitesse;
-									occ_item *item;
-
-									vitesse.x = 0;
-									n->occ_blocs[i][j]->etat = POUSSE_PAR_LA_DROITE;
-
-									/* Si le bloc ne contient pas un pointeur sur un item,
-									l'item sera en fonction de la transforùation actuelle 
-									du personnage */
-									if(n->occ_blocs[i][j]->item < 0) 
+									if(m->type_monstre->est_tuable_par_saut)
 									{
-										int index = (p->transformation == FIRE_MARIO)? p->transformation - 1: p->transformation;
-										vitesse.y = VIT_SORTIE_BLOC;
-										item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, index, vitesse, SORT_DU_BLOC);
+										m->etat = M_MORT_PAR_PROJ;
 									}
 									else
 									{
-										vitesse.y =  VIT_SORTIE_BLOC * 5;
-										item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, n->occ_blocs[i][j]->item, vitesse, SORT_DU_BLOC);
+										m->etat = M_RETRACTE_RETOURNE;
+										if(m->position.x > n->occ_blocs[i][j]->position.x)
+											m->vitesse.x = VITESSE_X_EJECTION;
+										else
+											m->vitesse.x = -VITESSE_X_EJECTION;
 									}
 
-									item->tps_sortie_bloc = TPS_ITEM_SORT_BLOC;
+									prec_collision_bloc = 1;
+									m->vitesse.y = VITESSE_Y_EJECTION * 2;
+									FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_PROJ_ON]);
 
-									n->items[item->type_item]->occ_items = ajout_item(n->items[item->type_item]->occ_items, item);
-									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_UNBREAKABLE_BLOCK]);
-									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_ITEM_BLOCK]);
-
-									/* Devient incassable */
-									n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif; 
-									n->occ_blocs[i][j]->bloc_alternatif = -1;
-								}
-								else if(bloc_actuel.type_bloc & CASSABLE)
-								{
-									n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif;//  A rendre plus propre
-									n->occ_blocs[i][j]->bloc_alternatif = -1;	// Suppression du bloc, rajouter les débris
-
-									/* Creation et ajout des 4 débris de blocs */
-									n->projectiles[DEBRIS]->occ_projectiles = ajout_projectile(n->projectiles[DEBRIS]->occ_projectiles, 
-										create_debris(n->projectiles[DEBRIS], (int)(i * LARGEUR_BLOC), (int)(j * LARGEUR_BLOC), -n->projectiles[DEBRIS]->vitesse.x, VITESSE_Y_EJECTION));
-
-									n->projectiles[DEBRIS]->occ_projectiles = ajout_projectile(n->projectiles[DEBRIS]->occ_projectiles, 
-										create_debris(n->projectiles[DEBRIS], (int)(i * LARGEUR_BLOC), (int)(j * LARGEUR_BLOC + LARGEUR_BLOC / 2), -n->projectiles[DEBRIS]->vitesse.x, VITESSE_Y_EJECTION * 2));
-
-									n->projectiles[DEBRIS]->occ_projectiles = ajout_projectile(n->projectiles[DEBRIS]->occ_projectiles, 
-										create_debris(n->projectiles[DEBRIS], (int)(i * LARGEUR_BLOC), (int)(j * LARGEUR_BLOC), n->projectiles[DEBRIS]->vitesse.x, VITESSE_Y_EJECTION));
-
-									n->projectiles[DEBRIS]->occ_projectiles = ajout_projectile(n->projectiles[DEBRIS]->occ_projectiles, 
-										create_debris(n->projectiles[DEBRIS], (int)(i * LARGEUR_BLOC), (int)(j * LARGEUR_BLOC + LARGEUR_BLOC / 2), n->projectiles[DEBRIS]->vitesse.x, VITESSE_Y_EJECTION * 2));
-
-
-									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_BREAK_BLOCK]);
+									compte_points(p, m, 0);
 								}
 								else
-									FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_LEVEL_ON]);
+								{
+									if(!prec_collision_bloc)
+									{
+										if(m->vitesse.x == -VITESSE_X_EJECTION || m->vitesse.x == VITESSE_X_EJECTION)
+											m->vitesse.x = 0;
+										m->vitesse.y = 0;
+										m->position.y = (float)block.position.y + block.taille.y;
+									}
+								}
+
+
+								// MAJ du carré monstre
+								monstre.position.y = m->position.y;
+								determinate_collision(monstre, block, &collision);
 							}
 
-
-							// MAJ du carré monstre
-							monstre.position.x = m->position.x;
-
-							determinate_collision(monstre, block, &collision);
-						}
-
-						/* Collision avec le mur à droite du monstre */
-						if((phys_bloc_actuel & MUR_A_DROITE) && collision.type_collision == PAR_LA_DROITE)
-						{
-
-							m->vitesse.x = -m->vitesse.x;
-							m->cote = COTE_GAUCHE;
-							m->position.x += m->vitesse.x * duree;
-
-							if(m->etat == M_RETRACTE || m->etat == M_RETRACTE_RETOURNE)
+							/* Collision avec les pentes */
+							if((phys_bloc_actuel == PENTE_30_DROITE_0
+								|| phys_bloc_actuel == PENTE_30_DROITE_16
+								|| phys_bloc_actuel == PENTE_30_GAUCHE_16
+								|| phys_bloc_actuel == PENTE_30_GAUCHE_32
+								|| phys_bloc_actuel == PENTE_45_DROITE
+								|| phys_bloc_actuel == PENTE_45_GAUCHE)
+								&& 
+								(collision.type_collision == PENTE_PAR_LE_BAS
+								|| collision.type_collision == PENTE_PAR_LA_GAUCHE
+								|| collision.type_collision == PENTE_PAR_LA_DROITE))
 							{
-								if(!(bloc_actuel.type_bloc & EST_VIDE))
+
+								/* Calcul de la nouvelle ordonnée du personnage avec l'équation de la pente et en fonction du bloc */
+								hauteur = (float) (-(monstre.position.x + monstre.taille.x / 2) * tan(deg_to_rad(block.angle_pente)) + block.position.y + block.taille.y - block.hauteur_a_retirer + block.position.x * tan(deg_to_rad(block.angle_pente)));
+								m->position.y = hauteur;
+
+								m->vitesse.y = 0;
+
+								// MAJ du carré monstre
+								monstre.position.y = m->position.y;
+								determinate_collision(monstre, block, &collision);
+							}
+
+							/* Collision avec le plafond */
+							if((phys_bloc_actuel & PLAFOND)	&& collision.type_collision == PAR_LE_HAUT)
+							{
+								m->vitesse.y = 0;
+								m->position.y = (float)block.position.y - block.taille.y - m->type_monstre->taille.y;
+
+								// MAJ du carré monstre
+								monstre.position.y = m->position.y;
+								determinate_collision(monstre, block, &collision);
+							}
+
+							/* Collision avec le mur à gauche du monstre */
+							if((phys_bloc_actuel & MUR_A_GAUCHE) && collision.type_collision == PAR_LA_GAUCHE)
+							{
+								m->vitesse.x = -m->vitesse.x;
+								m->cote = COTE_DROIT;
+								m->position.x += m->vitesse.x * duree + 2 * m->type_monstre->abscisse_bas;
+
+								if(m->etat == M_RETRACTE || m->etat == M_RETRACTE_RETOURNE)
 								{
-									/* Ajout de l'occurence d'item */
-									coordf vitesse;
-									occ_item *item;
+									if(!(bloc_actuel.type_bloc & EST_VIDE))
+									{
+										/* Ajout de l'occurence d'item */
+										coordf vitesse;
+										occ_item *item;
 
-									vitesse.x = 0;
+										vitesse.x = 0;
+										n->occ_blocs[i][j]->etat = POUSSE_PAR_LA_DROITE;
 
-									n->occ_blocs[i][j]->etat = POUSSE_PAR_LA_GAUCHE;
+										/* Si le bloc ne contient pas un pointeur sur un item,
+										l'item sera en fonction de la transforùation actuelle 
+										du personnage */
+										if(n->occ_blocs[i][j]->item < 0) 
+										{
+											int index = (p->transformation == FIRE_MARIO)? p->transformation - 1: p->transformation;
+											vitesse.y = VIT_SORTIE_BLOC;
+											item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, index, vitesse, SORT_DU_BLOC);
+										}
+										else
+										{
+											vitesse.y =  VIT_SORTIE_BLOC * 5;
+											item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, n->occ_blocs[i][j]->item, vitesse, SORT_DU_BLOC);
+										}
 
-									/* Si le bloc ne contient pas un pointeur sur un item,
-									l'item sera en fonction de la transforùation actuelle 
-									du personnage */
-									if(n->occ_blocs[i][j]->item < 0) {
-										int index = (p->transformation == FIRE_MARIO)? p->transformation - 1: p->transformation;
-										vitesse.y = VIT_SORTIE_BLOC;
-										item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, index, vitesse, SORT_DU_BLOC);
+										item->tps_sortie_bloc = TPS_ITEM_SORT_BLOC;
+
+										n->items[item->type_item]->occ_items = ajout_item(n->items[item->type_item]->occ_items, item);
+										FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_UNBREAKABLE_BLOCK]);
+										FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_ITEM_BLOCK]);
+
+										/* Devient incassable */
+										n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif; 
+										n->occ_blocs[i][j]->bloc_alternatif = -1;
+									}
+									else if(bloc_actuel.type_bloc & CASSABLE)
+									{
+										n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif;//  A rendre plus propre
+										n->occ_blocs[i][j]->bloc_alternatif = -1;	// Suppression du bloc, rajouter les débris
+
+										/* Creation et ajout des 4 débris de blocs */
+										n->projectiles[DEBRIS]->occ_projectiles = ajout_projectile(n->projectiles[DEBRIS]->occ_projectiles, 
+											create_debris(n->projectiles[DEBRIS], (int)(i * LARGEUR_BLOC), (int)(j * LARGEUR_BLOC), -n->projectiles[DEBRIS]->vitesse.x, VITESSE_Y_EJECTION));
+
+										n->projectiles[DEBRIS]->occ_projectiles = ajout_projectile(n->projectiles[DEBRIS]->occ_projectiles, 
+											create_debris(n->projectiles[DEBRIS], (int)(i * LARGEUR_BLOC), (int)(j * LARGEUR_BLOC + LARGEUR_BLOC / 2), -n->projectiles[DEBRIS]->vitesse.x, VITESSE_Y_EJECTION * 2));
+
+										n->projectiles[DEBRIS]->occ_projectiles = ajout_projectile(n->projectiles[DEBRIS]->occ_projectiles, 
+											create_debris(n->projectiles[DEBRIS], (int)(i * LARGEUR_BLOC), (int)(j * LARGEUR_BLOC), n->projectiles[DEBRIS]->vitesse.x, VITESSE_Y_EJECTION));
+
+										n->projectiles[DEBRIS]->occ_projectiles = ajout_projectile(n->projectiles[DEBRIS]->occ_projectiles, 
+											create_debris(n->projectiles[DEBRIS], (int)(i * LARGEUR_BLOC), (int)(j * LARGEUR_BLOC + LARGEUR_BLOC / 2), n->projectiles[DEBRIS]->vitesse.x, VITESSE_Y_EJECTION * 2));
+
+
+										FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_BREAK_BLOCK]);
+									}
+									else
+										FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_LEVEL_ON]);
+								}
+
+
+								// MAJ du carré monstre
+								monstre.position.x = m->position.x;
+
+								determinate_collision(monstre, block, &collision);
+							}
+
+							/* Collision avec le mur à droite du monstre */
+							if((phys_bloc_actuel & MUR_A_DROITE) && collision.type_collision == PAR_LA_DROITE)
+							{
+
+								m->vitesse.x = -m->vitesse.x;
+								m->cote = COTE_GAUCHE;
+								m->position.x += m->vitesse.x * duree;
+
+								if(m->etat == M_RETRACTE || m->etat == M_RETRACTE_RETOURNE)
+								{
+									if(!(bloc_actuel.type_bloc & EST_VIDE))
+									{
+										/* Ajout de l'occurence d'item */
+										coordf vitesse;
+										occ_item *item;
+
+										vitesse.x = 0;
+
+										n->occ_blocs[i][j]->etat = POUSSE_PAR_LA_GAUCHE;
+
+										/* Si le bloc ne contient pas un pointeur sur un item,
+										l'item sera en fonction de la transforùation actuelle 
+										du personnage */
+										if(n->occ_blocs[i][j]->item < 0) {
+											int index = (p->transformation == FIRE_MARIO)? p->transformation - 1: p->transformation;
+											vitesse.y = VIT_SORTIE_BLOC;
+											item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, index, vitesse, SORT_DU_BLOC);
+										}
+										else
+										{
+											vitesse.y =  (bloc_actuel.type_bloc & EST_VIDE)? VIT_SORTIE_BLOC * 5 : VIT_SORTIE_BLOC;
+											item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, n->occ_blocs[i][j]->item, vitesse, SORT_DU_BLOC);
+										}
+
+										item->tps_sortie_bloc = TPS_ITEM_SORT_BLOC;
+
+										n->items[item->type_item]->occ_items = ajout_item(n->items[item->type_item]->occ_items, item);
+										FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_UNBREAKABLE_BLOCK]);
+										FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_ITEM_BLOCK]);
+
+										/* Devient incassable */
+										n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif; 
+										n->occ_blocs[i][j]->bloc_alternatif = -1;
+									}
+									else if(bloc_actuel.type_bloc & CASSABLE) {
+										n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif;
+										n->occ_blocs[i][j]->bloc_alternatif = -1;
+
+										/* Creation et ajout des 4 débris de blocs */
+										n->projectiles[DEBRIS]->occ_projectiles = ajout_projectile(n->projectiles[DEBRIS]->occ_projectiles, 
+											create_debris(n->projectiles[DEBRIS], (int)(i * LARGEUR_BLOC), (int)(j * LARGEUR_BLOC), -n->projectiles[DEBRIS]->vitesse.x, VITESSE_Y_EJECTION));
+
+										n->projectiles[DEBRIS]->occ_projectiles = ajout_projectile(n->projectiles[DEBRIS]->occ_projectiles, 
+											create_debris(n->projectiles[DEBRIS], (int)(i * LARGEUR_BLOC), (int)(j * LARGEUR_BLOC + LARGEUR_BLOC / 2), -n->projectiles[DEBRIS]->vitesse.x, VITESSE_Y_EJECTION * 2));
+
+										n->projectiles[DEBRIS]->occ_projectiles = ajout_projectile(n->projectiles[DEBRIS]->occ_projectiles, 
+											create_debris(n->projectiles[DEBRIS], (int)(i * LARGEUR_BLOC), (int)(j * LARGEUR_BLOC), n->projectiles[DEBRIS]->vitesse.x, VITESSE_Y_EJECTION));
+
+										n->projectiles[DEBRIS]->occ_projectiles = ajout_projectile(n->projectiles[DEBRIS]->occ_projectiles, 
+											create_debris(n->projectiles[DEBRIS], (int)(i * LARGEUR_BLOC), (int)(j * LARGEUR_BLOC + LARGEUR_BLOC / 2), n->projectiles[DEBRIS]->vitesse.x, VITESSE_Y_EJECTION * 2));
+
+
+										FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_BREAK_BLOCK]);
 									}
 									else
 									{
-										vitesse.y =  (bloc_actuel.type_bloc & EST_VIDE)? VIT_SORTIE_BLOC * 5 : VIT_SORTIE_BLOC;
-										item = new_occ_item(i * LARGEUR_BLOC, j * LARGEUR_BLOC, n->occ_blocs[i][j]->item, vitesse, SORT_DU_BLOC);
+										FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_LEVEL_ON]);
 									}
-
-									item->tps_sortie_bloc = TPS_ITEM_SORT_BLOC;
-
-									n->items[item->type_item]->occ_items = ajout_item(n->items[item->type_item]->occ_items, item);
-									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_UNBREAKABLE_BLOCK]);
-									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_ITEM_BLOCK]);
-
-									/* Devient incassable */
-									n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif; 
-									n->occ_blocs[i][j]->bloc_alternatif = -1;
 								}
-								else if(bloc_actuel.type_bloc & CASSABLE) {
-									n->occ_blocs[i][j]->bloc_actuel = n->occ_blocs[i][j]->bloc_alternatif;
-									n->occ_blocs[i][j]->bloc_alternatif = -1;
 
-									/* Creation et ajout des 4 débris de blocs */
-									n->projectiles[DEBRIS]->occ_projectiles = ajout_projectile(n->projectiles[DEBRIS]->occ_projectiles, 
-										create_debris(n->projectiles[DEBRIS], (int)(i * LARGEUR_BLOC), (int)(j * LARGEUR_BLOC), -n->projectiles[DEBRIS]->vitesse.x, VITESSE_Y_EJECTION));
+								// MAJ du carré monstre
+								monstre.position.x = m->position.x;
 
-									n->projectiles[DEBRIS]->occ_projectiles = ajout_projectile(n->projectiles[DEBRIS]->occ_projectiles, 
-										create_debris(n->projectiles[DEBRIS], (int)(i * LARGEUR_BLOC), (int)(j * LARGEUR_BLOC + LARGEUR_BLOC / 2), -n->projectiles[DEBRIS]->vitesse.x, VITESSE_Y_EJECTION * 2));
-
-									n->projectiles[DEBRIS]->occ_projectiles = ajout_projectile(n->projectiles[DEBRIS]->occ_projectiles, 
-										create_debris(n->projectiles[DEBRIS], (int)(i * LARGEUR_BLOC), (int)(j * LARGEUR_BLOC), n->projectiles[DEBRIS]->vitesse.x, VITESSE_Y_EJECTION));
-
-									n->projectiles[DEBRIS]->occ_projectiles = ajout_projectile(n->projectiles[DEBRIS]->occ_projectiles, 
-										create_debris(n->projectiles[DEBRIS], (int)(i * LARGEUR_BLOC), (int)(j * LARGEUR_BLOC + LARGEUR_BLOC / 2), n->projectiles[DEBRIS]->vitesse.x, VITESSE_Y_EJECTION * 2));
-
-
-									FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_BREAK_BLOCK]);
-								}
-								else
-								{
-									FSOUND_PlaySound(FSOUND_FREE, m->type_monstre->sons[SND_LEVEL_ON]);
-								}
+								determinate_collision(monstre, block, &collision);
 							}
-
-							// MAJ du carré monstre
-							monstre.position.x = m->position.x;
-
-							determinate_collision(monstre, block, &collision);
 						}
 					}
 				}
@@ -2413,7 +2359,7 @@ void solve_collisions_projectile(occ_projectile* p, niveau *n)
 						block.taille.x = n->taille_blocs.x;
 						block.taille.y = n->taille_blocs.y;
 
-						find_angle_height_with_phys(phys_bloc_actuel, &block);
+						find_angle_height_with_phys(n, phys_bloc_actuel, &block);
 
 						block.est_bloc_pente = (block.angle_pente != 0);
 
@@ -2431,19 +2377,10 @@ void solve_collisions_projectile(occ_projectile* p, niveau *n)
 						}
 
 						/* Collision avec les pentes */
-						if((phys_bloc_actuel == PENTE_15_DROITE_16
-							|| phys_bloc_actuel == PENTE_15_GAUCHE_16
-							|| phys_bloc_actuel == PENTE_15_DROITE_12
-							|| phys_bloc_actuel == PENTE_15_GAUCHE_12
-							|| phys_bloc_actuel == PENTE_15_DROITE_8
-							|| phys_bloc_actuel == PENTE_15_GAUCHE_8
-							|| phys_bloc_actuel == PENTE_15_DROITE_4
-							|| phys_bloc_actuel == PENTE_15_GAUCHE_4
-
-							|| phys_bloc_actuel == PENTE_30_DROITE_0
-							|| phys_bloc_actuel == PENTE_30_DROITE_8
-							|| phys_bloc_actuel == PENTE_30_GAUCHE_8
+						if((phys_bloc_actuel == PENTE_30_DROITE_0
+							|| phys_bloc_actuel == PENTE_30_DROITE_16
 							|| phys_bloc_actuel == PENTE_30_GAUCHE_16
+							|| phys_bloc_actuel == PENTE_30_GAUCHE_32
 							|| phys_bloc_actuel == PENTE_45_DROITE
 							|| phys_bloc_actuel == PENTE_45_GAUCHE)
 							&& 
@@ -2452,33 +2389,8 @@ void solve_collisions_projectile(occ_projectile* p, niveau *n)
 							|| collision.type_collision == PENTE_PAR_LA_DROITE))
 						{
 
-							/* Calcul de la nouvelle ordonnée du personnage 
-							avec l'équation de la pente et en fonction du bloc */
-							if(phys_bloc_actuel == PENTE_45_GAUCHE)
-							{
-								hauteur = (float) (-(projectile.position.x + projectile.taille.x / 2) * tan(deg_to_rad(135.0)) + block.position.y + block.taille.y - LARGEUR_BLOC + block.position.x * tan(deg_to_rad(135.0)));
-							}
-							else if(phys_bloc_actuel == PENTE_45_DROITE)
-							{
-								hauteur = (float) (-(projectile.position.x + projectile.taille.x / 2) * tan(deg_to_rad(45.0)) + block.position.y + block.taille.y + block.position.x * tan(deg_to_rad(45.0)));
-							}
-							else if(phys_bloc_actuel == PENTE_30_GAUCHE_8)
-							{
-								hauteur = (float) (-(projectile.position.x + projectile.taille.x / 2) * tan(deg_to_rad(180.0F - 26.5650512F)) + block.position.y + block.taille.y - 8 + block.position.x * tan(deg_to_rad(180.0F - 26.5650512F)));
-							}
-							else if(phys_bloc_actuel == PENTE_30_GAUCHE_16)
-							{
-								hauteur = (float) (-(projectile.position.x + projectile.taille.x / 2) * tan(deg_to_rad(180.0F - 26.5650512F)) + block.position.y + block.taille.y - LARGEUR_BLOC + block.position.x * tan(deg_to_rad(180.0F - 26.5650512F)));
-							}
-							else if(phys_bloc_actuel == PENTE_30_DROITE_0)
-							{
-								hauteur = (float) (-(projectile.position.x + projectile.taille.x / 2) * tan(deg_to_rad(26.5650512F)) + block.position.y + block.taille.y + block.position.x * tan(deg_to_rad(26.5650512F)));
-							}
-							else// if(phys_bloc_actuel == PENTE_30_DROITE_8)
-							{
-								hauteur = (float) (-(projectile.position.x + projectile.taille.x / 2) * tan(deg_to_rad(26.5650512F)) + block.position.y + block.taille.y - 8 + block.position.x * tan(deg_to_rad(26.5650512F)));
-							}
-
+							/* Calcul de la nouvelle ordonnée du personnage avec l'équation de la pente et en fonction du bloc */
+							hauteur = (float) (-(projectile.position.x + projectile.taille.x / 2) * tan(deg_to_rad(block.angle_pente)) + block.position.y + block.taille.y - block.hauteur_a_retirer + block.position.x * tan(deg_to_rad(block.angle_pente)));
 							p->position.y = hauteur;
 							p->vitesse.y = V_REBOND_PROJECTILE;
 
@@ -2637,7 +2549,7 @@ void solve_collisions_item(occ_item* it, perso** persos, niveau* n, Uint32 duree
 							block.taille.x = n->taille_blocs.x;
 							block.taille.y = n->taille_blocs.y;
 
-							find_angle_height_with_phys(phys_bloc_actuel, &block);
+							find_angle_height_with_phys(n, phys_bloc_actuel, &block);
 
 							block.est_bloc_pente = (block.angle_pente != 0);
 
@@ -2694,19 +2606,10 @@ void solve_collisions_item(occ_item* it, perso** persos, niveau* n, Uint32 duree
 							}
 
 							/* Collision avec les pentes */
-							if((phys_bloc_actuel == PENTE_15_DROITE_16
-								|| phys_bloc_actuel == PENTE_15_GAUCHE_16
-								|| phys_bloc_actuel == PENTE_15_DROITE_12
-								|| phys_bloc_actuel == PENTE_15_GAUCHE_12
-								|| phys_bloc_actuel == PENTE_15_DROITE_8
-								|| phys_bloc_actuel == PENTE_15_GAUCHE_8
-								|| phys_bloc_actuel == PENTE_15_DROITE_4
-								|| phys_bloc_actuel == PENTE_15_GAUCHE_4
-
-								|| phys_bloc_actuel == PENTE_30_DROITE_0
-								|| phys_bloc_actuel == PENTE_30_DROITE_8
-								|| phys_bloc_actuel == PENTE_30_GAUCHE_8
+							if((phys_bloc_actuel == PENTE_30_DROITE_0
+								|| phys_bloc_actuel == PENTE_30_DROITE_16
 								|| phys_bloc_actuel == PENTE_30_GAUCHE_16
+								|| phys_bloc_actuel == PENTE_30_GAUCHE_32
 								|| phys_bloc_actuel == PENTE_45_DROITE
 								|| phys_bloc_actuel == PENTE_45_GAUCHE)
 								&& 
@@ -2715,33 +2618,8 @@ void solve_collisions_item(occ_item* it, perso** persos, niveau* n, Uint32 duree
 								|| collision.type_collision == PENTE_PAR_LA_DROITE))
 							{
 
-								/* Calcul de la nouvelle ordonnée de l'item 
-								avec l'équation de la pente et en fonction du bloc */
-								if(phys_bloc_actuel == PENTE_45_GAUCHE)
-								{
-									hauteur = (float) (-(item.position.x + item.taille.x / 2) * tan(deg_to_rad(135.0)) + block.position.y + block.taille.y - LARGEUR_BLOC + block.position.x * tan(deg_to_rad(135.0)));
-								}
-								else if(phys_bloc_actuel == PENTE_45_DROITE)
-								{
-									hauteur = (float) (-(item.position.x + item.taille.x / 2) * tan(deg_to_rad(45.0)) + block.position.y + block.taille.y + block.position.x * tan(deg_to_rad(45.0)));
-								}
-								else if(phys_bloc_actuel == PENTE_30_GAUCHE_8)
-								{
-									hauteur = (float) (-(item.position.x + item.taille.x / 2) * tan(deg_to_rad(180.0F - 26.5650512F)) + block.position.y + block.taille.y - 8 + block.position.x * tan(deg_to_rad(180.0F - 26.5650512F)));
-								}
-								else if(phys_bloc_actuel == PENTE_30_GAUCHE_16)
-								{
-									hauteur = (float) (-(item.position.x + item.taille.x / 2) * tan(deg_to_rad(180.0F - 26.5650512F)) + block.position.y + block.taille.y - LARGEUR_BLOC + block.position.x * tan(deg_to_rad(180.0F - 26.5650512F)));
-								}
-								else if(phys_bloc_actuel == PENTE_30_DROITE_0)
-								{
-									hauteur = (float) (-(item.position.x + item.taille.x / 2) * tan(deg_to_rad(26.5650512F)) + block.position.y + block.taille.y + block.position.x * tan(deg_to_rad(26.5650512F)));
-								}
-								else //if(phys_bloc_actuel == PENTE_30_DROITE_8)
-								{
-									hauteur = (float) (-(item.position.x + item.taille.x / 2) * tan(deg_to_rad(26.5650512F)) + block.position.y + block.taille.y - 8 + block.position.x * tan(deg_to_rad(26.5650512F)));
-								}
-
+								/* Calcul de la nouvelle ordonnée de l'item avec l'équation de la pente et en fonction du bloc */
+								hauteur = (float) (-(item.position.x + item.taille.x / 2) * tan(deg_to_rad(block.angle_pente)) + block.position.y + block.taille.y - block.hauteur_a_retirer + block.position.x * tan(deg_to_rad(block.angle_pente)));
 								it->position.y = hauteur;
 								it->vitesse.y = it->vitesse.y;
 
@@ -3378,7 +3256,7 @@ void lateral_move(perso *p, keystate *k, Uint32 t)
 	//}
 }
 
-void find_angle_height_with_phys(int phys_bloc, carre* bloc)
+void find_angle_height_with_phys(niveau* n, int phys_bloc, carre* bloc)
 {
 	switch(phys_bloc)
 	{
@@ -3388,23 +3266,23 @@ void find_angle_height_with_phys(int phys_bloc, carre* bloc)
 		break;
 	case PENTE_45_GAUCHE :
 		bloc->angle_pente = 135;
-		bloc->hauteur_a_retirer = (int)LARGEUR_BLOC;
+		bloc->hauteur_a_retirer = n->taille_blocs.y;
 		break;
 	case PENTE_30_DROITE_0 : 
 		bloc->angle_pente = 26.5650512F;
 		bloc->hauteur_a_retirer = 0;
 		break;
-	case PENTE_30_DROITE_8 : 
+	case PENTE_30_DROITE_16 : 
 		bloc->angle_pente = 26.5650512F;
-		bloc->hauteur_a_retirer = 8;
-		break;
-	case PENTE_30_GAUCHE_8 :
-		bloc->angle_pente = 153.4349488F;
-		bloc->hauteur_a_retirer = 8;
+		bloc->hauteur_a_retirer = n->taille_blocs.y / 2;
 		break;
 	case PENTE_30_GAUCHE_16 :
 		bloc->angle_pente = 153.4349488F;
-		bloc->hauteur_a_retirer = (int)LARGEUR_BLOC;
+		bloc->hauteur_a_retirer = n->taille_blocs.y / 2;
+		break;
+	case PENTE_30_GAUCHE_32 :
+		bloc->angle_pente = 153.4349488F;
+		bloc->hauteur_a_retirer = n->taille_blocs.y;
 		break;
 	default :
 		bloc->angle_pente = 0;
@@ -3416,16 +3294,16 @@ void find_angle_height_with_phys(int phys_bloc, carre* bloc)
 void pause_monstre(occ_monstre* monstre, ecran e)
 {
 	/* Teste si le personnage est hors écran */
-	if(monstre->position.x > e.origine.x + e.scroll.x + e.taille.x
-		|| monstre->position.x + monstre->type_monstre->taille.x < e.origine.x + e.scroll.x
-		|| monstre->position.y > e.origine.y + e.scroll.y + e.taille.y
-		|| monstre->position.y + monstre->type_monstre->taille.y < e.origine.y + e.scroll.y)
+	if(monstre->position.x > e.origine.x + e.scroll.x + e.taille.x + MARGE_ECRAN_ACTIF
+		|| monstre->position.x + monstre->type_monstre->taille.x < e.origine.x + e.scroll.x - MARGE_ECRAN_ACTIF 
+		|| monstre->position.y > e.origine.y + e.scroll.y + e.taille.y + MARGE_ECRAN_ACTIF
+		|| monstre->position.y + monstre->type_monstre->taille.y < e.origine.y + e.scroll.y - MARGE_ECRAN_ACTIF)
 	{
 		/* Si oui, teste si sa position initiale l'est aussi */
-		if(monstre->position_ini.x > e.origine.x + e.scroll.x + e.taille.x
-		|| monstre->position_ini.x + monstre->type_monstre->taille.x < e.origine.x + e.scroll.x
-		|| monstre->position_ini.y > e.origine.y + e.scroll.y + e.taille.y
-		|| monstre->position_ini.y + monstre->type_monstre->taille.y < e.origine.y + e.scroll.y)
+		if(monstre->position_ini.x > e.origine.x + e.scroll.x + e.taille.x + MARGE_ECRAN_ACTIF
+		|| monstre->position_ini.x + monstre->type_monstre->taille.x < e.origine.x + e.scroll.x - MARGE_ECRAN_ACTIF
+		|| monstre->position_ini.y > e.origine.y + e.scroll.y + e.taille.y + MARGE_ECRAN_ACTIF
+		|| monstre->position_ini.y + monstre->type_monstre->taille.y < e.origine.y + e.scroll.y - MARGE_ECRAN_ACTIF)
 		{
 			monstre->position = monstre->position_ini;
 			monstre->position_prec = monstre->position_ini;
@@ -3444,20 +3322,20 @@ void pause_monstre(occ_monstre* monstre, ecran e)
 void pause_projectile(occ_projectile* projectile, ecran e)
 {
 	/* Teste si le projectile est hors écran */
-	if(projectile->position.x > e.origine.x + e.scroll.x + e.taille.x
-		|| projectile->position.x + projectile->type_projectile->taille.x < e.origine.x + e.scroll.x
-		|| projectile->position.y > e.origine.y + e.scroll.y + e.taille.y
-		|| projectile->position.y + projectile->type_projectile->taille.y < e.origine.y + e.scroll.y)
+	if(projectile->position.x > e.origine.x + e.scroll.x + e.taille.x + MARGE_ECRAN_ACTIF
+		|| projectile->position.x + projectile->type_projectile->taille.x < e.origine.x + e.scroll.x - MARGE_ECRAN_ACTIF
+		|| projectile->position.y > e.origine.y + e.scroll.y + e.taille.y + MARGE_ECRAN_ACTIF
+		|| projectile->position.y + projectile->type_projectile->taille.y < e.origine.y + e.scroll.y - MARGE_ECRAN_ACTIF)
 		projectile->tps_vie = 0;
 }
 
 void pause_item(niveau* n, occ_item* item, ecran e)
 {
 	/* Teste si l'item est hors écran */
-	if(item->position.x > e.origine.x + e.scroll.x + e.taille.x
-		|| item->position.x + n->items[item->type_item]->taille.x < e.origine.x + e.scroll.x
-		|| item->position.y > e.origine.y + e.scroll.y + e.taille.y
-		|| item->position.y + n->items[item->type_item]->taille.y < e.origine.y + e.scroll.y)
+	if(item->position.x > e.origine.x + e.scroll.x + e.taille.x + MARGE_ECRAN_ACTIF
+		|| item->position.x + n->items[item->type_item]->taille.x < e.origine.x + e.scroll.x - MARGE_ECRAN_ACTIF
+		|| item->position.y > e.origine.y + e.scroll.y + e.taille.y + MARGE_ECRAN_ACTIF
+		|| item->position.y + n->items[item->type_item]->taille.y < e.origine.y + e.scroll.y - MARGE_ECRAN_ACTIF)
 		item->actif = 0;
 	else
 		item->actif = 1;

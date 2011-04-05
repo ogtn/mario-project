@@ -29,21 +29,21 @@
 
 /* Numérotation par rapport à la hauteur du pixel en haut à gauche :
 on enlève une certaine hauteur de l'ordonnée du point le plus à gauche de la pente par rapport au coin en haut à gauche */
-#define PENTE_30_GAUCHE_8		0x000100 // Ici 8
-#define PENTE_30_GAUCHE_16		0x000200 // Ici 16
+#define PENTE_30_GAUCHE_16		0x000100 // Ici 16
+#define PENTE_30_GAUCHE_32		0x000200 // Ici 32
 #define PENTE_30_DROITE_0		0x000300 
-#define PENTE_30_DROITE_8		0x000400
-#define PENTE_45_GAUCHE			0x000800 // 16 pxls
+#define PENTE_30_DROITE_16		0x000400
+#define PENTE_45_GAUCHE			0x000800 // 32 pxls
 #define PENTE_45_DROITE			0x001000 // 0 pxls
 
-#define PENTE_15_DROITE_16		0x002000
-#define PENTE_15_GAUCHE_16		0x004000
-#define PENTE_15_DROITE_12		0x008000
-#define PENTE_15_GAUCHE_12		0x010000
-#define PENTE_15_DROITE_8		0x020000
-#define PENTE_15_GAUCHE_8		0x040000
-#define PENTE_15_DROITE_4		0x080000
-#define PENTE_15_GAUCHE_4		0x100000
+#define PENTE_15_DROITE_32		0x002000
+#define PENTE_15_GAUCHE_32		0x004000
+#define PENTE_15_DROITE_24		0x008000
+#define PENTE_15_GAUCHE_24		0x010000
+#define PENTE_15_DROITE_16		0x020000
+#define PENTE_15_GAUCHE_16		0x040000
+#define PENTE_15_DROITE_8		0x080000
+#define PENTE_15_GAUCHE_8		0x100000
 
 /* Définition des flags pour les blocs plus compliqués */
 #define COIN_HAUT_A_GAUCHE		(SOL | MUR_A_GAUCHE)
@@ -91,7 +91,7 @@ typedef struct bloc
 	id texture;								/* l'id de la texture dans la structure niveau */
 	coordi coord_sprite;					/* les coordonnées du sprite dans la texture */
 	int phys;								/* Contient la physique du bloc sous la forme d'un flag */
-	int type_bloc;
+	int type_bloc;							/* Type de bloc */
 	int tps_piece;							/* Temps restant avant qu'il ne reste qu'une pièce */
 } bloc;
 

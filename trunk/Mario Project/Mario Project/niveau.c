@@ -461,7 +461,6 @@ void balise_projectile(niveau *n, const char **attrs)
 	static int i = 0;
 	n->projectiles[i] = charger_projectile(attrs[1]);
 	i++;
-	i %= n->nb_projectiles;
 }
 
 void balise_items(niveau *n, const char **attrs)
@@ -470,17 +469,19 @@ void balise_items(niveau *n, const char **attrs)
 	n->items = malloc(sizeof(item) * n->nb_items);
 }
 
+int id_item_actuel;
+
 void balise_item(niveau *n, const char **attrs)
 {
 	static int i = 0;
 	n->items[i] = charger_item(attrs[1], atoi(attrs[3]));
+	id_item_actuel = i;
 	i++;
-	i %= n->nb_items;
 }
 
 void balise_occ_item(niveau *n, const char **attrs)
 {
-	n->items[atoi(attrs[1])]->occ_items = ajout_item(n->items[atoi(attrs[1])]->occ_items, new_occ_item((float)atoi(attrs[3]), (float)atoi(strchr(attrs[3], ':') + 1), atoi(attrs[1]), n->items[atoi(attrs[1])]->vitesse, NORMAL));
+	n->items[id_item_actuel]->occ_items = ajout_item(n->items[id_item_actuel]->occ_items, new_occ_item((float)atoi(attrs[1]), (float)atoi(strchr(attrs[1], ':') + 1), id_item_actuel, n->items[id_item_actuel]->vitesse, NORMAL));
 }
 
 
@@ -490,18 +491,19 @@ void balise_monsters(niveau *n, const char **attrs)
 	n->monstres = malloc(sizeof(monstre*) * n->nb_monstres);
 }
 
+int id_mstr_actuel;
+
 void balise_monster(niveau *n, const char **attrs)
 {
 	static int i = 0;
     n->monstres[i] = charger_monstre(attrs[1]);
+	id_mstr_actuel = i;
 	i++;
-	i %= n->nb_monstres;
 }
-
 
 void balise_occ(niveau *n, const char **attrs)
 {
-	n->monstres[atoi(attrs[1])]->occ_monstres = ajout_monstre(n->monstres[atoi(attrs[1])]->occ_monstres, new_occ_monstre((float)atoi(attrs[3]), (float)atoi(strchr(attrs[3], ':') + 1), n->monstres[atoi(attrs[1])]));
+	n->monstres[id_mstr_actuel]->occ_monstres = ajout_monstre(n->monstres[id_mstr_actuel]->occ_monstres, new_occ_monstre((float)atoi(attrs[1]), (float)atoi(strchr(attrs[1], ':') + 1), n->monstres[id_mstr_actuel]));
 }
 
 void balise_pipes(niveau *n, const char **attrs)
@@ -956,7 +958,6 @@ void sauver_niveau(char *nom, niveau *n)
 			open_element(fic, "item");
 			add_attrib(fic, "img", "%s", it->nom_text);
 			add_attrib(fic, "type", "%d", it->nom);
-			add_attrib(fic, "nb", "%d", it->occ_items->nb_elements);
 
 			if(it->occ_items->nb_elements > 0)
 			{
@@ -964,7 +965,6 @@ void sauver_niveau(char *nom, niveau *n)
 				while(occ_i != NULL)
 				{
 					open_element(fic, "occ_item");
-					add_attrib(fic, "actual", "%d", i);
 					add_attrib(fic, "pos", "%d:%d", (int)occ_i->occ_item->position.x, (int)occ_i->occ_item->position.y);
 					close_element_short(fic);
 					occ_i = occ_i->suivant;
@@ -997,13 +997,11 @@ void sauver_niveau(char *nom, niveau *n)
 
 			open_element(fic, "monster");
 			add_attrib(fic, "name", "%s", m->nom);
-			add_attrib(fic, "nb", "%d", m->occ_monstres->nb_elements);
 			end_element(fic);
 
 			while(occ_m != NULL)
 			{
 				open_element(fic, "occ");
-				add_attrib(fic, "actual", "%d", i);
 				add_attrib(fic, "pos", "%d:%d",
 					(int)occ_m->occ_monstre->position.x,
 					(int)occ_m->occ_monstre->position.y);
@@ -1658,25 +1656,25 @@ void draw_blocs(niveau *n, ecran e, Uint32 duree)
 					case POUSSE_PAR_LA_DROITE:
 						sprite.position.x = occ->position.x + occ->compteur_etat * 2;
 						sprite.position.y = occ->position.y;
-						draw_sprite_d(&sprite, 1);
+						draw_sprite_d(&sprite, LAYER_BLOC_2);
 						occ->compteur_etat = (occ->compteur_etat + 1) % 6;
 						break;
 					case POUSSE_PAR_LA_GAUCHE:
 						sprite.position.x = occ->position.x - occ->compteur_etat * 2;
 						sprite.position.y = occ->position.y;
-						draw_sprite_d(&sprite, 1);
+						draw_sprite_d(&sprite, LAYER_BLOC_2);
 						occ->compteur_etat = (occ->compteur_etat + 1) % 6;
 						break;
 					case POUSSE_PAR_LE_HAUT:
 						sprite.position.y =  occ->position.y = occ->position.y + occ->compteur_etat;
 						sprite.position.x = occ->position.x;
-						draw_sprite(&sprite);
+						draw_sprite_d(&sprite, LAYER_BLOC_2);
 						occ->compteur_etat = (occ->compteur_etat + 1) % 5;
 						break;
 					default:
 						sprite.position.x =  occ->position.x = i * n->taille_blocs.x;
 						sprite.position.y =  occ->position.y = j * n->taille_blocs.y;
-						draw_sprite(&sprite);
+						draw_sprite_d(&sprite, LAYER_BLOC_1);
 						break;
 					}
 
