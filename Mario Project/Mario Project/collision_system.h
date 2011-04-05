@@ -22,19 +22,19 @@
 #define MARGE_ECRAN_ACTIF			5 * LARGEUR_BLOC
 
 /* Constantes determinant les frottements */
-#define FROTT_CLASSIQUE			    0.008F
-#define FROTT_GLACE				    0.005F
-#define FROTT_AIR				    0.003F
+#define FROTT_CLASSIQUE			    0.007F
+#define FROTT_GLACE				    0.004F
+#define FROTT_AIR				    0.001F
 #define COEFF_GLISSE			    0.3F
 
 /* Constantes des vitesses et des accélèrations */
-#define ACC_MARCHE				    0.03F
-#define ACC_COURSE				    0.05F
+#define ACC_MARCHE				    0.05F
+#define ACC_COURSE				    0.07F
 #define V_MAX   					1.6F
 #define V_MIN	    				0.008F
-#define V_MARCHE	    			0.25F
-#define V_COURSE		    		0.5F
-#define VITESSE_SAUT		    	0.75F
+#define V_MARCHE	    			0.3F
+#define V_COURSE		    		0.6F
+#define VITESSE_SAUT		    	0.5F
 #define V_REBOND			    	0.5F
 #define V_REBOND_SAUT		    	0.8F
 #define V_REBOND_PROJECTILE	    	0.3F

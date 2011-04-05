@@ -195,12 +195,6 @@
     <None Include="to do list.txt" />
     <None Include="world1.wld" />
   </ItemGroup>
-  <ItemGroup>
-    <Object Include="textures\backgrounds\firs.obj" />
-    <Object Include="textures\backgrounds\mountains.obj" />
-    <Object Include="textures\backgrounds\night_sky.obj" />
-    <Object Include="textures\backgrounds\underground.obj" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
