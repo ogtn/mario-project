@@ -247,18 +247,4 @@
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
-  <ItemGroup>
-    <Object Include="textures\backgrounds\firs.obj">
-      <Filter>Resource Files</Filter>
-    </Object>
-    <Object Include="textures\backgrounds\night_sky.obj">
-      <Filter>Resource Files</Filter>
-    </Object>
-    <Object Include="textures\backgrounds\mountains.obj">
-      <Filter>Resource Files</Filter>
-    </Object>
-    <Object Include="textures\backgrounds\underground.obj">
-      <Filter>Resource Files</Filter>
-    </Object>
-  </ItemGroup>
 </Project>

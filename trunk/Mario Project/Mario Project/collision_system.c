@@ -513,6 +513,15 @@ void MAJ_collision_perso(perso *perso, niveau* lvl, keystate* keystate, Uint32 d
 		&& (perso->environnement == SOL_DUR || perso->etat == MONTE_ECHELLE))
 			jump_perso(perso);
 
+        /* Prolonger le saut si la touche reste enfoncée */
+        if(perso->etat == SAUT)
+        {
+            perso->tps_saut += duree;
+
+            if(keystate->actuel[SAUTER] && perso->tps_saut < 175)
+                perso->vitesse.y = VITESSE_SAUT;
+        }
+
 		if(perso->vitesse.y != 0)
 			perso->environnement = AIR;
 
@@ -1041,6 +1050,8 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 							/* Collision avec le plafond */
 							if((phys_bloc_actuel & PLAFOND) && collision.type_collision == PAR_LE_HAUT)
 							{
+                                /* Empeche le saut de se prolonger même si la touche reste enfoncée */
+                                p->tps_saut = 500000;
 
 								p->vitesse.y = 0;
 								p->position.y = (float)block.position.y - ordonnee_haut - 1;
@@ -3002,6 +3013,9 @@ vectf *jump(vectf *v)
 
 void jump_perso(perso* p)
 {
+    /* La touche vient d'etre enfoncée, le compteur commence à 0 */
+    p->tps_saut = 0;
+
 	jump(&p->vitesse);
 	
 	FSOUND_PlaySound(FSOUND_FREE, p->sons[SND_SAUT]);

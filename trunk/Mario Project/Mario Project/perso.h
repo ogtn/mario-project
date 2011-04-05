@@ -108,6 +108,7 @@ typedef struct perso
 	Uint32 tps_pousse_carapace;				/* indique le temps restant au personnage pour qu'il reste en état où il pousse qqch */
 	Uint32 tps_mort;						/* indique le temps restant avant la fin d'animation de mort */
 	Uint32 tps_finish;						/* indique le temps restant au personnage avant la fin d'animation de fin de niveau */
+    Uint32 tps_saut;                        /* temps depuis lequel le saut à commencé */
 	data_texture* texture_act;				/* indique les infos sur l'affichage du personnage par apport à la texture actuelle */
 	data_texture* texture_prec;				/* indique les infos sur l'affichage du personnage par apport à la texture précédente */
 	FSOUND_SAMPLE* sons[NB_SONS];			/* contient les sons des actions du personnage */

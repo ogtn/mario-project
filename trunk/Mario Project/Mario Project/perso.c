@@ -48,6 +48,7 @@ perso *init_perso(perso *p)
 		p->tps_attaque = 0;
 		p->tps_pousse_carapace = 0;
 		p->tps_mort = 0;
+        p->tps_saut = 0;
 		p->tuyau = NULL;
 
 		p->cote = COTE_DROIT;
