@@ -173,34 +173,16 @@
     <None Include="textures\blocs\speciaux\incassables\[Q]\[Q].cfg">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="textures\backgrounds\bluehills.png">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="textures\blocs\speciaux\cassables\cassables.cfg">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="textures\blocs\classiques\classiques.cfg">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="textures\blocs\classiques\grass.png">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="textures\blocs\speciaux\incassables\interaction\interaction.cfg">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="level_design_log.txt">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="textures\blocs\speciaux\incassables\[Q]\overworld.png">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="textures\blocs\speciaux\cassables\overworld.png">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="textures\blocs\speciaux\incassables\[Q]\overworld2.png">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="textures\backgrounds\skybluehills.png">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="smb.xml">
@@ -215,38 +197,39 @@
     <None Include="to do list.txt">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="textures\blocs\classiques\underground.png">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="textures\backgrounds\underground.png">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="textures\backgrounds\underground2.png">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="musics\underworld.ogg">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="world1.wld">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="textures\objects\castle.png">
+    <None Include="smb3.xml">
       <Filter>Resource Files</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Object Include="textures\backgrounds\bluehills.obj">
+    <None Include="textures\persos\fire_mario.perso">
       <Filter>Resource Files</Filter>
-    </Object>
-    <Object Include="textures\backgrounds\skybluehills.obj">
+    </None>
+    <None Include="textures\persos\super_mario.perso">
       <Filter>Resource Files</Filter>
-    </Object>
-    <Object Include="textures\backgrounds\underground.obj">
+    </None>
+    <None Include="textures\monstres\red_koopa.mstr">
       <Filter>Resource Files</Filter>
-    </Object>
-    <Object Include="textures\backgrounds\underground2.obj">
+    </None>
+    <None Include="textures\monstres\red_koopa.png">
       <Filter>Resource Files</Filter>
-    </Object>
+    </None>
+    <None Include="textures\backgrounds\firs.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="textures\backgrounds\night_sky.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="textures\backgrounds\mountains.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="textures\blocs\classiques\snow.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="textures\blocs\speciaux\incassables\interaction\blue_plant.png">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
@@ -263,5 +246,19 @@
     <ResourceCompile Include="ressources.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="textures\backgrounds\firs.obj">
+      <Filter>Resource Files</Filter>
+    </Object>
+    <Object Include="textures\backgrounds\night_sky.obj">
+      <Filter>Resource Files</Filter>
+    </Object>
+    <Object Include="textures\backgrounds\mountains.obj">
+      <Filter>Resource Files</Filter>
+    </Object>
+    <Object Include="textures\backgrounds\underground.obj">
+      <Filter>Resource Files</Filter>
+    </Object>
   </ItemGroup>
 </Project>

@@ -173,34 +173,33 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="level_design_log.txt" />
-    <None Include="musics\underworld.ogg" />
     <None Include="smb.xml" />
     <None Include="smb2.xml" />
+    <None Include="smb3.xml" />
     <None Include="test_xml.xml">
       <SubType>Designer</SubType>
     </None>
-    <None Include="textures\backgrounds\bluehills.png" />
-    <None Include="textures\backgrounds\skybluehills.png" />
-    <None Include="textures\backgrounds\underground.png" />
-    <None Include="textures\backgrounds\underground2.png" />
+    <None Include="textures\backgrounds\firs.png" />
+    <None Include="textures\backgrounds\mountains.png" />
+    <None Include="textures\backgrounds\night_sky.png" />
     <None Include="textures\blocs\classiques\classiques.cfg" />
-    <None Include="textures\blocs\classiques\grass.png" />
-    <None Include="textures\blocs\classiques\underground.png" />
+    <None Include="textures\blocs\classiques\snow.png" />
     <None Include="textures\blocs\speciaux\cassables\cassables.cfg" />
-    <None Include="textures\blocs\speciaux\cassables\overworld.png" />
+    <None Include="textures\blocs\speciaux\incassables\interaction\blue_plant.png" />
     <None Include="textures\blocs\speciaux\incassables\interaction\interaction.cfg" />
-    <None Include="textures\blocs\speciaux\incassables\[Q]\overworld.png" />
-    <None Include="textures\blocs\speciaux\incassables\[Q]\overworld2.png" />
     <None Include="textures\blocs\speciaux\incassables\[Q]\[Q].cfg" />
-    <None Include="textures\objects\castle.png" />
+    <None Include="textures\monstres\red_koopa.mstr" />
+    <None Include="textures\monstres\red_koopa.png" />
+    <None Include="textures\persos\fire_mario.perso" />
+    <None Include="textures\persos\super_mario.perso" />
     <None Include="to do list.txt" />
     <None Include="world1.wld" />
   </ItemGroup>
   <ItemGroup>
-    <Object Include="textures\backgrounds\bluehills.obj" />
-    <Object Include="textures\backgrounds\skybluehills.obj" />
+    <Object Include="textures\backgrounds\firs.obj" />
+    <Object Include="textures\backgrounds\mountains.obj" />
+    <Object Include="textures\backgrounds\night_sky.obj" />
     <Object Include="textures\backgrounds\underground.obj" />
-    <Object Include="textures\backgrounds\underground2.obj" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

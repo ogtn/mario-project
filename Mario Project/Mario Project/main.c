@@ -335,11 +335,11 @@ void affichage_debug(world *w)
         case SOL :
             screen_printf_dbg("Type de bloc en dessous du milieu de Mario : SOL\n");
             break;
-        case PENTE_30_GAUCHE_8 :
-            screen_printf_dbg("Type de bloc en dessous du milieu de Mario : PENTE_30_GAUCHE_8\n");
-            break;
         case PENTE_30_GAUCHE_16 :
             screen_printf_dbg("Type de bloc en dessous du milieu de Mario : PENTE_30_GAUCHE_16\n");
+            break;
+        case PENTE_30_GAUCHE_32 :
+            screen_printf_dbg("Type de bloc en dessous du milieu de Mario : PENTE_30_GAUCHE_32\n");
             break;
         case PENTE_45_DROITE :
             screen_printf_dbg("Type de bloc en dessous du milieu de Mario : PENTE_45_DROITE\n");

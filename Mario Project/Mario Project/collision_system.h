@@ -19,6 +19,7 @@
 
 /* Physique */
 #define GRAVITY					    0.002F
+#define MARGE_ECRAN_ACTIF			5 * LARGEUR_BLOC
 
 /* Constantes determinant les frottements */
 #define FROTT_CLASSIQUE			    0.008F
@@ -175,7 +176,7 @@ void limit_speed(perso *p, keystate *k);
 void lateral_move(perso *p, keystate *k, Uint32 t);
 
 /* Calcul l'angle et la hauteur en fonction de la physique du bloc */
-void find_angle_height_with_phys(int phys_bloc_actuel, carre* bloc);
+void find_angle_height_with_phys(niveau* n, int phys_bloc, carre* bloc);
 
 /* MAJ de l'activité d'un monstre */
 void pause_monstre(occ_monstre* monstre, ecran e);
