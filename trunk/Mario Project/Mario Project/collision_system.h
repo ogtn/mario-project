@@ -20,6 +20,7 @@
 /* Physique */
 #define GRAVITY					    0.002F
 #define MARGE_ECRAN_ACTIF			5 * LARGEUR_BLOC
+#define EPSILON						0.5F
 
 /* Constantes determinant les frottements */
 #define FROTT_CLASSIQUE			    0.007F

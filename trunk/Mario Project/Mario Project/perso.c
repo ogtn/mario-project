@@ -94,6 +94,23 @@ perso *init_perso(perso *p)
 	return p;
 }
 
+void init_perso_niveau(perso* p)
+{
+	if(p != NULL)
+	{
+		p->etat = DEBOUT;
+
+		p->vitesse.x = 0;
+		p->vitesse.y = 0;
+
+		p->tps_invincible = 0;
+		p->peut_grimper = 0;
+		p->tps_invincible_etoile = 0;
+
+		p->cote = COTE_DROIT;
+	}
+}
+
 perso* free_perso(perso *p)
 {
 	int i;

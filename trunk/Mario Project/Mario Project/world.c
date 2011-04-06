@@ -115,214 +115,52 @@ world *free_world(world *w)
 void modifier_niveau_SMB(niveau* n)
 {
 	int i, j;
-	coordf position = { 0, 768};
-	coordi taille = { 200 * 32, 0};
-
-	n->nb_foreground_generators = 1;
-	n->foreground_generators = malloc(sizeof(particule_generator) * n->nb_foreground_generators);
-	n->foreground_generators[0] = new_particule_generator(position, taille, 4000, 200, "snow_particle.png", 1, 0xFFFFFFFF, 0xFFFFFFFF);
-
-	n->nb_checkpoints = 1;
-	n->checkpoints = malloc(sizeof(checkpoint) * n->nb_checkpoints);
-	n->checkpoints[0] = charger_checkpoint("checkpoint");
-	n->checkpoints[0]->position.x = 3520;
-	n->checkpoints[0]->position.y = 160;
 	
-
 	for(i = 0; i < n->taille.x; i++)
 	{
 		for(j = 0; j < n->taille.y; j++)
 		{
-			if((i == 119 && j >= 5 && j <= 20)
-				|| (i == 154 && j >= 12 && j <= 20)
-				|| (i == 157 && j >= 10 && j <= 17)
-				|| (i == 161 && j >= 5 && j <= 10))
-			{
-				// blue plant
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 28, -1, -1);
-			}
-			else if((i == 119 && j == 21)
-				|| (i == 154 && j == 21)
-				|| (i == 157 && j == 18)
-				|| (i == 161 && j == 4))
-			{
-				// bloc incassable
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 27, -1, -1);
-			}
-			else if((i == 41 && j == 9)
-				|| ( i == 115 && j == 8))
-			{
-				// bloc '?' avec item transformation actuelle
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 26, 27, -1);
-			}
-			else if((i == 40 && j == 9)
-				|| (i == 146 && j == 17))
-			{
-				// bloc '?' avec piece
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 26, 27, 0);
-			}
-			else if((i == 145 && j == 17))
-			{
-				// bloc distributeur de pièces
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 26, 27, 0);
-			}
-			else if((i == 11 && j == 1)
-				|| (i == 61 && j == 6)
-				|| (i == 62 && j == 5)
-				|| (i == 63 && j == 4)
-				|| (i == 64 && j == 3))
-			{
-				// pente 45 gauche
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 23, -1, -1);
-			}
-			else if((i == 32 && j == 0)
-				|| (i == 33 && j == 1)
-				|| (i == 34 && j == 2)
-				|| (i == 35 && j == 3)
-				|| (i == 36 && j == 4)
-				|| (i == 183 && j == 4)
-				|| (i == 184 && j == 5)
-				|| (i == 185 && j == 6))
-			{
-				// pente 45 droite
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, -1, -1);
-			}
-			else if((i == 177 && j == 1)
-				|| (i == 179 && j == 2)
-				|| (i == 181 && j == 3))
-			{
-				// pente 30 droite 1
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 20, -1, -1);
-			}
-			else if((i == 178 && j == 1)
-				|| (i == 180 && j == 2)
-				|| (i == 182 && j == 3))
-			{
-				// pente 30 droite 2
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 22, -1, -1);
-			}
-			else if((i == 90 && j == 3)
-				|| (i == 100 && j == 4)
-				|| (i == 144 && j == 13)
-				|| (i == 142 && j == 10)
-				|| (i == 165 && j == 0))
-			{
-				// bord à gauche
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 10, -1, -1);
-			}
-			else if((i == 26 && j == 0)
-				|| (i == 73 && j == 2)
-				|| (i == 95 && j == 3)
-				|| (i == 119 && j == 4)
-				|| (i == 136 && j == 17)
-				|| (i == 146 && j == 13)
-				|| (i == 148 && j == 10))
-			{
-				// bord à droite
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 12, -1, -1);
-			}
-			else if((i == 73 && j <= 1)
-				|| (i == 95 && j <= 3)
-				|| (i == 119 && j <= 4)
-				|| (i == 136 && j <= 16)
-				|| (i == 146 && j <= 12 && j >= 11)
-				|| (i == 148 && j <= 9))
-			{
-				// mur à gauche passable
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 11, -1, -1);
-			}
-			else if((i == 90 && j <= 3)
-				|| (i == 100 && j <= 4)
-				|| (i == 142 && j <= 9)
-				|| (i == 144 && j <= 12 && j >= 11))
-			{
-				// mur à droite passable
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 9, -1, -1);
-			}
-			else if((i == 46 && j == 5)
-				|| (i == 120 && j <= 16))
-			{
-				// mur à droite
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 1, -1, -1);
-			}
-			else if((i == 46 && j == 6)
-				|| (i == 120 && j == 17))
-			{
-				// coin haut gauche
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 2, -1, -1);
-			}
-			else if((i == 11 && j == 0)
-				|| (i == 61 && j == 5)
-				|| (i == 62 && j == 4)
-				|| (i == 63 && j == 3)
-				|| (i == 64 && j == 2))
-			{
-				// rattachements pente/sol haut droit
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 16, -1, -1);
-			}
-			else if((i == 33 && j == 0)
-				|| (i == 34 && j == 1)
-				|| (i == 35 && j == 2)
-				|| (i == 36 && j == 3)
-				|| (i == 183 && j == 3)
-				|| (i == 184 && j == 4)
-				|| (i == 185 && j == 5))
-			{
-				// rattachements pente/sol haut gauche
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 13, -1, -1);
-			}
-			else if((i == 179 && j == 1)
-				|| (i == 181 && j == 2))
-			{
-				// rattachements pente 30°/sol haut gauche
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 19, -1, -1);
-			}
-			else if((i == 46 && j == 4))
-			{
-				// rattachements mur/sol haut gauche
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 13, -1, -1);
-			}
-			else if((i <= 10 && j == 1)
-				|| (i >= 12 && i <= 25 && j == 0)
-				|| (i >= 37 && i <= 45 && j == 4)
-				|| (i >= 47 && i <= 60 && j == 6)
-				|| (i >= 65 && i <= 72 && j == 2)
-				|| (i >= 91 && i <= 94 && j == 3)
-				|| (i >= 101 && i <= 118 && j == 4)
-				|| (i >= 121 && i <= 135 && j == 17)
-				|| (i >= 142 && i <= 147 && j == 10)
-				|| (i == 145 && j == 13)
-				|| (i >= 186 && j == 6)
-				|| (i >= 166 && j == 0))
+			if((j == 0))
 			{
 				// sol
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 5, -1, -1);
 			}
-			else if((i <= 11 && j == 0)
-				|| (i == 34 && j == 0)
-				|| (i == 35 && j <= 1)
-				|| (i == 36 && j <= 2)
-				|| (i >= 37 && i <= 46 && j <= 3)
-				|| (i >= 47 && i <= 60 && j <= 5)
-				|| (i == 61 && j <= 4)
-				|| (i == 62 && j <= 3)
-				|| (i == 63 && j <= 2)
-				|| (i >= 64 && i <= 73 && j <= 1)
-				|| (i >= 91 && i <= 94 && j <= 3)
-				|| (i >= 101 && i <= 118 && j <= 3)
-				|| (i >= 121 && i <= 135 && j <= 16)
-				|| (i == 145 && j <= 12 && j >= 11)
-				|| (i >= 143 && i <= 147 && j <= 9)
-				|| (i >= 178 && j == 0)
-				|| (i >= 180 && j == 1)
-				|| (i >= 182 && j == 2)
-				|| (i >= 183 && j == 3)
-				|| (i >= 184 && j == 4)
-				|| (i >= 185 && j == 5))
+			else if((i == 10 && j == 1)
+				|| (i == 12 && j == 2))
 			{
-				// plein
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 4, -1, -1);
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 20, -1, -1);
 			}
+			else if((i == 11 && j == 1)
+				|| (i == 13 && j == 2))
+			{
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 22, -1, -1);
+			}
+			else if((i == 14 && j == 2)
+				|| (i == 16 && j == 1))
+			{
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 18, -1, -1);
+			}
+			else if((i == 15 && j == 2)
+				|| (i == 17 && j == 1))
+			{
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 21, -1, -1);
+			}
+			else if((i == 15 && j == 2)
+				|| (i == 17 && j == 1))
+			{
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 21, -1, -1);
+			}
+			else if((i == 20 && j == 1)
+				|| (i == 21 && j == 2))
+			{
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, -1, -1);
+			}
+			else if((i == 22 && j == 2)
+				|| (i == 23 && j == 1))
+			{
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 23, -1, -1);
+			}
+
 		}
 	}
 }
@@ -351,7 +189,7 @@ void load_world(world *w)
     w->niveau = new_niveau();
     charger_niveau(w->liste_niveaux[w->num_niveau], w->niveau);
 	//modifier_niveau_SMB(w->niveau);
-	//sauver_niveau("smb3.xml", w->niveau);
+	//sauver_niveau("smb4.xml", w->niveau);
 
 }
 
@@ -368,7 +206,7 @@ void begin_level(world *w, int *persos_tous_morts, int* continuer)
     }
 
 	/* Présentation du niveau */
-	presentation_niveau(w, continuer);
+	presentation_niveau(w, continuer, *persos_tous_morts);
 
 	/* initialisations (temporaires?) de l'ecran */
     w->ecran.taille.x = LARGEUR_FENETRE;
@@ -378,16 +216,14 @@ void begin_level(world *w, int *persos_tous_morts, int* continuer)
 
 	for(i = 0; i < w->nb_persos; i++)
 	{
-		if(w->num_niveau == 0)
-			transforme_perso(FIRE_MARIO, w->persos[i]);
-
-		w->persos[i]->etat = DEBOUT;
-
-		/* Initialisation de la position des persos */
+		/* Initialisation de la position des persos en fonction de s'il a passé un checkpoint ou non */
 		if(persos_tous_morts && w->persos[i]->checkpoint >= 0)
 		{
 			w->persos[i]->position.x = (float)(w->niveau->checkpoints[w->persos[i]->checkpoint]->position.x + 3 * w->niveau->taille_blocs.x);
 			w->persos[i]->position.y = (float)(w->niveau->checkpoints[w->persos[i]->checkpoint]->position.y);
+
+			/* Activation du checkpoint passé auparavant */
+			w->niveau->checkpoints[w->persos[i]->checkpoint]->etat = PASSED;
 		}
 		else
 		{
@@ -407,7 +243,7 @@ void begin_level(world *w, int *persos_tous_morts, int* continuer)
 	FSOUND_Stream_Play(1, w->niveau->musique); 
 }
 
-void presentation_niveau(world *w, int *continuer)
+void presentation_niveau(world *w, int *continuer, int persos_tous_morts)
 {
 	int i;
 	vecti pos_text_vie, pos_text_nom_niveau;
@@ -444,12 +280,18 @@ void presentation_niveau(world *w, int *continuer)
 
 		screen_printf(pos_text_nom_niveau, NULL, COLOR_WHITE, "%s", w->niveau->nom);
 
-		/* Affiche chaque perso et leur nombre de vies retantes */
+		/* Affiche chaque perso et leur nombre de vies restantes */
 		for(i = 0; i < w->nb_persos; i++)
 		{
-			w->persos[i]->etat = DEBOUT;
-			w->persos[i]->cote = COTE_DROIT;
-			w->persos[i]->position.x = LARGEUR_FENETRE / 4 + i * LARGEUR_BLOC;
+			/* Si c'est le premier niveau ou si les persos sont tous morts, on remet tout le monde petit */
+			if(w->num_niveau == 0 || persos_tous_morts)
+			{
+				transforme_perso(SMALL_MARIO, w->persos[i]);
+			}
+
+			init_perso_niveau(w->persos[i]);
+
+			w->persos[i]->position.x = LARGEUR_FENETRE / 4 + i * LARGEUR_BLOC - w->persos[i]->texture_act->abscisse_bas;
 			w->persos[i]->position.y = HAUTEUR_FENETRE / 4 * 3 + LARGEUR_BLOC / 2;
 
 			pos_text_vie.x = LARGEUR_FENETRE / 4 + (i + 1) * LARGEUR_BLOC;
@@ -596,7 +438,8 @@ void persos_morts(world* w, int *persos_morts, int* continuer)
 
 	for(i = 0; i < w->nb_persos; i++)
 	{
-		*persos_morts = *persos_morts || (w->persos[i]->etat == MORT && w->persos[i]->position.y < 0);
+		*persos_morts = *persos_morts 
+			|| (w->persos[i]->etat == MORT && w->persos[i]->position.y + w->persos[i]->texture_act->ordonnee_haut  < 0);
 		total_vies += w->persos[i]->hud->nb_vies;
 	}
 

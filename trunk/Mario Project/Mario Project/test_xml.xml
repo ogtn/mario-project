@@ -1,9 +1,7 @@
-<level name="Snowland" size="200:45" music="Snowland.mp3">
+<level name="Castle" size="200:45" music="">
 	<spawn pos="64:64"/>
-	<backgrounds nb="3">
-    <background img="sky"/>
-    <background img="mountains"/>
-    <background img="sapins"/>
+	<backgrounds nb="1">
+    <background img="night_sky"/>
 	</backgrounds>
 	<background_generators nb="0"/>
   <foregrounds nb="0"/>
@@ -18,61 +16,15 @@
 	</projectiles>
 	<items nb="3">
     <item img="piece" type="0">
-      <occ_item pos="896:128" />
-      <occ_item pos="928:128" />
-      <occ_item pos="960:128" />
-      <occ_item pos="2432:224" />
-      <occ_item pos="2470:224" />
-      <occ_item pos="2784:256" />
-      <occ_item pos="2816:256" />
-      <occ_item pos="3104:256" />
-      <occ_item pos="3136:256" />
-      <occ_item pos="4800:480" />
-      <occ_item pos="4832:480" />
-      <occ_item pos="4864:480" />
-      <occ_item pos="4960:480" />
-      <occ_item pos="4992:480" />
-      <occ_item pos="5056:480" />
-      <occ_item pos="5088:480" />
-      <occ_item pos="5120:480" />
-      <occ_item pos="5184:256" />
-      <occ_item pos="5216:256" />
     </item>
 		<item img="champignon" type="1"/>
 		<item img="fleur" type="2"/>
 	</items>
-  <monsters nb="3">
-    <monster name="goomba"> 
-      <occ pos="1184:160" />
-      <occ pos="2240:96" />
-      <occ pos="2288:96" />
-      <occ pos="2336:96" />
-      <occ pos="4112:576" />
-      <occ pos="4160:576" />
-      <occ pos="6032:224" />
-      <occ pos="6080:224" />
-      <occ pos="6122:224" />
-    </monster>
-    <monster name="koopa">
-      <occ pos="544:32" />
-      <occ pos="1920:224" />
-      <occ pos="5760:96" />
-    </monster>
-    <monster name="red_koopa">
-      <occ pos="2944:128" />
-      <occ pos="4608:352" />
-    </monster>
+  <monsters nb="0">
   </monsters>
-  <pipes nb="6">
-    <pipe img="cyan_pipe" sens="0" length="2" pos="19:0" state="1" destination_pipe="0" level_destination="" monster="0"/>
-    <pipe img="cyan_pipe" sens="0" length="4" pos="79:0" state="1" destination_pipe="0" level_destination="" monster="-1"/>
-    <pipe img="cyan_pipe" sens="0" length="6" pos="83:0" state="1" destination_pipe="0" level_destination="" monster="-1"/>
-    <pipe img="cyan_pipe" sens="0" length="3" pos="132:18" state="1" destination_pipe="0" level_destination="" monster="0"/>
-    <pipe img="cyan_pipe" sens="0" length="0" pos="136:0" state="0" destination_pipe="5" level_destination="" monster="-1"/>
-    <pipe img="cyan_pipe" sens="1" length="1" pos="198:1" state="1" destination_pipe="0" level_destination="" monster="-1"/>
-  </pipes>
+  <pipes nb="0"/>
 	<blocs nb_textures="5" nb_models="29" bloc_size="32:32">
-		<textures img="classiques/snow.png"/>
+		<textures img="classiques/underground.png"/>
 		<textures img="speciaux/cassables/overworld.png"/>
 		<textures img="speciaux/incassables/[Q]/overworld.png"/>
     <textures img="speciaux/incassables/[Q]/overworld2.png"/>

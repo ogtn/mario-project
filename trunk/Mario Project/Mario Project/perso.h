@@ -128,6 +128,9 @@ perso* new_perso(void);
 /* Initilisation des valeurs par defaut */
 perso* init_perso(perso *p);
 
+/* Initialisation du perso au début de chaque niveau */
+void init_perso_niveau(perso* p);
+
 /* Libère le perso en mémoire */
 perso* free_perso(perso *p);
 

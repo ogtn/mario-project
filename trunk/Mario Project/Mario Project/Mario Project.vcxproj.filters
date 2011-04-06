@@ -203,33 +203,6 @@
     <None Include="smb3.xml">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="textures\persos\fire_mario.perso">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="textures\persos\super_mario.perso">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="textures\monstres\red_koopa.mstr">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="textures\monstres\red_koopa.png">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="textures\backgrounds\firs.png">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="textures\backgrounds\night_sky.png">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="textures\backgrounds\mountains.png">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="textures\blocs\classiques\snow.png">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="textures\blocs\speciaux\incassables\interaction\blue_plant.png">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
