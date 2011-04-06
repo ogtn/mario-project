@@ -593,9 +593,9 @@ void MAJ_collision_perso(perso *perso, niveau* lvl, keystate* keystate, Uint32 d
 			perso->monstre_porte->position_prec.y = perso->monstre_porte->position.y;
 
 			if(perso->cote == COTE_DROIT)
-				perso->monstre_porte->position.x = perso->position.x + perso->taille.x - perso->monstre_porte->type_monstre->taille.x / 2.5F;
+				perso->monstre_porte->position.x = perso->position.x + perso->taille.x - perso->monstre_porte->type_monstre->abscisse_bas - (perso->monstre_porte->type_monstre->taille.x) / 2.5F;
 			else
-				perso->monstre_porte->position.x = perso->position.x - perso->monstre_porte->type_monstre->taille.x + perso->monstre_porte->type_monstre->taille.x / 2.5F;
+				perso->monstre_porte->position.x = perso->position.x + perso->monstre_porte->type_monstre->abscisse_bas - perso->monstre_porte->type_monstre->taille.x + (perso->monstre_porte->type_monstre->taille.x) / 2.5F;
 
 			perso->monstre_porte->position.y = perso->position.y + perso->texture_act->ordonnee_haut / 2;
 

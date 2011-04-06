@@ -125,42 +125,6 @@ void modifier_niveau_SMB(niveau* n)
 				// sol
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 5, -1, -1);
 			}
-			else if((i == 10 && j == 1)
-				|| (i == 12 && j == 2))
-			{
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 20, -1, -1);
-			}
-			else if((i == 11 && j == 1)
-				|| (i == 13 && j == 2))
-			{
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 22, -1, -1);
-			}
-			else if((i == 14 && j == 2)
-				|| (i == 16 && j == 1))
-			{
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 18, -1, -1);
-			}
-			else if((i == 15 && j == 2)
-				|| (i == 17 && j == 1))
-			{
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 21, -1, -1);
-			}
-			else if((i == 15 && j == 2)
-				|| (i == 17 && j == 1))
-			{
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 21, -1, -1);
-			}
-			else if((i == 20 && j == 1)
-				|| (i == 21 && j == 2))
-			{
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 17, -1, -1);
-			}
-			else if((i == 22 && j == 2)
-				|| (i == 23 && j == 1))
-			{
-				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 23, -1, -1);
-			}
-
 		}
 	}
 }
@@ -188,7 +152,7 @@ void load_world(world *w)
 
     w->niveau = new_niveau();
     charger_niveau(w->liste_niveaux[w->num_niveau], w->niveau);
-	//modifier_niveau_SMB(w->niveau);
+	modifier_niveau_SMB(w->niveau);
 	//sauver_niveau("smb4.xml", w->niveau);
 
 }
@@ -286,7 +250,7 @@ void presentation_niveau(world *w, int *continuer, int persos_tous_morts)
 			/* Si c'est le premier niveau ou si les persos sont tous morts, on remet tout le monde petit */
 			if(w->num_niveau == 0 || persos_tous_morts)
 			{
-				transforme_perso(SMALL_MARIO, w->persos[i]);
+				transforme_perso(SUPER_MARIO, w->persos[i]);
 			}
 
 			init_perso_niveau(w->persos[i]);
