@@ -20,7 +20,10 @@
 		<item img="champignon" type="1"/>
 		<item img="fleur" type="2"/>
 	</items>
-  <monsters nb="0">
+  <monsters nb="1">
+    <monster name="koopa">
+      <occ pos="560:32"/>
+    </monster>
   </monsters>
   <pipes nb="0"/>
 	<blocs nb_textures="5" nb_models="29" bloc_size="32:32">
