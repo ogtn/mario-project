@@ -316,7 +316,7 @@ void MAJ_HUD(perso *p, Uint32 duree, ecran e)
 	/* Suppression de certains scores si besoin */
 	p->hud->file_points = free_file_pts(p->hud->file_points);
 
-	if(p->etat == MORT && p->position.y < 0)
+	if(p->etat == MORT && p->position.y + p->texture_act->ordonnee_haut < 0)
 		p->hud->nb_vies--;
 }
 
@@ -1036,7 +1036,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 								}
 
 								/* Calcul de la nouvelle ordonnée du personnage avec l'équation de la pente et en fonction du bloc */
-								hauteur = (float) (-(perso.position.x + perso.taille.x / 2.0F) * tan(deg_to_rad(block.angle_pente)) + block.position.y + block.taille.y - block.hauteur_a_retirer + block.position.x * tan(deg_to_rad(block.angle_pente)));
+								hauteur = (float) (-(perso.position.x + perso.taille.x / 2.0F) * tan(deg_to_rad(block.angle_pente)) + block.position.y + block.taille.y - block.hauteur_a_retirer + block.position.x * tan(deg_to_rad(block.angle_pente))) + EPSILON;
 								p->position.y = hauteur;
 
 								p->environnement = SOL_DUR;

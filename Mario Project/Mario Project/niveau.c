@@ -430,6 +430,8 @@ void balise_object(niveau *n, const char **attrs)
 	strcpy(n->objets[i].nom_text, attrs[1]);
 	charger_objet_background(&n->objets[i], VRAI);
 	i++;
+
+	/* Remise a zéro pour le prochain niveau */
 	i %= n->nb_objets;
 }
 
@@ -447,6 +449,8 @@ void balise_finish(niveau *n, const char **attrs)
 	n->finishes[i].position.y = (float)atoi(strchr(attrs[3], ':') + 1);
 	charger_finish(&n->finishes[i]);
 	i++;
+
+	/* Remise a zéro pour le prochain niveau */
 	i %= n->nb_finish;
 }
 
@@ -461,6 +465,9 @@ void balise_projectile(niveau *n, const char **attrs)
 	static int i = 0;
 	n->projectiles[i] = charger_projectile(attrs[1]);
 	i++;
+
+	/* Remise a zéro pour le prochain niveau */
+	i %= n->nb_projectiles;
 }
 
 void balise_items(niveau *n, const char **attrs)
@@ -477,6 +484,9 @@ void balise_item(niveau *n, const char **attrs)
 	n->items[i] = charger_item(attrs[1], atoi(attrs[3]));
 	id_item_actuel = i;
 	i++;
+
+	/* Remise a zéro pour le prochain niveau */
+	i %= n->nb_items;
 }
 
 void balise_occ_item(niveau *n, const char **attrs)
@@ -499,6 +509,9 @@ void balise_monster(niveau *n, const char **attrs)
     n->monstres[i] = charger_monstre(attrs[1]);
 	id_mstr_actuel = i;
 	i++;
+
+	/* Remise a zéro pour le prochain niveau */
+	i %= n->nb_monstres;
 }
 
 void balise_occ(niveau *n, const char **attrs)
@@ -517,6 +530,8 @@ void balise_pipe(niveau *n, const char **attrs)
 	static int i = 0;
 	n->tuyaux[i] = charger_tuyau(attrs[1], atoi(attrs[3]), atoi(attrs[5]), atoi(attrs[7]), atoi(strchr(attrs[7], ':') + 1), atoi(attrs[9]), atoi(attrs[11]), attrs[13], atoi(attrs[15]));
 	i++;
+
+	/* Remise a zéro pour le prochain niveau */
 	i %= n->nb_tuyaux;
 }
 

@@ -96,7 +96,7 @@ void load_world(world *w);
 void begin_level(world *w, int *persos_tous_morts, int* continuer);
 
 /* Présente le niveau à l'aide dune mini-capture, de l'état actuel de mario et de son nombre de vies */
-void presentation_niveau(world *w, int *continuer);
+void presentation_niveau(world *w, int *continuer, int persos_tous_morts);
 
 /* mise à jour des champs qui stockent notament le temps écoulé entre 
 deux images */
