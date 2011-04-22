@@ -62,7 +62,8 @@ on enlève une certaine hauteur de l'ordonnée du point le plus à gauche de la pen
 #define CASSABLE				0x200000
 #define DISTRIBUTEUR_PIECE		0x400000
 #define EST_VIDE				0x800000
-#define PEUT_GRIMPER			0x1000000
+#define PEUT_GRIMPER			0x1000000 /* Haricots, plante, ... */
+#define BLOC_MORT				0x2000000 /* Lave, acide, poison, ....*/
 #define BLOC_SPEC				(SOL | PLAFOND | MUR_A_DROITE | MUR_A_GAUCHE )
 
 typedef enum ETAT_BLOC

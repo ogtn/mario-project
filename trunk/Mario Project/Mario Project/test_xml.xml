@@ -1,15 +1,14 @@
 <level name="Castle" size="200:45" music="">
 	<spawn pos="64:64"/>
-	<backgrounds nb="1">
-    <background img="night_sky"/>
+	<backgrounds nb="2">
+    <background img="castle"/>
+    <background img="castle_back"/>
 	</backgrounds>
 	<background_generators nb="0"/>
   <foregrounds nb="0"/>
   <foreground_generators nb="0"/>
 	<objects nb="0"/>
-  <finishes nb="1">
-    <finish img="snow_castle" position="6144:224"/>
-  </finishes>
+  <finishes nb="0"/>
 	<projectiles nb="2">
 		<projectile img="debris"/>
 		<projectile img="fireball"/>
@@ -20,14 +19,10 @@
 		<item img="champignon" type="1"/>
 		<item img="fleur" type="2"/>
 	</items>
-  <monsters nb="1">
-    <monster name="koopa">
-      <occ pos="560:32"/>
-    </monster>
-  </monsters>
+  <monsters nb="0"/>
   <pipes nb="0"/>
 	<blocs nb_textures="5" nb_models="29" bloc_size="32:32">
-		<textures img="classiques/underground.png"/>
+		<textures img="classiques/castle.png"/>
 		<textures img="speciaux/cassables/overworld.png"/>
 		<textures img="speciaux/incassables/[Q]/overworld.png"/>
     <textures img="speciaux/incassables/[Q]/overworld2.png"/>

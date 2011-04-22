@@ -226,7 +226,8 @@ void charger_perso(char *nom, perso* p){
 	fscanf(perso_file, "nb_sprites_marche : %d\n", &nb_1);
 	p->texture_act->nb_sprites[MARCHE] = nb_1;
 
-	if(nb_1){
+	if(nb_1)
+	{
 		nb_lignes++;
 		nb_1 = p->taille.x / nb_1; // stockage de la taille du sprite
 	}
