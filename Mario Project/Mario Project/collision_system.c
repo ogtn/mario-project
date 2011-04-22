@@ -514,12 +514,16 @@ void MAJ_collision_perso(perso *perso, niveau* lvl, keystate* keystate, Uint32 d
 			jump_perso(perso);
 
         /* Prolonger le saut si la touche reste enfoncée */
-        if(perso->etat == SAUT)
+		if(perso->etat == SAUT || perso->etat == SAUT_CARAPACE)
         {
-            perso->tps_saut += duree;
-
-            if(keystate->actuel[SAUTER] && perso->tps_saut < 175)
-                perso->vitesse.y = VITESSE_SAUT;
+			perso->tps_saut += duree;
+			
+			if(keystate->actuel[SAUTER])
+			{
+				if((perso->tps_saut < 300 && (perso->vitesse.x >= V_COURSE || perso->vitesse.x <= -V_COURSE)) ||
+					(perso->tps_saut < 175))
+					perso->vitesse.y = VITESSE_SAUT;
+			}
         }
 
 		if(perso->vitesse.y != 0)
@@ -3394,7 +3398,7 @@ void compte_points(perso* p, occ_monstre* monstre, int is_finish)
 
 void kill_monster_finish(niveau* n, perso* p)
 {
-	int i;
+	int i, cpt = 0;
 
 	for(i = 0; i < n->nb_monstres; i++)
 	{
@@ -3406,6 +3410,7 @@ void kill_monster_finish(niveau* n, perso* p)
 			{
 				mstr_actuel->occ_monstre->etat = M_MORT_PAR_PROJ;
 				compte_points(p, mstr_actuel->occ_monstre, 1);
+				cpt++;
 			}
 
 			mstr_actuel = mstr_actuel->suivant;

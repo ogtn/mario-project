@@ -120,10 +120,15 @@ void modifier_niveau_SMB(niveau* n)
 	{
 		for(j = 0; j < n->taille.y; j++)
 		{
-			if((j == 0))
+			if((j == 1))
 			{
 				// sol
 				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 5, -1, -1);
+			}
+			else if((j == 0))
+			{
+				// plein
+				n->occ_blocs[i][j] = new_occ_bloc(i * n->taille_blocs.x, j * n->taille_blocs.y, 4, -1, -1);
 			}
 		}
 	}
@@ -178,12 +183,13 @@ void begin_level(world *w, int *persos_tous_morts, int* continuer)
     w->ecran.origine.x = 0;
     w->ecran.origine.y = 0;
 
+	/* Initialisation de chaque position des persos */
 	for(i = 0; i < w->nb_persos; i++)
 	{
 		/* Initialisation de la position des persos en fonction de s'il a passé un checkpoint ou non */
 		if(persos_tous_morts && w->persos[i]->checkpoint >= 0)
 		{
-			w->persos[i]->position.x = (float)(w->niveau->checkpoints[w->persos[i]->checkpoint]->position.x + 3 * w->niveau->taille_blocs.x);
+			w->persos[i]->position.x = (float)(w->niveau->checkpoints[w->persos[i]->checkpoint]->position.x + (i + 3) * LARGEUR_BLOC);
 			w->persos[i]->position.y = (float)(w->niveau->checkpoints[w->persos[i]->checkpoint]->position.y);
 
 			/* Activation du checkpoint passé auparavant */
@@ -191,16 +197,11 @@ void begin_level(world *w, int *persos_tous_morts, int* continuer)
 		}
 		else
 		{
-			w->persos[i]->position.x = (float)w->niveau->spawn.x;
+			w->persos[i]->position.x = (float)w->niveau->spawn.x + i * LARGEUR_BLOC;
 			w->persos[i]->position.y = (float)w->niveau->spawn.y;
 		}
 
 		w->persos[i]->position_prec = w->persos[i]->position;
-
-
-		/* Initialisation du nom et du temps dans le HUD pour chaque niveau chargé */
-		w->persos[i]->hud->nom_niveau = w->niveau->nom;
-		w->persos[i]->hud->time = 5000;
 	}
 
 	/* Lancement de la musique */
@@ -229,7 +230,7 @@ void presentation_niveau(world *w, int *continuer, int persos_tous_morts)
 		w->ecran.taille.x = LARGEUR_FENETRE / 2;
 		w->ecran.taille.y = HAUTEUR_FENETRE / 2;
 
-		draw_main_options(w->niveau, w->ecran, 0, 1, 1, 1);
+		draw_main_options(w->niveau, w->ecran, w->temps_actuel, 1, 1, 1);
 
 		/* Affiche le cadre autour de l'aperçu */
 		w->ecran.origine.x -= 5;
@@ -250,10 +251,15 @@ void presentation_niveau(world *w, int *continuer, int persos_tous_morts)
 			/* Si c'est le premier niveau ou si les persos sont tous morts, on remet tout le monde petit */
 			if(w->num_niveau == 0 || persos_tous_morts)
 			{
-				transforme_perso(SUPER_MARIO, w->persos[i]);
+				transforme_perso(SMALL_MARIO, w->persos[i]);
 			}
 
+			/* Réinitialisation de ceraines valeurs utilisées pour chaque niveau */
 			init_perso_niveau(w->persos[i]);
+
+			/* Initialisation du nom et du temps dans le HUD pour chaque niveau chargé */
+			w->persos[i]->hud->nom_niveau = w->niveau->nom;
+			w->persos[i]->hud->time = 5000;
 
 			w->persos[i]->position.x = LARGEUR_FENETRE / 4 + i * LARGEUR_BLOC - w->persos[i]->texture_act->abscisse_bas;
 			w->persos[i]->position.y = HAUTEUR_FENETRE / 4 * 3 + LARGEUR_BLOC / 2;

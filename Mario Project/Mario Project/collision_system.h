@@ -18,19 +18,19 @@
 #define COLLISION_SYSTEM_H_
 
 /* Physique */
-#define GRAVITY					    0.002F
+#define GRAVITY					    0.0018F
 #define MARGE_ECRAN_ACTIF			5 * LARGEUR_BLOC
 #define EPSILON						0.5F
 
 /* Constantes determinant les frottements */
-#define FROTT_CLASSIQUE			    0.007F
+#define FROTT_CLASSIQUE			    0.004F
 #define FROTT_GLACE				    0.004F
-#define FROTT_AIR				    0.001F
+#define FROTT_AIR				    0.0005F
 #define COEFF_GLISSE			    0.3F
 
 /* Constantes des vitesses et des accélèrations */
-#define ACC_MARCHE				    0.05F
-#define ACC_COURSE				    0.07F
+#define ACC_MARCHE				    0.1F
+#define ACC_COURSE				    0.15F
 #define V_MAX   					1.6F
 #define V_MIN	    				0.008F
 #define V_MARCHE	    			0.3F

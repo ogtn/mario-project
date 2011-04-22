@@ -11,7 +11,7 @@
 	<background_generators nb="0"/>
 	<foregrounds nb="0"/>
 	<foreground_generators nb="1">
-		<foreground_generator img="snow_particle.png" position="0:768" size="6400:0" particles_life="4000" flow="200" gravity="1" beginning_color="-1" end_color="-1"/>
+		<foreground_generator img="snow_particle.png" position="0:1280" size="6400:0" particles_life="4000" flow="200" gravity="1" beginning_color="-1" end_color="-1"/>
 	</foreground_generators>
 	<objects nb="0"/>
 	<finishes nb="1">

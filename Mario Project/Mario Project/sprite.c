@@ -580,7 +580,6 @@ void draw_HUD(perso* p)
 	screen_printf_dbg("Nombre de pieces : %d\n", p->hud->nb_pieces);
 	screen_printf_dbg("Score : %d\n", p->hud->score);
 	screen_printf_dbg("Temps restant : %d\n", p->hud->time);
-	screen_printf_dbg("Dimensions hitbox (%d,%d)\n", p->taille.x - 2 * p->texture_act->abscisse_bas, p->texture_act->ordonnee_haut);
 }
 
 

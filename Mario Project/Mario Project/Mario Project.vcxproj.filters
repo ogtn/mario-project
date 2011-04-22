@@ -203,6 +203,9 @@
     <None Include="smb3.xml">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Functions.txt">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
