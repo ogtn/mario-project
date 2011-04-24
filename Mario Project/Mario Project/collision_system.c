@@ -1661,6 +1661,7 @@ void solve_collisions_perso(perso* p, niveau *n, keystate* keystate)
 			{
 				/* S'il est invincible, il ne l'est plus */
 				p->tps_invincible_etoile = 0;
+				p->tps_invincible = 0;
 
 				/* On tue tous les monstres à l'écran */
 				kill_monster_finish(n, p);
@@ -2602,12 +2603,12 @@ void solve_collisions_item(occ_item* it, perso** persos, niveau* n, Uint32 duree
 											it->position.x = (float)it->position.x + it->vitesse.x * duree;
 										}
 									}
-									else // vitesse = 0 -> PIECE
+									else // vitesse.x = 0 -> PIECE
 									{
 										it->etat = SORT_DU_BLOC;
 										it->tps_sortie_bloc = TPS_ITEM_SORT_BLOC;
 										it->vitesse.y = VIT_SORTIE_BLOC * 3;
-										prend_item(persos[n->occ_blocs[i][j]->id_perso], n->items[it->type_item]->nom, NULL);
+										prend_item(persos[0], n->items[it->type_item]->nom, NULL);
 									}
 
 									collision_bloc_releve = 1;

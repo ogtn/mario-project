@@ -534,7 +534,7 @@
 				<occ_block pos="1664:352" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="1664:384" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="1664:416" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="1664:576" actual="17" alt="18" item="-1"/>
+				<occ_block pos="1664:544" actual="17" alt="18" item="-1"/>
 				<occ_block pos="1696:0" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="1696:96" actual="3" alt="-1" item="-1"/>
 				<occ_block pos="1696:128" actual="4" alt="-1" item="-1"/>
@@ -547,7 +547,7 @@
 				<occ_block pos="1696:352" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="1696:384" actual="4" alt="-1" item="-1"/>
 				<occ_block pos="1696:416" actual="5" alt="-1" item="-1"/>
-				<occ_block pos="1696:576" actual="17" alt="18" item="0"/>
+				<occ_block pos="1728:544" actual="17" alt="18" item="0"/>
 				<occ_block pos="1728:0" actual="5" alt="-1" item="-1"/>
 				<occ_block pos="1728:96" actual="3" alt="-1" item="-1"/>
 				<occ_block pos="1728:128" actual="4" alt="-1" item="-1"/>

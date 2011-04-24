@@ -157,7 +157,7 @@ void load_world(world *w)
 
     w->niveau = new_niveau();
     charger_niveau(w->liste_niveaux[w->num_niveau], w->niveau);
-	modifier_niveau_SMB(w->niveau);
+	//modifier_niveau_SMB(w->niveau);
 	//sauver_niveau("smb4.xml", w->niveau);
 
 }
@@ -171,7 +171,6 @@ void begin_level(world *w, int *persos_tous_morts, int* continuer)
     {
         w->niveau = new_niveau();
         charger_niveau(w->liste_niveaux[w->num_niveau], w->niveau);
-		*persos_tous_morts = FAUX;
     }
 
 	/* Présentation du niveau */
@@ -206,6 +205,9 @@ void begin_level(world *w, int *persos_tous_morts, int* continuer)
 
 	/* Lancement de la musique */
 	FSOUND_Stream_Play(1, w->niveau->musique); 
+
+	/* On relance un niveau, donc tout le monde est vivant */
+	*persos_tous_morts = FAUX;
 }
 
 void presentation_niveau(world *w, int *continuer, int persos_tous_morts)
