@@ -176,7 +176,9 @@
     <None Include="level_design_log.txt" />
     <None Include="smb.xml" />
     <None Include="smb2.xml" />
-    <None Include="smb3.xml" />
+    <None Include="smb3.xml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="test_xml.xml">
       <SubType>Designer</SubType>
     </None>

@@ -107,6 +107,9 @@ void init_perso_niveau(perso* p)
 		p->peut_grimper = 0;
 		p->tps_invincible_etoile = 0;
 
+		p->hud->nb_monstres_tues = 0;
+		p->hud->nb_monstres_tues_carapace = 0;
+
 		p->cote = COTE_DROIT;
 	}
 }
