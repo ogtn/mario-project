@@ -203,7 +203,7 @@
     <None Include="smb3.xml">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="Functions.txt">
+    <None Include="textures\objects\snow_castle.png">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
