@@ -203,9 +203,6 @@
     <None Include="smb3.xml">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="textures\objects\snow_castle.png">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">

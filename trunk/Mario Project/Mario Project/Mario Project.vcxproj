@@ -185,7 +185,6 @@
     <None Include="textures\blocs\speciaux\cassables\cassables.cfg" />
     <None Include="textures\blocs\speciaux\incassables\interaction\interaction.cfg" />
     <None Include="textures\blocs\speciaux\incassables\[Q]\[Q].cfg" />
-    <None Include="textures\objects\snow_castle.png" />
     <None Include="to do list.txt" />
     <None Include="world1.wld" />
   </ItemGroup>

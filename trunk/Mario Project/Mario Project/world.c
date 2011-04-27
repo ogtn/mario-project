@@ -80,7 +80,9 @@ world *free_world(world *w)
 			for(i = 0; i < w->nb_persos; i++)
 			{
 				if(w->persos[i] != NULL)
+				{
 					free_perso(w->persos[i]);
+				}
 			}
 
 			free(w->persos);
@@ -155,7 +157,6 @@ void load_world(world *w)
 		fscanf(wldFile, "%s", w->liste_niveaux[i]);
 	}
 
-    w->niveau = new_niveau();
     charger_niveau(w->liste_niveaux[w->num_niveau], w->niveau);
 	//modifier_niveau_SMB(w->niveau);
 	//sauver_niveau("smb4.xml", w->niveau);
@@ -214,7 +215,32 @@ void presentation_niveau(world *w, int *continuer, int persos_tous_morts)
 {
 	int i;
 	vecti pos_text_vie, pos_text_nom_niveau;
+	GLuint texture_cadre = charger_texture_bis("textures/cadre3.png", NULL);
+
 	w->ecran.scroll.x = w->ecran.scroll.y = 0;
+
+	/* Initialisations */
+	for(i = 0; i < w->nb_persos; i++)
+	{
+		/* Si c'est le premier niveau ou si les persos sont tous morts, on remet tout le monde petit */
+		if(w->num_niveau == 0 || persos_tous_morts)
+		{
+			transforme_perso(SMALL_MARIO, w->persos[i]);
+		}
+
+		/* Réinitialisation de ceraines valeurs utilisées pour chaque niveau */
+		init_perso_niveau(w->persos[i]);
+
+		/* Initialisation du nom et du temps dans le HUD pour chaque niveau chargé */
+		w->persos[i]->hud->nom_niveau = w->niveau->nom;
+		w->persos[i]->hud->time = 5000;
+
+		w->persos[i]->position.x = LARGEUR_FENETRE / 4 + i * LARGEUR_BLOC - w->persos[i]->texture_act->abscisse_bas;
+		w->persos[i]->position.y = HAUTEUR_FENETRE / 4 * 3 + LARGEUR_BLOC / 2;
+
+		pos_text_vie.x = LARGEUR_FENETRE / 4 + (i + 1) * LARGEUR_BLOC;
+		pos_text_vie.y = w->persos[i]->position.y;
+	}
 
 	while(!w->keystate->actuel[ENTRER] && !w->keystate->actuel[ECHAP])
 	{
@@ -239,7 +265,7 @@ void presentation_niveau(world *w, int *continuer, int persos_tous_morts)
 		w->ecran.origine.y -= 5;
 		w->ecran.taille.x += 10;
 		w->ecran.taille.y += 10;
-		draw_cadre(w->ecran.origine, w->ecran.taille, charger_texture_bis("textures/cadre3.png", NULL), 5);
+		draw_cadre(w->ecran.origine, w->ecran.taille, texture_cadre, 5);
 
 		/* Affiche le nom du niveau */
 		pos_text_nom_niveau.x = w->ecran.origine.x;
@@ -250,27 +276,7 @@ void presentation_niveau(world *w, int *continuer, int persos_tous_morts)
 		/* Affiche chaque perso et leur nombre de vies restantes */
 		for(i = 0; i < w->nb_persos; i++)
 		{
-			/* Si c'est le premier niveau ou si les persos sont tous morts, on remet tout le monde petit */
-			if(w->num_niveau == 0 || persos_tous_morts)
-			{
-				transforme_perso(SMALL_MARIO, w->persos[i]);
-			}
-
-			/* Réinitialisation de ceraines valeurs utilisées pour chaque niveau */
-			init_perso_niveau(w->persos[i]);
-
-			/* Initialisation du nom et du temps dans le HUD pour chaque niveau chargé */
-			w->persos[i]->hud->nom_niveau = w->niveau->nom;
-			w->persos[i]->hud->time = 5000;
-
-			w->persos[i]->position.x = LARGEUR_FENETRE / 4 + i * LARGEUR_BLOC - w->persos[i]->texture_act->abscisse_bas;
-			w->persos[i]->position.y = HAUTEUR_FENETRE / 4 * 3 + LARGEUR_BLOC / 2;
-
-			pos_text_vie.x = LARGEUR_FENETRE / 4 + (i + 1) * LARGEUR_BLOC;
-			pos_text_vie.y = w->persos[i]->position.y;
-
 			screen_printf(pos_text_vie, NULL, COLOR_WHITE, "x%d", w->persos[i]->hud->nb_vies);
-
 			draw_perso(w->persos[i], 0);
 		}
 
