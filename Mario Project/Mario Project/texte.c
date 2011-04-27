@@ -89,7 +89,7 @@ font_2d *load_font_2d(char *nom)
 
 font_2d *lire_font_2d(FILE *flux, font_2d *f)
 {
-    size_t ascii_actuel;
+    size_t ascii_actuel = 0;
     char buff[300];
     char *debut;
 

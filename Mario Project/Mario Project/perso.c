@@ -129,6 +129,7 @@ perso* free_perso(perso *p)
 		
 		/* Libération du HUD */
 		free_file_pts(p->hud->file_points);
+		free_font_2d(&p->hud->font);
 		free(p->hud);
 
 		free(p);

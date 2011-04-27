@@ -69,6 +69,9 @@ void init_text(char *font_name, size_t buff_size, couleur c);
 /* Charge une police à partir de l'emplacement du fichier .fnt */
 font_2d *load_font_2d(char *nom);
 
+/* Libère une police */
+void free_font_2d(font_2d **f);
+
 /* Quitte le module proprement (ou pas :p) */
 void quit_text(void);
 
