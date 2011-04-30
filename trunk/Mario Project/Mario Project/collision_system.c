@@ -305,9 +305,9 @@ void MAJ_HUD(perso *p, Uint32 duree, ecran e)
 		position.x = file->element->pos_points.x - e.scroll.x;
 		position.y = file->element->pos_points.y - e.scroll.y;
 		if(file->element->points == 10000)
-			screen_printf(position, p->hud->font, COLOR_WHITE, "1UP");
+			screen_printf(position, NULL, COLOR_WHITE, "1UP");
 		else
-			screen_printf(position, p->hud->font, COLOR_WHITE, "%d", file->element->points);
+			screen_printf(position, NULL, COLOR_WHITE, "%d", file->element->points);
 
 		file->element->tps_affichage -= duree;
 		file = file->suivant;

@@ -129,7 +129,6 @@ perso* free_perso(perso *p)
 		
 		/* Libération du HUD */
 		free_file_pts(p->hud->file_points);
-		free_font_2d(&p->hud->font);
 		free(p->hud);
 
 		free(p);
@@ -423,7 +422,6 @@ void init_HUD(perso* p)
 	p->hud->nb_monstres_tues_carapace = 0;
 	p->hud->personnage = p->personnage;
 	p->hud->file_points = NULL;
-    p->hud->font = load_font_2d("fonts/smb.fnt");
 
 	/* Définition du tableau des scores */
 	p->hud->tab_points[0] = 100;

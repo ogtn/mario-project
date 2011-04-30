@@ -66,7 +66,6 @@ typedef struct HUD
 	unsigned int nb_monstres_tues_carapace;	/* variable permettant de calculer le score du personnage en lançant une carapace */
 	int tab_points[TAB_POINTS_LENGTH];		/* tableau correspondant à la suite des points lorsque le personnage tue des monstres */
 	file_pts* file_points;					/* file correspondant à l'affichage des points dans le jeu */
-    font_2d *font;                          /* police du HUD lors de l'affichage */
 }HUD;
 
 
